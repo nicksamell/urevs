@@ -1,0 +1,4 @@
+<template name='blogPage'>
+	<h3 class='text-center'>Hey all! Thanks for your interest in urevs.com and its development!</h3>
+	<p class='text-center'>The urevs blog is not up yet but I'll let you know once it's up through twitter, @NickfromUrevs, and other means once it is. For now, you can join our discussion on the subreddit, gadgets! Hope to see you there!<br><br>Happy Reviewing,<br>Nick</p>
+</template>

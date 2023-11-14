@@ -1,0 +1,8 @@
+<template name='loading'>
+	<div class='col-xs-12'>
+			
+		<h1>Loading...</h1>
+			
+		<h3 class='please-wait'>Please wait a few seconds. If your results are taking too long, there may be a problem on the server or a search has been made without any parameters. <a href='{{pathFor route='landingPage'}}'>Click here to go back to your urevs home page</a>.</h3>
+	</div>
+</template>

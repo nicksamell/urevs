@@ -1,0 +1,24 @@
+<template name='errors'>
+	<div class='errors'>
+		{{#each errors}}
+			{{> error}}
+		{{/each}}
+	</div>
+</template>
+
+<template name='error'>
+	<div class='alert alert-danger' role='alert'>
+		<button type='button' class='close' data-dismiss='alert'>&times;</button>
+		{{message}}
+	</div>
+</template>
+
+<!--
+ShoutOut To Discover Meteor, who helped me immensely during the development of this project. Thanks a lot guys!
+
+Copyright (C) 2012--2014 Discover Meteor
+
+Permission is hereby granted, free of charge...
+
+2014 - old? how to limit copyright only for this code?
+-->

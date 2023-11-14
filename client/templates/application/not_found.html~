@@ -1,0 +1,9 @@
+<template name='notFound'>
+	<div class='not-found page jumbotron'>
+		<h2>404 Error</h2>
+		<br>
+		<p>Sorry, seems like we're not in stock with such a url - 
+		we couldn't find anything at this address. :/</p>
+		<p>Please double check for any misspellings in the address bar.</p>
+	</div>
+</template>

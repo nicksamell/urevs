@@ -1,0 +1,368 @@
+<template name='layout'>
+	<!--
+	 	This notice applies to all code within this application wrapped in the tags "//DiscoverMeteor Start" and "//DiscoverMeteor End", and all associated css code. The aforementioned applicable code starts just after the "//DiscoverMeteor Start" tag and ends just before the "//DiscoverMeteor End" tag.
+	 	
+	 	Copyright (c) 2012-2014 Discover Meteor
+	 	
+	 	Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+	 	
+	 	The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+	 	
+	 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+	 -->
+	
+	<div class='container layout-container'>
+		<header class='navbar navbar-default layout-navbar' role='navigation'>
+			<div class='navbar-header layout-navbar-header'>
+				{{{_ 'logo_a'}}}
+				
+				<div class='layout-login-div'>
+					{{> loginButtons}}
+					{{#if notificationCount}}
+						<div class='notification-bubble' id='layout-note'>{{notificationCount}}</div>
+					{{/if}}
+				</div>
+			</div>
+		</header>
+
+		<footer id='top{{layoutClass}}' class='text-center col-xs-12'>
+			<a title={{newestTitle}} href="{{pathFor route='newestPage'}}" id='layout-newest'>{{_ 'Newest'}}</a>
+			&#8226;
+			<a title={{trendingTitle}} href="{{pathFor route='trendingPage'}}" id='layout-trending'>{{_ 'Trending'}}</a>
+		</footer>
+
+		{{> successes}}
+		{{> errors}}
+		
+		<div id='main'>
+		{{> yield}}
+		</div>
+		
+	<div id='inProgressModal' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-body'>
+					<button type='button' class='btn btn-info' data-dismiss='modal'>X</button>
+					<h5 class='text-center in-progress-text'>{{_ 'in_progress_text1'}}
+					</h5>
+					<br>
+					<br>
+					<a data-toggle='collapse' data-target='#recover-link' id='recover-work-link'>{{_ 'in_progress_text_recover'}}<span class='caret'></span></a>
+					<a id='delete-recovered-work-link'>{{_ 'in_progress_text_delete'}}</a>
+					<br>
+
+					<div id='recover-link' class='collapse'>
+						{{#if commentInProgress}}
+							<span>{{_ 'in_progress_snippet'}}</span>{{commentInProgress}}
+						{{/if}}
+						<br>
+						{{#if commentInEdit}}
+							<span>{{_ 'in_progress_editing'}}</span>{{commentInEdit}}
+						{{/if}}
+						<br>
+						{{#if flagCommentInProgress}}
+							<span>{{_ 'in_progress_comment_flag'}}</span>{{flagCommentInProgress}}
+						{{/if}}
+						<br>
+						{{#if flagReviewInProgress}}
+							<span>{{_ 'in_progress_review_flag'}}</span>{{flagReviewInProgress}}
+						{{/if}}
+						<br>
+						{{#if suggestionInProgress}}
+							<span>{{_ 'in_progress_suggestion'}}</span>{{suggestionInProgress}}
+						{{/if}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id='inProgressConfirmDeleteModal' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-body'>
+					<h3>{{_ 'in_progress_confirm_delete_header'}}</h3>
+					<button type='button' class='btn btn-success reject-recovered-delete-btn'>{{_ 'cancel'}}</button>
+					<button type='button' class='btn btn-danger confirm-recovered-delete-btn'>{{_ 'yes'}}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+		
+	<div id='gratitudes' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-header'>
+				<button type='button' class='close' data-dismiss='modal'>&times;</button>
+				<h3 class='modal-title'>{{_ 'Gratitudes'}}</h3>
+				</div>
+				<div class='modal-body'>
+					<p>{{_ 'gratitudes_modal_p1'}}</p>
+					<p>{{_ 'gratitudes_modal_p2'}}</p>
+					<p>{{_ 'gratitudes_modal_meteor'}}</p>
+					<p>{{_ 'gratitudes_modal_p3'}}</p>
+					<p>{{_ 'gratitudes_modal_p4'}}</p>
+					<p>{{_ 'gratitudes_modal_p5'}}</p>
+					<br>
+					<br>
+					<br>
+					<p>{{_ 'gratitudes_modal_signature'}}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id='ourMission' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-header'>
+				<button type='button' class='close' data-dismiss='modal'>&times;</button>
+				<h3 class='modal-title'>{{_ 'our_mission_modal_header'}}</h3>
+				</div>
+				<div class='modal-body'>
+					<p>{{{_ 'our_mission_modal_p1'}}}</p>
+					<p>{{_ 'our_mission_modal_contact'}}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id='legalPrivacy' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-header'>
+				<button type='button' class='close' data-dismiss='modal'>&times;</button>
+				<h3 class='modal-title'>{{_ 'legal_privacy_modal_header'}}</h3>
+				</div>
+				<div class='modal-body'>
+					<h4>{{_ 'legal_privacy_modal_terms_header'}}</h4>
+					<p>{{_ 'legal_privacy_modal_p1'}}</p>
+					
+					<p>{{{_ 'legal_privacy_definitions'}}}</p>
+
+					<p>{{_ 'legal_privacy_modal_p2'}}</p>
+	
+					<p>{{_ 'legal_privacy_modal_p3'}}</p>
+
+					<p>{{_ 'legal_privacy_modal_p4'}}</p>
+
+					<p>{{_ 'legal_privacy_modal_p5'}}</p>
+	
+					<p>{{_ 'legal_privacy_modal_p6'}}</p>
+	
+					<p>{{_ 'legal_privacy_modal_p7'}}</p>
+	
+					<p>{{_ 'legal_privacy_modal_p8'}}</p>
+	
+					<p>{{_ 'legal_privacy_modal_p9'}}</p>
+	
+					<p>{{_ 'legal_privacy_modal_p10'}}</p>
+					
+					<p>{{_ 'legal_privacy_modal_p11'}}</p>
+	
+					<p>{{_ 'legal_privacy_modal_p12'}}</p>
+	
+					<p>{{_ 'legal_privacy_modal_p13'}}</p>
+					
+					<p>{{_ 'legal_privacy_modal_p14'}}</p>
+	
+					<p>{{_ 'legal_privacy_modal_p15'}}</p>
+					<br>	
+					<br>
+					<h4>{{_ 'legal_privacy_modal_privacy_header'}}</h4>
+					<h5>{{_ 'legal_privacy_modal_privacy_mini_header'}}</h5>
+					<p>{{_ 'legal_privacy_modal_p16'}}</p>
+
+					<p>{{_ 'legal_privacy_modal_p17'}}</p>
+					
+					<h5>{{_ 'legal_privacy_modal_privacy_mini_header2'}}</h5>
+
+					<p>{{_ 'legal_privacy_modal_p18'}}</p>
+					
+					<p>{{_ 'legal_privacy_modal_p19'}}</p>
+					
+					<p>{{_ 'legal_privacy_modal_p20'}}</p>
+					<br>
+					<p>{{_ 'legal_privacy_modal_p21'}}</p>
+					<button type='button' class='btn btn-success text-center' data-dismiss='modal'>x</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id='suggestions' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-header'>
+				<button type='button' class='close' data-dismiss='modal'>&times;</button>
+				<h3 class='modal-title'>{{_ 'suggestions_modal_header'}}</h3>
+				</div>
+				<div class='modal-body'>
+					{{#if currentUser}}
+						<p>{{_ 'suggestions_modal_p1'}}</p> 
+						<p>{{_ 'suggestions_modal_p2'}}</p>
+						<textarea class='form-control' rows='5' maxlength='10000' id='suggestion'></textarea>
+						<span id='suggestion-legal'>{{_ 'suggestions_modal_legal'}}</span>
+						<br>
+						<br>
+						<div class='share-dialog-btn-div'>
+							<input type='submit' class='btn btn-success' value='Submit' id='suggestion-submit'>
+						</div>
+					{{else}}
+						{{> accessDenied}}
+					{{/if}}
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id='privacyFirstContactDialog' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-body'>
+					<div class='text-center'>
+						{{{_ 'legal_popup'}}}
+					</div>
+					
+					<div class='share-dialog-btn-div'>
+						{{#if xs}}
+						<button type='button' class='btn btn-info privacy-fc-understand-btn text-center' data-dismiss='modal'>{{_ 'legal_i_understand_sm_1'}}<br>{{_ 'legal_i_understand_sm_2'}}</button>
+						{{else}}
+						<button type='button' class='btn btn-info privacy-fc-understand-btn text-center' data-dismiss='modal'>{{_ 'legal_i_understand'}}</button>
+						{{/if}}
+						<br>
+						<br>
+						{{#if xs}}
+						<a href='#' data-toggle='modal' data-target='#iDontAgree'><button type='button' class='btn btn-info text-center i-dont-agree-btn' data-dismiss='modal'>{{_ 'legal_i_dont_agree_sm_1'}}<br>{{_ 'legal_i_dont_agree_sm_2'}}</button></a>
+						{{else}}
+						<a href='#' data-toggle='modal' data-target='#iDontAgree'><button type='button' class='btn btn-info text-center i-dont-agree-btn' data-dismiss='modal'>{{_ 'legal_i_dont_agree'}}</button></a>
+						{{/if}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id='privacyAmendmentDialog' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-body'>
+					<div class='text-center'>
+						{{{_ 'legal_amend_popup'}}}
+					</div>
+					
+					<div class='share-dialog-btn-div'>
+						{{#if xs}}
+						<button type='button' class='btn btn-info privacy-fc-understand-amendment-btn text-center' data-dismiss='modal'>{{_ 'legal_i_understand_sm_1'}}<br>{{_ 'legal_i_understand_sm_2'}}</button>
+						{{else}}
+						<button type='button' class='btn btn-info privacy-fc-understand-amendment-btn text-center' data-dismiss='modal'>{{_ 'legal_i_understand'}}</button>
+						{{/if}}
+						<br>
+						<br>
+						{{#if xs}}
+						<a href='#' data-toggle='modal' data-target='#iDontAgree'><button type='button' class='btn btn-info text-center i-dont-agree-btn' data-dismiss='modal'>{{_ 'legal_i_dont_agree_sm_1'}}<br>{{_ 'legal_i_dont_agree_sm_2'}}</button></a>
+						{{else}}
+						<a href='#' data-toggle='modal' data-target='#iDontAgree'><button type='button' class='btn btn-info text-center i-dont-agree-btn' data-dismiss='modal'>{{_ 'legal_i_dont_agree'}}</button></a>
+						{{/if}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id='iDontAgree' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-lg'>
+			<div class='modal-content'>
+				<div class='modal-body'>
+					<div class='text-center'>
+						{{{_ 'i_dont_agree_text'}}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id='moreTranslations' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-body'>
+					<h4>{{_ 'select_language'}}</h4>
+					<select class='form-control' id='language-select'>
+						{{#each languages}}
+							{{#if currentLanguage}}
+								<option title={{langLabel}} selected="selected">{{lang}}</option>
+							{{else}}
+								<option title={{langLabel}}>{{lang}}</option>
+							{{/if}}
+						{{/each}}
+					</select>
+					<span>{{_ 'more_languages_soon'}}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	{{#unless notFirstTimeVisitAnywhere}}
+		<div id='introMessage' class='modal fade' role='dialog'>
+			<div class='modal-dialog modal-xs'>
+				<div class='modal-content'>
+					<div class='modal-header'>
+					<h3 class='text-center'>Welcome to <span id='welcome-u-logo'>u</span><span id='welcome-revs-logo'>revs</span>.com!</h3>
+					</div>
+					<div class='modal-body'>
+						<h3 class='text-center'>You're already comparing products before buying<br> so why not use urevs to streamline that?</h3>
+						<br>
+						<h3 class='text-center'>How Urevs Works</h3>
+						<img src='intro-works-1.gif' class='intro-modal-gif' id='intro-img-1'>
+						<p class='text-center intro-works-paragraphs'><b>Search for a product</b><br>for instance, one which you've used before</p>
+						<hr>
+						<img src='intro-works-2.png' class='intro-modal-gif' id='intro-img-2'>
+						<p class='text-center intro-works-paragraphs' id='intro-works-paragraph-2'><b>Receive numerous comparisons</b></p>
+						<hr>
+						<img src='intro-works-3.png' class='intro-modal-gif' id='intro-img-3'>
+						<p class='text-center intro-works-paragraphs' id='intro-works-paragraph-3'><b>Compare your products</b><br>in a way that makes sense (less jargon)</p>
+						<hr>
+						<span class='glyphicon glyphicon-arrow-up' id='intro-works-4'></span>
+						<span class='glyphicon glyphicon-arrow-down' id='intro-works-5'></span>
+						<p class='text-center intro-works-paragraphs' id='intro-works-paragraph-4'><b>and in a way that's efficient</b><br>(no more jumping around - all review snippets are curated by users giving you the best opinions in one place)</p>
+						<br>
+						<br>
+						<h4 class='text-center'>Sounds cool?</h4>
+						<h3 class='text-center'>How can you make this possible?</h3>
+						<span class='glyphicon glyphicon-duplicate intro-modal-img' id='intro-img-6'></span>
+						<p class='text-center intro-possible-paragraphs'><b>Create reviews on things you want compared</b><br>(like the phone you have now to ones you've been hearing about)</p>
+						<span class='glyphicon glyphicon-share-alt intro-modal-img' id='intro-img-7'></span>
+						<p class='text-center intro-possible-paragraphs'><b>Share!</b><br>The best way to get quality reviews is to get the people who have used the products, talking about them!</p>
+						<span class='glyphicon glyphicon-pencil intro-modal-img' id='intro-img-8'></span>
+						<p class='text-center intro-possible-paragraphs' id='intro-last-paragraph'><b>Contribute!</b><br>Have you used more than one kind of phone in your life? You probably have. So share your comparative experience with other users - they'll appreciate it!</p>
+						
+						<button type='button' class='btn btn-info' id='intro-modal-bottom-btn' data-dismiss='modal'>Let's get started!</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	{{/unless}}
+				
+		{{inProgressHelper}}
+		{{privacyFirstContact}}
+
+		<footer id='{{layoutClass}}' class='text-center col-xs-12'>
+			<a title={{suggestionsTitle}} href='#' data-toggle='modal' data-target='#suggestions'>{{_ 'Suggestions'}}</a>
+			&#8226;
+			<a href='#' id='moretext' data-toggle='collapse' data-target='#more'>{{_ 'More'}}</a>
+			&#8226;
+			<a href='#' data-toggle='modal' data-target='#moreTranslations'>{{#each currentLanguageName}}{{lang}}{{/each}}</a>
+				<div id='more' class='collapse'>
+					<a title={{gratitudesTitles}} href='#' data-toggle='modal' data-target='#gratitudes'>{{_ 'Gratitudes'}}</a>
+					&#8226;
+					<a title={{missionTitle}} href='#' data-toggle='modal' data-target='#ourMission'>{{_ 'Our_Mission'}}</a>
+					&#8226;
+					<a title={{legalTitle}} href='#' data-toggle='modal' data-target='#legalPrivacy'>{{_ 'Legal_&_Privacy'}}</a>
+					&#8226;
+					<a title={{blogTitle}} href="{{pathFor route='blogPage'}}" id='blog-link'>{{_ 'Blog'}}</a>
+					<h5>{{{_ 'Copyright_Line'}}}</h5>
+					<h5>Public Beta</h5>
+				</div>
+		</footer>
+	</div>
+</template>

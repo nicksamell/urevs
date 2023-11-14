@@ -1,0 +1,74 @@
+<template name='reviewCommentItemLack'>
+	<div class='container col-xs-12' id='c{{commentsCount3}}'>
+		<div class='commentLack' id='c{{commentsCount3}}'>
+			<div class='comment-count'>
+				{{commentsCount3}}
+			</div>
+			
+			{{#if owner}}
+			<div class='row edit-glyph'>
+				<span class='glyphicon glyphicon-edit'></span>
+			</div>
+			{{else}}
+				{{#if currentUser}}
+					<span class='glyphicon glyphicon-chevron-down flag-comment-caret' data-toggle='collapse' data-target='#flagCommentCaretC{{commentsCount3}}'></span>
+		
+					<div id='flagCommentCaretC{{commentsCount3}}' class='collapse'>
+						<span class='glyphicon glyphicon-flag flagComment'></span>
+					</div>
+				{{/if}}
+			{{/if}}
+			<br>
+			<div class='row commentTextParent'>
+				{{#if bigComment}}
+					<p class='commentText'>{{filteredComment}}<a class='show-more'>{{_ 'review_page_show_more'}}</a></p>
+				{{else}}
+					<p class='commentText'>{{comment}}</p>
+				{{/if}}
+			</div>
+			
+			<div class='row'>
+				<div class='votes'>
+					{{#if currentUser}}
+						<button title='Is this snippet inaccurate/misleading?' type='button' class='F-btn-flag btn btn-danger {{isHighlightedDownVote}} disabled'>
+							<span style='font-family: "Courier New", Courier, monospace; font-style: oblique; font-weight: bold;'>{{_ 'review_page_grade_F'}}</span>
+						</button>
+					{{else}}
+						<button title='Is this snippet inaccurate/misleading?' type='button' class='F-btn-flag btn btn-danger {{isHighlightedDownVote}} disabled'>
+							<span style='font-family: "Courier New", Courier, monospace; font-style: oblique; font-weight: bold;'>{{_ 'review_page_grade_F'}}</span>
+						</button>
+					{{/if}}
+					<div class='text-center'>
+						{{downvotes}}
+					</div>
+				</div>
+				<div class='votes'>
+					{{#if currentUser}}	
+						<button title='Is this snippet accurate?' type='button' class='A-btn-flag btn btn-success {{isHighlightedUpVote}} disabled'>
+							<span style='font-family: "Courier New", Courier, monospace; font-style: oblique; font-weight: bold;'>{{_ 'review_page_grade_A'}}</span>
+						</button>
+					{{else}}
+						<button title='Is this snippet accurate?' type='button' class='A-btn-flag btn btn-success {{isHighlightedUpVote}} disabled'>
+							<span style='font-family: "Courier New", Courier, monospace; font-style: oblique; font-weight: bold;'>{{_ 'review_page_grade_A'}}</span>
+						</button>
+					{{/if}}
+					<div class='text-center'>
+						{{upvotes}}
+					</div>
+				</div>
+			</div>
+				<div class='row'>
+					<img class='pro-pic' src="{{assetUrl proPic}}" />
+					<div class='author'>{{author}}</div>
+					<div class='submitted'>{{submitted}}</div>
+					{{#if isYoutubeLink}}
+					<br>
+					<br>
+					<a href={{youtubeLink}}>My Youtube<br>Reviews</a>
+					{{/if}}
+				</div>
+		</div>
+	</div>
+	<hr>
+	<br>
+</template>

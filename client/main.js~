@@ -1,0 +1,4 @@
+$(document).ready(function() {
+	$('#singleCommentsCarousel').off('keydown.bs.carousel');
+	$('#doubleCommentsCarousel').off('keydown.bs.carousel');
+});

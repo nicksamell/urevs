@@ -1,0 +1,43 @@
+<template name='newestPage'>
+	<h2 class='text-center newest-trending-h2'>{{_ 'newest_page_header'}}</h2>
+	<div class='col-xs-12'>
+		{{#each newestReviews}}
+			{{> newestPageReviewItem}}
+		{{/each}}
+		
+		{{#if hasMoreNewestHelper}}
+			<a href="{{hasMoreNewestPath}}" class='btn btn-info newest-trending-load-more-less'>{{_ 'load_more'}}</a>
+		{{else}}
+			<a href="{{hasMoreNewestPath}}" class='btn btn-info newest-trending-load-more-less'>{{_ 'hide_10'}}</a>
+			<a id='newestCreateReview' href='#addreview' data-toggle='modal' data-target='#createReview'>
+				<button class='btn btn-info col-xs-12 newest-create-review-btn'>
+					{{_ 'newest_page_create_review'}}
+				</button>
+			</a>
+		{{/if}}
+		
+		{{#if hasMoreNewestHelper}}		
+			<div id='newest-trending-page-search-wrap-div'>
+				{{#unless searchBoxSummoned}}
+					<div class='text-center' id='another-search'>
+						<button class='btn btn-info' id='another-search-button'>{{_ 'another_search'}}</button>
+					</div>
+				{{else}}
+					{{> genericSearchTemplate}}
+				{{/unless}}
+			</div>
+		{{else}}
+			<div id='newest-trending-page-search-wrap-div-alternate'>
+				{{#unless searchBoxSummoned}}
+					<div class='text-center another-search-newest' id='another-search'>
+						<button class='btn btn-info' id='another-search-button'>{{_ 'another_search'}}</button>
+					</div>
+				{{else}}
+					{{> genericSearchTemplate}}
+				{{/unless}}
+			</div>
+		{{/if}}	
+	</div>
+	
+	{{> reviewCategoryForm}}
+</template>

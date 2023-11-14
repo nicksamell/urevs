@@ -1,0 +1,7 @@
+<template name='reviewCommentSubmitBoxS'>
+	{{#if currentUser}}
+		<textarea rows='4'  style='min-width:100%;'></textarea><input type='submit' class='btn btn-info' value='Submit'>
+	{{else}}
+		<p>Please log in to contribute a review snippet.</p>
+	{{/if}}
+</template>

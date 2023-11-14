@@ -1,0 +1,124 @@
+<template name='searchLandingPage'>
+	{{#unless searchResults}}
+
+		{{> loading}}
+		
+	{{else}}
+		<div class='text-center col-sm-9' id='search-search-div'>
+			{{> genericSearchTemplate}}
+		</div>
+		{{fillInHelper}}
+
+		{{#if xs}}
+		<div class='col-xs-12 col-sm-2 filters-wrapper'>
+			<button class='btn btn-info filters-show' data-toggle='collapse' data-target='#filters'>{{_ 'search_landing_filter_title'}}<span class='glyphicon glyphicon-chevron-down filters-chevron'></span></button>
+		
+				<div id='filters' class='collapse col-xs-12 col-sm-2'>
+					<h5 class='text-center'>
+						{{_ 'search_landing_set_range'}}
+					</h5>
+					<span class='search-page-optional'>{{_ 'search_landing_optional'}}</span>
+					<div class='form-group text-center'>
+						<span class='price-range-input-text'>{{_ 'search_landing_from'}}</span>
+						<br>
+						<input type='number' class='form-control price-range-input' id='homePriceRange1'>
+						<br>
+						<span class='price-range-input-text'>{{_ 'search_landing_to'}}</span>
+						<br>
+						<input type='number' class='form-control price-range-input' id='homePriceRange2'>
+						<br>
+						<span class='price-range-input-text'>{{_ 'search_landing_currency'}}</span>
+					</div>
+					<h5 class='text-center'>
+						{{_ 'search_landing_filter'}}
+					</h5>
+					<ul class='nav nav-pills nav-stacked' id='typeFilterTabs'>
+						<li>
+							<a href="{{pathFor route='searchLandingPage' searchString1=searchString1Helper searchString2=searchString2Helper typeFilter='all' range1=range1Helper range2=range2Helper searchLimit=searchLimitHelper}}" class='btn btn-info {{isAll}} {{isDisabled}}'>{{_ 'All'}}</a>
+						</li>
+						<li>
+							<a href="{{pathFor route='searchLandingPage' searchString1=searchString1Helper searchString2=searchString2Helper typeFilter='single' range1=range1Helper range2=range2Helper searchLimit=searchLimitHelper}}" class='btn btn-info {{isSingle}} {{isDisabled}}'>{{_ 'Single'}}</a>
+						</li>
+						<li>
+							<a href="{{pathFor route='searchLandingPage' searchString1=searchString1Helper searchString2=searchString2Helper typeFilter='comparison' range1=range1Helper range2=range2Helper searchLimit=searchLimitHelper}}" class='btn btn-info {{isDouble}}'>{{_ 'Versus'}}</a>
+						</li>
+					</ul>
+				</div>
+		</div>
+		{{/if}}
+
+		<div class='container search-results-container col-xs-12 col-sm-9'>
+				{{#each searchResults}}
+					{{> searchResultItem}}
+				{{else}}
+				<br>
+					{{#if isSingleDouble}}
+						{{#if spellCheckSuggestions}}<p>{{_ 'search_landing_did_you_mean_root'}}<a href="#" id='spellCheckRedirect'>{{spellCheckSuggestions}}</a>{{_ 'search_landing_did_you_mean_root_question'}}</p>{{/if}}
+						<h3 class='text-center'>{{{_ 'search_landing_cant_find_filter'}}}</h3>
+						<div class='search-here-arrow'></div>
+					{{else}}
+						{{#if spellCheckSuggestions}}<p>{{_ 'search_landing_did_you_mean_root'}}<a href="#" id='spellCheckRedirect'>{{spellCheckSuggestions}}</a>{{_ 'search_landing_did_you_mean_root_question'}}</p>{{/if}}
+						<br>
+						<h3 class='text-center'>{{{_ 'search_landing_cant_find_terms'}}}</h3>
+						<div class='search-here-arrow'></div>
+						<br>
+					{{/if}}
+				{{/each}}
+				
+			{{#if hasMoreSL}}
+				<a href='{{hasMoreSearchPath}}' id='has-more-search-path' class='btn btn-info'>{{_ 'search_landing_load_more'}}</a>
+				{{else}}
+				<br>
+				{{#if resultsPresent}}
+				<p class='text-center'>{{_ 'search_landing_no_more_results'}}</p>
+				{{/if}}
+			{{/if}}
+			
+			<a id='asd' href='#addreview' data-toggle='modal' data-target='#createReview'>
+				<button class='btn btn-info search-cant-find-div col-xs-12'>
+					{{_ 'search_landing_cant_find_q'}}
+				</button>
+			</a>
+		</div>
+		
+		{{#unless xs}}
+		<div class='col-xs-12 col-sm-2 filters-wrapper'>
+			<button class='btn btn-info filters-show' data-toggle='collapse' data-target='#filters'>{{_ 'search_landing_filter_title'}}<span class='glyphicon glyphicon-chevron-down filters-chevron'></span></button>
+		
+				<div id='filters' class='collapse col-xs-12 col-sm-2'>
+					<h5 class='text-center'>
+						{{_ 'search_landing_set_range'}}
+					</h5>
+					<span class='search-page-optional'>{{_ 'search_landing_optional'}}</span>
+					<div class='form-group text-center'>
+						<span class='price-range-input-text'>{{_ 'search_landing_from'}}</span>
+						<br>
+						<input type='number' class='form-control price-range-input' id='homePriceRange1'>
+						<br>
+						<span class='price-range-input-text'>{{_ 'search_landing_to'}}</span>
+						<br>
+						<input type='number' class='form-control price-range-input' id='homePriceRange2'>
+						<br>
+						<span class='price-range-input-text'>{{_ 'search_landing_currency'}}</span>
+					</div>
+					<h5 class='text-center'>
+						{{_ 'search_landing_filter'}}
+					</h5>
+					<ul class='nav nav-pills nav-stacked' id='typeFilterTabs'>
+						<li>
+							<a href="{{pathFor route='searchLandingPage' searchString1=searchString1Helper searchString2=searchString2Helper typeFilter='all' range1=range1Helper range2=range2Helper searchLimit=searchLimitHelper}}" class='btn btn-info {{isAll}} {{isDisabled}}'>{{_ 'All'}}</a>
+						</li>
+						<li>
+							<a href="{{pathFor route='searchLandingPage' searchString1=searchString1Helper searchString2=searchString2Helper typeFilter='single' range1=range1Helper range2=range2Helper searchLimit=searchLimitHelper}}" class='btn btn-info {{isSingle}} {{isDisabled}}'>{{_ 'Single'}}</a>
+						</li>
+						<li>
+							<a href="{{pathFor route='searchLandingPage' searchString1=searchString1Helper searchString2=searchString2Helper typeFilter='comparison' range1=range1Helper range2=range2Helper searchLimit=searchLimitHelper}}" class='btn btn-info {{isDouble}}'>{{_ 'Versus'}}</a>
+						</li>
+					</ul>
+				</div>
+		</div>
+		{{/unless}}
+	
+		{{> reviewCategoryForm}}
+	{{/unless}}
+</template>

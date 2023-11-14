@@ -1,0 +1,20 @@
+<template name='messageItem'>
+	<button type='button' class='message-x-button'><span class='glyphicon glyphicon-remove message-x'></span></button>
+	<p>{{messageText}}</p>
+	<hr>
+	
+	<div class='confirmMessageRemove modal fade' role='dialog'>
+		<div class='modal-dialog modal-md'>
+			<div class='modal-content'>
+				<div class='modal-body'>
+					<h4 class='text-center'>Delete this message?</h4>
+					<br>
+					<div class='confirm-delete-btns-div'>
+						<button type='button' class='confirm-message-remove-cancel btn btn-danger' data-dismiss='modal'>{{_ 'review_page_delete_cancel'}}</button>
+						<button type='button' class='confirm-message-remove-yes btn btn-success'>{{_ 'review_page_delete_confirmation_confirm'}}</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>

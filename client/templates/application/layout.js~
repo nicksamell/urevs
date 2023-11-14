@@ -1,0 +1,78 @@
+Template.registerHelper("assetUrl", (asset) => {
+	return /*"http://mycdn.com" +*/ '/' + asset;
+});
+
+Template.layout.helpers({
+	layoutClass: function() {
+		if (Router.current().route.getName() == 'landingPage') {
+			return 'layoutFooterHome';
+		} else {
+			return 'layoutFooter';
+		}
+	},
+	blogUrl: function() {
+		return 'null';
+	},
+	privacyFirstContact: function() {
+		Meteor.setTimeout(function() {
+			if (Meteor.user()) {
+				if (localStorage.getItem('IUnderstandAndAgreeToTheCurrentlyEnforcedUrevsLegalAgreement') || Meteor.user().profile.privacyFCUnderstand) {
+					//do nothing
+				} else {
+					$('#privacyFirstContactDialog').modal();
+				}
+			} else {
+				if (localStorage.getItem('IUnderstandAndAgreeToTheCurrentlyEnforcedUrevsLegalAgreement')) {
+					//do nothing
+				} else {
+					$('#privacyFirstContactDialog').modal();
+				}
+			}
+		}, 1000);
+	}
+});
+
+Template.layout.events({
+	'click .layout-login-div': function() {
+		if ($('.login-button').length) {
+			if ($('.legal-sign-in-reminder').length == 0) {
+				$('.dropdown-menu').append("<p class='legal-sign-in-reminder'>By using urevs.com, you indicate that you understand and agree to the terms of use and privacy policy outlined <a title='Read about your rights and obligations when using the site' href='#' data-toggle='modal' data-target='#legalPrivacy'>here</a>.</p>");
+			}
+		}
+	},
+	'click .privacy-fc-understand-btn': function() {
+		if (Meteor.user()) {
+			Meteor.call('IUnderstandAndAgreeToTheCurrentlyEnforcedUrevsLegalAgreement', function(error) {
+				if (error) {
+					return throwError(error);
+				}
+			});
+		} else {
+			localStorage.setItem('IUnderstandAndAgreeToTheCurrentlyEnforcedUrevsLegalAgreement', true);
+		}
+	},
+	'click #suggestion-submit': function() {
+		var suggestion = $('#suggestion').val();
+		
+		Meteor.call('suggestionInsert', suggestion, function(error) {
+			if (error) {
+				return throwError(error);
+			}
+			
+			throwSuccess('Thanks for your input!');
+			$('#suggestions').modal('toggle');
+			$('#suggestion').val('');
+		});
+	},
+	'show.bs.collapse': function() {
+		$('#moretext').html('Less');
+	},
+	'hide.bs.collapse': function() {
+		$('#moretext').html('More');
+	},
+	'click .glyphicon-globe': function() {
+		if (Router.current().route.getName() == 'landingPage') {
+			location.reload();
+		}
+	}
+});

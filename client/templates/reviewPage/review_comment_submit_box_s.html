@@ -1,0 +1,17 @@
+<template name='reviewCommentSubmitBoxS'>
+	{{#if currentUser}}
+		{{#if isCommentBoxSummoned}}
+			<form name='comment' class='comment-form form'>	
+				<textarea name='body' rows='4' id='review-comment-box-normal'>{{customSectionSnippetTextBox}}</textarea>
+				{{#if creatingCharCount}}
+					{{charCount}}
+				{{/if}}
+				{{{_ 'snippet_submit_btn'}}}
+			</form>
+		{{else}}
+			<button class='showCommentBox'><span class='glyphicon glyphicon-comment showCommentBoxGlyphicon'></span></button>
+		{{/if}}
+	{{else}}
+		<p class='text-center'>{{_ 'review_page_comment_logged_out'}}</p>
+	{{/if}}
+</template>

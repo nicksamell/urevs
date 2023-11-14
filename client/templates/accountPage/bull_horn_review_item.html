@@ -1,0 +1,30 @@
+<template name='bullHornReviewItem'>
+	<div class='col-xs-12 col-s-2 {{accountColMd}} account-page-bull-horn-review-item-wrapper' style='margin-bottom: 30px;'>
+		<a class='account-bull-horn-item-link' href="{{pathFor 'reviewPage' category=this.category _id=this._id}}">
+		{{#if single}}
+			<div class='row text-center'>
+				{{#if notificationBubble}}
+					<div class='notification-bubble' id='bullhorn-note-single'><span class='bullhorn-note-text'>{{_ 'account_page_notification_new'}}</span></div>
+				{{/if}}	
+				<img src="{{assetUrl revPicUrl1}}" class='img-thumbnail img-responsive single-account-horn-img' />
+				<br>
+				<div class='text-center'>
+					{{revTitle1}}
+				</div>
+			</div>
+		{{else}}
+			<div class='row text-center'>
+				{{#if notificationBubble}}
+				<div class='notification-bubble' id='bullhorn-note-double'><span class='bullhorn-note-text'>{{_ 'account_page_notification_new'}}</span></div>
+				{{/if}}
+				<img src="{{assetUrl revPicUrl1}}" class='img-thumbnail img-responsive double-account-horn-img' />
+				<img src="{{assetUrl revPicUrl2}}" class='img-thumbnail img-responsive double-account-horn-img' />
+				<br>
+				<div class='text-center'>
+					{{revTitleDouble1}} {{_ 'acct_pg_vs'}} {{revTitleDouble2}}
+				</div>
+			</div>
+		{{/if}}
+		</a>
+	</div>
+</template>

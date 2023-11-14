@@ -1,0 +1,216 @@
+<template name='accountPage'>
+	<div class='text-center search-account-div col-sm-12'>
+		{{> genericSearchTemplate}}
+	</div>
+		{{#if currentUser}}
+	<div class='container'>
+		<div class='row'>
+		<div class='col-sm-8'>
+			<h2 id='username'>{{userName}}</h2>
+			<br>
+			<img id='account-pro-pic-large' src="{{assetUrl proPic}}" />
+			<br>
+			<a id='pro-pic-settings-change' class='pro-pic-settings-change-class' href='#' data-toggle='collapse' data-target='#proPicSettings'>Change</a>
+		
+			<div id='proPicSettings' class='collapse'>
+				<label>I'd prefer my profile picture to be:</label>
+					<form role='form' id='proPicSettingsForm'>
+						<fieldset>
+							<input class='checkboxInput' type='radio' name='proPicSet' value='proPicDefault' {{ppDefaultChecked}}><label>Default</label>
+							<img id='account-pro-pic-default' class='pro-pic-option' src="{{assetUrl 'pro_pic_default.png'}}" />
+							<br>
+							<input class='checkboxInput' type='radio' name='proPicSet' value='proPic1' {{pp1Checked}}><label>Picture 1</label>
+							<img id='account-pro-pic-1' class='pro-pic-option' src="{{assetUrl 'pro_pic_1.png'}}" />
+							<br>
+							<input class='checkboxInput' type='radio' name='proPicSet' value='proPic2' {{pp2Checked}}><label>Picture 2</label>
+							<img id='account-pro-pic-2' class='pro-pic-option' src="{{assetUrl 'pro_pic_2.png'}}" />
+							<br>
+							<input class='checkboxInput' type='radio' name='proPicSet' value='proPic3' {{pp3Checked}}><label>Picture 3</label>
+							<img id='account-pro-pic-3' class='pro-pic-option' src="{{assetUrl 'pro_pic_3.png'}}" />
+							<br>
+							<input class='checkboxInput' type='radio' name='proPicSet' value='proPic4' {{pp4Checked}}><label>Picture 4</label>
+							<img id='account-pro-pic-4' class='pro-pic-option' src="{{assetUrl 'pro_pic_4.png'}}" />
+							<br>
+							<input class='checkboxInput' type='radio' name='proPicSet' value='proPic5' {{pp5Checked}}><label>Picture 5</label>
+							<img id='account-pro-pic-5' class='pro-pic-option' src="{{assetUrl 'pro_pic_5.png'}}" />
+							<br>
+							<input class='checkboxInput' type='radio' name='proPicSet' value='proPic6' {{pp6Checked}}><label>Picture 6</label>
+							<img id='account-pro-pic-6' class='pro-pic-option' src="{{assetUrl 'pro_pic_6.png'}}" />
+						</fieldset>
+					</form>
+			</div>
+			<div id='bullHornReviewPanel' class='col-sm-8'>
+				<div class='row'>
+					<h3>{{_ 'bull_horn_panel_header'}}</h3>
+				</div>
+				<div class='row col-sm-8'>
+					{{#if bullHornReviews}}
+						{{#each bullHornReviews}}
+							{{> bullHornReviewItem}}
+						{{/each}}
+					{{else}}
+						<p>{{_ 'alternate_bh_panel_text'}}</p>
+					{{/if}}
+				</div>
+			</div>
+			<br>
+			<div id='messagePanel' class='col-sm-8'>
+				<div class='row'>
+					<h3>Messages</h3>
+				</div>
+				<div class='row col-sm-8'>
+					{{#if messages}}
+						{{#each messages}}
+							{{> messageItem}}
+						{{/each}}
+					{{else}}
+						<p>Hey there!<br>This is where urevs will communicate with you regarding your category proposals, questions/suggestions, and flags you've submitted.</p>
+					{{/if}}
+				</div>
+			</div>
+						
+			<div id='confirmMessageRemove' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-md'>
+					<div class='modal-content'>
+						<div class='modal-body'>
+							<h4 class='text-center'>Delete this message?</h4>
+							<br>
+							<div class='confirm-delete-btns-div'>
+								<button type='button' class='btn btn-danger' data-dismiss='modal' id='confirm-message-remove-cancel'>{{_ 'review_page_delete_cancel'}}</button>
+								<button type='button' class='btn btn-success' id='confirm-message-remove-yes'>{{_ 'review_page_delete_confirmation_confirm'}}</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<br>
+			<br>
+			<div id='comingSoon'>
+				<h1>{{_ 'coming_soon_header'}}</h1>
+				<p>{{{_ 'coming_soon_text'}}}</p>
+			</div>	
+		</div>
+		<div class='col-sm-4 settings-account-div'>
+			<h3>{{_ 'settings_header'}}</h3>
+			<button data-toggle='collapse' data-target='#settings'><span class='glyphicon glyphicon-th-list'></span></button>
+		
+		<div id='settings' class='collapse'>
+			<h3>Reviewer Settings</h3>
+				<div class='form-group'>
+					<label>I'd like to advertise my youtube channel on my snippets</label>
+					<ul class='nav nav-pills'>
+						{{#if isYoutube}}
+							<li class='active' data-toggle='pill' id='yes-youtube'><a data-toggle='modal' data-target='#yesYoutube'>Yes</a></li>
+							<li id='no-youtube'><a data-toggle='pill'>No</a></li>
+						{{else}}
+							<li data-toggle='pill' id='yes-youtube'><a data-toggle='modal' data-target='#yesYoutube'>Yes</a></li>
+							<li class='active' id='no-youtube'><a data-toggle='pill'>No</a></li>
+						{{/if}}
+					</ul>
+				</div>
+			
+			
+			<div id='yesYoutube' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-lg'>
+					<div class='modal-content'>
+						<div class='modal-header'>
+						<button type='button' class='close' data-dismiss='modal'>&times;</button>
+						</div>
+						<div class='modal-body'>
+							<p>Thanks for your interest!</p>
+							<p>Please remember that urevs only advertises channels relevant to product reviewing. If your channel falls into this category, type its name or url in the input box below and send it on my way.</p>
+							<p>Once your channel is verified to meet urevs' requirements, I'll get into contact with you through urevs' youtube channel, urevsofficial, with a short message that I'll ask you to respond to to verify that you are indeed the owner of said channel. If, however, I feel that your channel does not involve the area of product reviews enough, I'll still send you a message letting you know my reasons. Happy reviewing!</p>
+							<p>Nick,<br>urevs founder</p>
+								<input type='text' id='youtube-input' autofocus>
+								<input type='submit' class='btn btn-success' value="Send" id='reviewerSetSave'>
+						</div>
+					</div>
+				</div>
+			</div>
+	
+			<div id='noYoutube' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-md'>
+					<div class='modal-content'>
+						<div class='modal-body'>
+							<h4 class='text-center'>Delete your channel link from your snippets?</h4>
+							<h5>(this will require you to re-send a request if you wish to take advantage of this feature again)</h5>
+							<br>
+							<div class='text-center'>
+								<button type='button' class='btn btn-danger' data-dismiss='modal' id='confirm-delete-youtube-cancel'>{{_ 'review_page_delete_cancel'}}</button>
+								<button type='button' class='btn btn-success' id='confirm-delete-youtube-yes'>{{_ 'review_page_delete_confirmation_confirm'}}</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<hr>
+							
+			<h3>{{_ 'review_settings_header'}}</h3>
+				<label>{{_ 'review_setting1_label'}}</label>
+				<form role='form' id='likeButtonSettings'>
+					<fieldset>
+						{{#if isLikeChecked}}
+							<input class='checkboxInput' type='radio' name='likeSet' value='top' checked><label>{{_ 'review_setting1_top'}}</label>
+							<br>
+							<input class='checkboxInput' type='radio' name='likeSet' value='bottom'><label>{{_ 'review_setting1_bottom'}}</label>
+						{{else}}
+							<input class='checkboxInput' type='radio' name='likeSet' value='top'><label>{{_ 'review_setting1_top'}}</label>
+							<br>
+							<input class='checkboxInput' type='radio' name='likeSet' value='bottom' checked><label>{{_ 'review_setting1_bottom'}}</label>
+						{{/if}}
+					</fieldset>
+				</form>
+				
+				<br>
+				
+				<form role='role' id='showShareSettings'>
+					<input id='show-share' type='checkbox' name='dont-show' {{isShowChecked}}><label for='show-share'>{{_ 'review_setting2_label'}}</label>
+				</form>
+				
+				<br>
+				
+				<form role='role' id='showShareRecSettings'>
+					<input id='show-share-rec' type='checkbox' name='dont-show-rec' {{isShowRecChecked}}><label for='show-share-rec'>I'd like to see a friend-share reminder when I 'recommend' a review</label>
+				</form>
+				
+				<br>
+				
+				<label>I'd like my review comment section switcher form to be:</label>
+				<form role='form' id='commentSectionSwitcherSettings'>
+					<fieldset>
+							<input class='checkboxInput' type='radio' name='cSSSet' value='left' {{cSSSettingLeft}}><label>Left</label>
+							<br>
+							<input class='checkboxInput' type='radio' name='cSSSet' value='right' {{cSSSettingRight}}><label>Right</label>
+							<br>
+							<input class='checkboxInput' type='radio' name='cSSSet' value='both' {{cSSSettingBoth}}><label>Both</label>
+					</fieldset>
+				</form>
+				
+				<br>
+				
+				<label>I'd prefer my search box position to be:</label>
+				<form role='form' id='searchBoxSettings'>
+					<fieldset>
+						{{#if isSearchBottom}}
+							<input class='checkboxInput' type='radio' name='searchBoxSet' value='searchTop'><label>{{_ 'review_setting1_top'}}</label>
+							<br>
+							<input class='checkboxInput' type='radio' name='searchBoxSet' value='searchBottom' checked><label>{{_ 'review_setting1_bottom'}}</label>
+						{{else}}
+							<input class='checkboxInput' type='radio' name='searchBoxSet' value='searchTop' checked><label>{{_ 'review_setting1_top'}}</label>
+							<br>
+							<input class='checkboxInput' type='radio' name='searchBoxSet' value='searchBottom'><label>{{_ 'review_setting1_bottom'}}</label>
+						{{/if}}
+					</fieldset>
+				</form>
+					
+				<input type='submit' class='btn btn-success' value="{{_ 'settings_save_big'}}" id='likeSetSave'>
+						<hr>
+		</div>
+		</div>
+		</div>
+	</div>
+	{{else}}
+		<h1>{{_ 'account_page_please_login'}}</h1>
+	{{/if}}
+</template>

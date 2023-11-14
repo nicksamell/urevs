@@ -1,0 +1,132 @@
+Template.newestPage.onRendered(function() {
+	Session.set('searchBoxSummonedNewest', false);
+});
+
+Template.newestPage.helpers({
+	searchBoxSummoned: function() {
+		return Session.get('searchBoxSummonedNewest');
+	}
+});
+
+Template.newestPageReviewItem.helpers({
+	postsCount: function() {
+		let array = SearchIndex.find().fetch();
+		 
+		for(let i = 0; i < array.length; i++) { 
+			if(array[i]['_id'] === this._id) { 
+				switch ((i + 1)/30) {
+					case 1/30:
+						return 'item-1';
+						break;
+					case 2/30:
+						return 'item-2';
+						break;
+					case 3/30:
+						return 'item-3';
+						break;
+					case 4/30:
+						return 'item-4';
+						break;
+					case 5/30:
+						return 'item-5';
+						break;
+					case 6/30:
+						return 'item-6';
+						break;
+					case 7/30:
+						return 'item-7';
+						break;
+					case 8/30:
+						return 'item-8';
+						break;
+					case 9/30:
+						return 'item-9';
+						break;
+					case 10/30:
+						return 'item-10';
+						break;
+					case 11/30:
+						return 'item-11';
+						break;
+					case 12/30:
+						return 'item-12';
+						break;
+					case 13/30:
+						return 'item-13';
+						break;
+					case 14/30:
+						return 'item-14';
+						break;
+					case 15/30:
+						return 'item-15';
+						break;
+					case 16/30:
+						return 'item-16';
+						break;
+					case 17/30:
+						return 'item-17';
+						break;
+					case 18/30:
+						return 'item-18';
+						break;
+					case 19/30:
+						return 'item-19';
+						break;
+					case 20/30:
+						return 'item-20';
+						break;
+					case 20/30:
+						return 'item-21';
+						break;
+					case 21/30:
+						return 'item-22';
+						break;
+					case 22/30:
+						return 'item-23';
+						break;
+					case 23/30:
+						return 'item-24';
+						break;
+					case 24/30:
+						return 'item-25';
+						break;
+					case 25/30:
+						return 'item-26';
+						break;
+					case 26/30:
+						return 'item-27';
+						break;
+					case 27/30:
+						return 'item-28';
+						break;
+					case 28/30:
+						return 'item-29';
+						break;
+					case 29/30:
+						return 'item-30';
+						break;
+				}
+			} 
+		} 
+	},
+	revTitleDouble: function() {
+		var title1 = this.revTitle[0];
+		var title2 = this.revTitle[1];
+		
+		var fullTitle = title1 + ' vs ' + title2; 
+		return fullTitle;
+	}
+});
+
+Template.newestPage.events({
+	'click #another-search-button': function() {
+		Session.set('searchBoxSummonedNewest', true);
+		
+		$('html, body').animate({ scrollTop: $(document).height()}, 2000);
+		$('#generic-site-search-query1').focus();
+		//$('.generic-search-anchor').addClass('generic-search-review');
+		//$('.tab-content').removeClass('generic-tab-content');
+		//$('.tab-content').addClass('generic-tab-content-review');
+		//add styling specific for pages with this 'do another search' option. (review tag included since review page was the first to acquire such a feature)
+	}
+});

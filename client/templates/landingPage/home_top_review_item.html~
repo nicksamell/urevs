@@ -1,0 +1,17 @@
+<template name='homeTopReviewItem'>
+	<div class='item'>
+		{{#if single}}
+		<a href='/{{revUrl}}'>
+			<div class='text-center col-md-4 col-md-offset-4 slider-size' style='background:url(/{{revPicUrl}}) center center; background-size:cover;'>
+			</div>
+		</a>	
+		{{else}}
+		<div class='row text-center'>
+			<a href='/{{revUrl}}'>
+				<div class='text-center col-xs-8 col-xs-offset-2 slider-size' style="background-image:url(/{{revPicUrl1}}), url('/vs.png'), url(/{{revPicUrl2}}); background-position: left center, center center, right center; background-size: 40% auto, 20% auto, 40% auto; background-repeat: no-repeat;">
+				</div>
+			</a>
+		</div>
+		{{/if}}
+	</div>
+</template>

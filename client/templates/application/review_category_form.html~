@@ -1,0 +1,195 @@
+<template name='reviewCategoryForm'>
+	{{#if currentUser}}
+		<div id='createReview' class='modal fade' role='dialog'>
+			<div class='modal-dialog modal-xs'>
+				<div class='modal-content'>
+					<div class='modal-header'>
+						<button type='button' class='close' data-dismiss='modal'>&times;</button>
+						<h3 class='modal-title'>{{_ 'review_submit_header'}}</h3>
+					</div>
+				
+					<div class='modal-body'>
+						<div class='form-group form-groups-header'>
+							<label>{{_ 'review_submit_question1'}}</label>
+							<ul class='nav nav-pills'>
+								<li class='first-question-pill'><a data-toggle='pill' href='#single'>{{_ 'Single'}}</a></li>
+								<li class='first-question-pill'><a data-toggle='pill' href='#comparison'>{{_ 'Versus'}}</a></li>
+							</ul>
+						</div>
+						
+						{{#if firstQuestionAnswered}}
+						<h4>{{_ 'review_submit_sub_header2'}}</h4>
+						<div class='form-group'>
+							<label for='categPick'>{{_ 'review_submit_question2_single'}}</label>
+								<span data-toggle='collapse' data-target='#info2' title='This helps us keep our database tidy' class='glyphicon glyphicon-info-sign'></span>
+									<div id='info2' class='collapse'>
+										<p>{{_ 'review_submit_info'}}</p>
+									</div>
+								<select class='form-control' id='categPick'>
+									{{#each reviewFormCategories}}
+										<option value={{reviews}}>{{title}}</option>
+									{{/each}}
+								</select>
+								<p>{{_ 'review_submit_question2_subquestion_1'}} <a href='#addcategory' data-toggle='modal' data-target='#createCategory'>{{_ 'review_submit_question2_subquestion_2'}}</a>{{_ 'review_submit_question2_subquestion_3'}}</p>
+						</div>
+						{{/if}}
+						
+						<div class='tab-content'>
+							<div id='single' class='tab-pane fade'>
+								<div class='form-group'>
+									<label for='srevPick'>{{_ 'review_submit_question_3'}}</label><input type='text' class='form-control' id='srevPick' placeholder="Enter the product's name here">
+								</div>
+							
+								<div class='form-group'>
+									<label for='suploadPic'>{{_ 'review_submit_question_4_single'}}</label>
+									<input type='text' class='form-control' id='suploadPic' placeholder="Give us a web address">
+									<div class='not-sure-r-c-div'>
+										<span>{{_ 'review_submit_guide_question'}}</span> <button data-toggle='collapse' data-target='#singleTutorial'><span>{{_ 'review_submit_guide_link'}}</span></button>
+									
+										<div id='singleTutorial' class='collapse'>
+											<br>
+											<p>{{_ 'review_submit_guide_1'}}</p>
+											<img src="{{assetUrl 'tutorial_1.png'}}" width='100%' height='300' class='img-thumbnail img-responsive' />
+											<br>
+											<br>
+											<br>
+											<p>{{_ 'review_submit_guide_2'}}</p>
+											<img src="{{assetUrl 'tutorial_2.png'}}" width='100%' height='300' class='img-thumbnail img-responsive' />
+											<br>
+											<br>
+											<br>
+											<p>{{_ 'review_submit_guide_3'}}</p>
+											<img src="{{assetUrl 'tutorial_3.png'}}" width='100%' height='300' class='img-thumbnail img-responsive' />
+											<br>
+											<br>
+											<br>
+											<p>{{_ 'review_submit_guide_4'}}</p>
+										</div>
+									</div>
+								</div>
+								<input type='submit' class='btn btn-success' value='Create!' id='reviewsingle'>
+							</div>
+						
+							<div id='comparison' class='tab-pane fade'>
+								<div class='form-group'>
+									<label>{{_ 'review_submit_question3_double'}}</label>
+									<br>
+									<label for='revPickA'>{{_ 'review_submit_question3_double_A'}}</label><input type='text' class='form-control' id='revPickA' placeholder="Enter the product's name here">
+					
+									<label for='revPickB'>{{_ 'review_submit_question3_double_B'}}</label><input type='text' class='form-control' id='revPickB' placeholder="Enter the product's name here">
+								</div>
+							
+								<div class='form-group'>
+									<label>3.</label>
+									<label for='uploadPicA'>{{_ 'review_submit_question_4_double_A'}}</label>
+									<input type='text' class='form-control' id='uploadPicA' placeholder="Give us a web address">
+									<label for='uploadPicB'>{{_ 'review_submit_question_4_double_B'}}</label>	
+									<input type='text' class='form-control' id='uploadPicB' placeholder="Give us a web address">								
+								
+									<div class='not-sure-r-c-div'>
+										<span>{{_ 'review_submit_guide_question'}}</span> <button data-toggle='collapse' data-target='#comparisonTutorial'><span>{{_ 'review_submit_guide_link'}}</span></button>	
+										<div id='comparisonTutorial' class='collapse'>
+											<br>
+											<p>{{_ 'review_submit_guide_1'}}</p>
+											<img src="{{assetUrl 'tutorial_1.png'}}" width='100%' height='300' class='img-thumbnail img-responsive' />
+											<br>
+											<br>
+											<br>
+											<p>{{_ 'review_submit_guide_2'}}</p>
+											<img src="{{assetUrl 'tutorial_2.png'}}" width='100%' height='300' class='img-thumbnail img-responsive' />
+											<br>
+											<br>
+											<br>
+											<p>{{_ 'review_submit_guide_3'}}</p>
+											<img src="{{assetUrl 'tutorial_3.png'}}" width='100%' height='300' class='img-thumbnail img-responsive' />
+											<br>
+											<br>
+											<br>
+											<p>{{_ 'review_submit_guide_4'}}</p>
+										</div>
+									</div>
+								</div>
+								<input type='submit' class='btn btn-success' value='Create!' id='reviewcomparison'>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+	{{else}}
+		<div id='createReview' class='modal fade' role='dialog'>
+			<div class='modal-dialog modal-xs'>
+				<div class='modal-content'>
+					<div class='modal-header'>
+						<button type='button' class='close' data-dismiss='modal'>&times;</button>
+						<h3 class='modal-title'>{{_ 'review_submit_header'}}</h3>
+					</div>
+				
+					<div class='modal-body'>
+						{{> accessDenied}}
+					</div>
+				</div>
+			</div>
+		</div>
+	{{/if}}
+	
+	{{#if currentUser}}
+		<div id='createCategory' class='modal fade' role='dialog'>
+			<div class='modal-dialog modal-xs'>
+				<div class='modal-content'>
+					<div class='modal-header'>
+						<button type='button' class='close' data-dismiss='modal'>&times;</button>
+						<h3 class='modal-title'>{{_ 'category_submit_header'}}</h3>
+					</div>
+					<div class='modal-body'>
+						<div class='form-group'>
+							<label for='createcategPick'>{{_ 'category_submit_question1'}}</label><input type='text' class='form-control' id='createcategPick'>
+						</div>
+					
+						<input type='submit' class='btn btn-success' value='Submit' id='categorycreatebutton'>
+					</div>
+				</div>
+			</div>
+		</div>
+	{{else}}
+		<div id='createCategory' class='modal fade' role='dialog'>
+			<div class='modal-dialog modal-xs'>
+				<div class='modal-content'>
+					<div class='modal-header'>
+						<button type='button' class='close' data-dismiss='modal'>&times;</button>
+						<h3 class='modal-title'>{{_ 'category_submit_header'}}</h3>
+					</div>
+				
+					<div class='modal-body'>
+						{{> accessDenied}}
+					</div>
+				</div>
+			</div>
+		</div>
+	{{/if}}
+	
+	<div id='review-already-started' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-body'>
+					<h3>{{_ 'review_started_notification'}}</h3>
+				
+					<input type='submit' class='btn btn-success text-center' value='Ok' id='go-to-review'>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id='thank-you-for-category' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-body'>
+					<p>{{_ 'thank_you_proposal'}}</p>
+				
+					<input type='submit' class='btn btn-success text-center' value="You're welcome!" data-dismiss='modal'>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>

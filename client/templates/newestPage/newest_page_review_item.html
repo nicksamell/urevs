@@ -1,0 +1,66 @@
+<template name='newestPageReviewItem'>
+	<div class='{{ballMake}}'></div>
+	<div>
+	<div class='review-item-wrapper {{actualPostsCount}} {{postsCount}} col-xs-12 col-md-12 row'>
+		<a href="{{pathFor 'reviewPage' category=this.category _id=this._id}}">
+		{{#if single}}
+			<div class='row text-center review-item-wrapper-inner'>
+				<div class='photo-portion'>	
+					<img src="{{assetUrl revPicUrl1}}" class='img-thumbnail img-responsive single-photo' />
+					<span class='glyphicon glyphicon-eye-open glyph-eye-single'>{{views}}</span>
+				</div>
+				<br>
+				<div class='bottom-portion-single'>
+					<div class='text-center'>
+						{{revTitle1}}
+					</div>
+					<div class='col-xs-6 col-xs-offset-3'>
+						<button type='button' class='btn btn-primary disabled new-tren-search-heart-btn'><span class='glyphicon glyphicon-heart new-tren-search-heart'></span></button>
+						<div class='col-xs-4 col-xs-offset-3 new-tren-search-heart-number'>
+							{{likes1}}
+						</div>
+					</div>
+				</div>
+			</div>
+		{{else}}
+			<div class='row text-center review-item-wrapper-inner'>
+				<div class='photo-portion'>
+					<img src="{{assetUrl revPicUrl1}}" class='img-thumbnail img-responsive double-photo double-photo-left' />
+					<img src="{{assetUrl revPicUrl2}}" class='img-thumbnail img-responsive double-photo double-photo-right' />
+					<span class='glyphicon glyphicon-eye-open glyph-eye-double'>{{views}}</span>
+				</div>
+				<br>
+				<div class='bottom-portion'>	
+					<div class='text-center'>
+						{{revTitleDouble}}
+					</div>
+					<div class='col-xs-6 newest-trending-item-like-column-1'>
+						<button type='button' class='btn btn-primary disabled new-tren-search-heart-btn'><span class='glyphicon glyphicon-heart new-tren-search-heart'></span></button>
+						<div class='new-tren-search-heart-number'>
+							{{likes1}}
+						</div>
+					</div>
+					<div class='newest-trending-item-like-column-2'>
+						<button type='button' class='btn btn-primary disabled new-tren-search-heart-btn'><span class='glyphicon glyphicon-heart new-tren-search-heart'></span></button>
+						<div class='new-tren-search-heart-number'>
+							{{likes2}}
+						</div>
+					</div>
+				</div>
+			</div>
+			<br>
+		{{/if}}
+		</a>
+	</div>
+	</div>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+</template>

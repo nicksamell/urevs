@@ -1,0 +1,18 @@
+<!-- //DiscoverMeteor Start -->
+
+<template name='successes'>
+	<div class='successes'>
+		{{#each successes}}
+			{{> success}}
+		{{/each}}
+	</div>
+</template>
+
+<template name='success'>
+	<div class='alert alert-success alert-notification' role='alert'>
+		<button type='button' class='close' data-dismiss='alert'>&times;</button>
+		{{message}}
+	</div>
+</template>
+
+<!-- //DiscoverMeteor End -->

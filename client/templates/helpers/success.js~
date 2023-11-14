@@ -1,0 +1,17 @@
+//DiscoverMeteor Start
+
+Successes = new Mongo.Collection(null);
+
+throwSuccess = function(message) {
+	Successes.insert({message: message});
+};
+
+
+//collection for the new Review quick tip
+Tips = new Mongo.Collection(null);
+
+throwTip = function(tip) {
+	Tips.insert({tip: tip});
+};
+
+//DiscoverMeteor End

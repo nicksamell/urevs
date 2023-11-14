@@ -1,0 +1,10 @@
+<template name='accessDenied'>
+	<div class='access-denied page jumbotron'>
+		<h1>{{_ 'access_denied_header'}}</h1> 
+		<div id='access-denied-arrow'></div>
+		<p>{{_ 'access_denied_p1'}}</p>
+		{{#if fromIntroModal}}
+			<p id='where-ask-or-tell'>*Once you do, you can access this form at any time by clicking on "Ask or Tell" at the bottom of any page you visit.</p>
+		{{/if}}
+	</div>
+</template>

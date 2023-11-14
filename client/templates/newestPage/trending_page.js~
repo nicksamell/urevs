@@ -1,0 +1,23 @@
+Template.trendingPage.events({
+'click #trendingPrefSave': function() {
+		if (Meteor.user()){
+			let prefs = $('#availCategs').serializeArray();
+			
+			let finalprefs = [];
+			
+			for (var p = 0; p < prefs.length; p++) {
+				finalprefs.push(prefs[p].name);
+			}
+				
+			Meteor.users.update({_id: Meteor.userId()},{$set: {'profile.trendingPreferences': finalprefs}}, function(error){
+				if (error) {
+					return throwError(error.reason);
+				}
+			});
+		} else {
+			return throwError("We couldn't save preferences because you are not logged in. Please log in.");
+		}
+		
+	$('#trendingPreferencesCall').modal('toggle');
+	},
+});

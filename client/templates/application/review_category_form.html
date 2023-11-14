@@ -1,0 +1,243 @@
+<template name='reviewCategoryForm'>
+	<div id='createReview' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-header'>
+					<button type='button' class='close' data-dismiss='modal'>&times;</button>
+					<h3 class='modal-title'>{{_ 'review_submit_header'}}</h3>
+				</div>
+			
+				<div class='modal-body'>
+					<div class='review-category-form-group form-groups-header'>
+						<label>{{_ 'review_submit_lang_question'}}</label>
+						{{{_ 'lang_info'}}}
+							<div id='lang-info' class='collapse'>
+								<p>{{_ 'review_lang_info'}}</p>
+							</div>
+						<select class='form-control' id='review-language-select'>
+							{{#each languages}}
+								{{#if currentLanguage}}
+									<option title={{langLabel}} selected="selected">{{lang}}</option>
+								{{else}}
+									<option title={{langLabel}}>{{lang}}</option>
+								{{/if}}
+							{{/each}}
+						</select>
+						<sub>{{_ 'rev_cat_more_langs_soon'}}</sub>
+					</div>
+					
+					<div class='review-category-form-group form-groups-header'>
+						<label>{{_ 'review_submit_question1'}}</label>
+						<ul class='nav nav-pills'>
+							<li class='first-question-pill'><a data-toggle='pill' href='#single'>{{_ 'rev_cat_single'}}</a></li>
+							<li class='first-question-pill'><a data-toggle='pill' href='#comparison'>{{_ 'rev_cat_versus'}}</a></li>
+						</ul>
+					</div>
+					
+					{{#if firstQuestionAnswered}}
+					<h4>{{_ 'review_submit_sub_header2'}}</h4>
+					<div class='review-category-form-group'>
+						<label for='categPick'>{{_ 'review_submit_question2_single'}}</label>
+								{{{_ 'tidy_info'}}}
+								<div id='info2' class='collapse'>
+									<p>{{_ 'review_submit_info'}}</p>
+								</div>
+							<select class='form-control' id='categPick'>
+									<option value='none'>None</option>
+								{{#each reviewFormCategories}}
+									<option value={{reviews}}>{{title}}</option>
+								{{/each}}
+							</select>
+							<p>{{_ 'review_submit_question2_subquestion_1'}} <a href='#addcategory' data-toggle='modal' data-target='#createCategory'>{{_ 'review_submit_question2_subquestion_2'}}</a>{{_ 'review_submit_question2_subquestion_3'}}</p>
+					</div>
+					{{/if}}
+					
+					<div class='tab-content'>
+						<div id='single' class='tab-pane fade'>
+							<div class='review-category-form-group'>
+								<label for='srevPick'>{{_ 'review_submit_question_3'}}</label>{{{_ 'review_submit_question_3_input'}}}
+							</div>
+						
+							<div class='review-category-form-group'>
+								<label>{{_ 'review_submit_question_4_single'}}</label>
+								<br>
+								<span>{{_ 'review_submit_question_4_optional'}}</span>
+								<!-- Special thanks to Ryan Glover from The Meteor Chef for this 'upload-area' code 
+								
+								From themeteorchef.com - "All source code on The Meteor Chef is licensed under the MIT License." Link - https://opensource.org/licenses/MIT
+								-->
+								{{#if currentUser}}
+								<div class='upload-area'>
+									<p class='alert alert-success text-center'>	
+										<span>{{_ 'product_photo_upload_text'}}</span>
+										<input type='file' id='suploadPic' accept='image/*'>
+									</p>
+									{{picPreviewName1}}
+									{{#if picPreviewName1}}
+										<div class='source-submission-div'>
+											<label for='suploadPicSource'>{{_ 'review_submit_source_submission'}}</label>
+											{{{_ 'review_source_input_1'}}}
+										</div>
+									{{/if}}
+								</div>
+								{{else}}
+									<div id='access-denied-arrow'></div>
+									<p class='photo-sign-in-class'>Please sign in to submit photos</p>
+								{{/if}}
+							</div>
+							
+							<div class='review-category-last-form-group'>
+								<label for='srevPrice'>{{_ 'review_submit_question_5_single'}}</label>
+								<br>
+								<span>{{_ 'review_submit_question_5_optional'}}</span>
+								<br>
+								{{{_ 'review_submit_question_5_single_price_input'}}} {{_ 'landing_currency'}}
+								{{{_ 'review_submit_question_5_single_location_input'}}}
+							</div>
+						{{{_ 'review_single_create'}}}
+						</div>
+					
+						<div id='comparison' class='tab-pane fade'>
+							<div class='review-category-form-group'>
+								<label>{{_ 'review_submit_question3_double'}}</label>
+								<br>
+								<label for='revPickA'>{{_ 'review_submit_question3_double_A'}}</label>{{{_ 'review_submit_question_3_double_A_input'}}}
+				
+								<label for='revPickB'>{{_ 'review_submit_question3_double_B'}}</label>{{{_ 'review_submit_question_3_double_B_input'}}}
+							</div>
+						
+							<div class='review-category-form-group'>
+								<label>3.</label>
+								<br>
+								<span>{{_ 'review_submit_question_4_optional'}}</span>
+								<br>
+								<label class='photo-question' for='uploadPicA'>
+								{{_ 'review_submit_question_4_double_A_1'}}
+								{{#if productA}}
+									{{productA}}
+								{{else}}
+									{{_ 'review_submit_question_4_double_A_2'}}
+								{{/if}}
+								{{_ 'review_submit_question_4_double_A_3'}}
+								</label>
+								<!-- Special thanks to Ryan Glover from The Meteor Chef for this 'upload-area' code 
+								
+								From themeteorchef.com - "All source code on The Meteor Chef is licensed under the MIT License." Link - https://opensource.org/licenses/MIT
+								-->
+								{{#if currentUser}}
+								<div class='upload-area'>
+									<p class='alert alert-success text-center'>	
+										<span>{{_ 'product_photo_upload_text'}}</span>
+										<input type='file' id='uploadPicA' accept='image/*'>
+									</p>
+									{{picPreviewName2}}
+									{{#if picPreviewName2}}
+										<div class='source-submission-div'>
+											<label for='uploadPicSourceA'>{{_ 'review_submit_source_submission'}}</label>
+											{{{_ 'review_source_input_A'}}}
+										</div>
+									{{/if}}
+								</div>
+								{{else}}
+									<div id='access-denied-arrow'></div>
+									<p class='photo-sign-in-class'>Please sign in to submit photos</p>
+									<br>
+								{{/if}}
+								
+								<label for='uploadPicB'>
+								{{_ 'review_submit_question_4_double_B_1'}}
+								{{#if productB}}
+									{{productB}}
+								{{else}}
+									{{_ 'review_submit_question_4_double_B_2'}}
+								{{/if}}
+								{{_ 'review_submit_question_4_double_B_3'}}
+								</label>	
+								{{#if currentUser}}
+								<div class='upload-area'>
+									<p class='alert alert-success text-center'>	
+										<span>{{_ 'product_photo_upload_text'}}</span>
+										<input type='file' id='uploadPicB' accept='image/*'>
+									</p>
+									{{picPreviewName3}}
+									{{#if picPreviewName3}}
+										<div class='source-submission-div'>
+											<label for='uploadPicSourceB'>{{_ 'review_submit_source_submission'}}</label>
+											{{{_ 'review_source_input_B'}}}
+										</div>
+									{{/if}}
+								</div>
+								{{else}}
+									<div id='access-denied-arrow'></div>
+									<p class='photo-sign-in-class'>Please sign in to submit photos</p>
+								{{/if}}
+							</div>
+							
+							<div class='review-category-last-double-form-group'>
+								<label for='drevPrice'>{{_ 'review_submit_question_5_double'}}</label>
+								<br>
+								<span>{{_ 'review_submit_question_5_optional_double'}}</span>
+								<br>
+								{{#if productA}}
+								{{productA}} - 
+								{{/if}}
+								{{{_ 'review_submit_question_5_double_price_input_1'}}} {{_ 'landing_currency'}}
+								{{{_ 'review_submit_question_5_double_location_input_1'}}}
+								{{#if productB}}
+								{{productB}} - 
+								{{/if}}
+								{{{_ 'review_submit_question_5_double_price_input_2'}}} {{_ 'landing_currency'}}
+								{{{_ 'review_submit_question_5_double_location_input_2'}}}
+							</div>
+							
+							{{{_ 'review_comparison_create'}}}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id='createCategory' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-header'>
+					<button type='button' class='close' data-dismiss='modal'>&times;</button>
+					<h3 class='modal-title'>{{_ 'category_submit_header'}}</h3>
+					<sub>{{_ 'rev_cat_freeze_warning'}}</sub>
+				</div>
+				<div class='modal-body'>
+					<div>
+						<label for='createcategPick'>{{_ 'category_submit_question1'}}</label><input type='text' class='form-control' id='createcategPick'>
+					</div>
+				
+					{{{_ 'create_category_submit'}}}
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id='review-already-started' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-body'>
+					<h3>{{_ 'review_started_notification'}}</h3>
+				
+					{{{_ 'review_already_started_ok'}}}
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id='thank-you-for-category' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-body'>
+					<p>{{_ 'thank_you_proposal'}}</p>
+				
+					{{{_ 'thank_you_for_category_proposal_input'}}}
+				</div>
+			</div>
+		</div>
+	</div>
+</template>

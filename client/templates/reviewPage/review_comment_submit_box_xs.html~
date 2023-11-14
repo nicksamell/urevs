@@ -1,0 +1,14 @@
+<template name='reviewCommentSubmitBoxXs'>
+	{{#if currentUser}}
+		{{#if isCommentBoxSummoned}}
+			<form name='comment' class='comment-form form'>
+				<textarea name='body' class='col-xs-12' id='review-comment-box-x-small' rows='4'></textarea>
+				<input type='submit' class='btn btn-info' value='Submit' id='review-comment-box-x-small-submit'>
+			</form>
+		{{else}}
+			<button class='showCommentBox'><span class='glyphicon glyphicon-comment'></span></button>
+		{{/if}}
+	{{else}}
+		<p class='text-center'>Please log in to contribute a review snippet.</p>
+	{{/if}}
+</template>

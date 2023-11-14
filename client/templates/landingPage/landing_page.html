@@ -1,0 +1,51 @@
+<template name='landingPage'>
+	{{#unless xs}}
+	<h4 id='landing-greeting'>{{_ 'landing_header'}}</h4>
+	{{/unless}}
+	<datalist id='suggestions1'></datalist>
+	<datalist id='suggestions2'></datalist>
+	<div id='search-circle-content'>
+		<div id='comparison' class='comparison-network-content'>
+			<form id='hp-site-search'>
+				{{#unless notFirstTimeVisit}}
+					{{#if keyupSearch}}
+					<div id='firstTimeDownArrowBox'>{{_ 'landing_tutorial_1'}}</div>	
+					{{/if}}
+				{{/unless}}
+				{{{_ 'search_landing'}}}
+				{{#unless notFirstTimeVisit}}
+					<div id='firstTimeSuggestionBox'>{{_ 'landing_tutorial_2'}}</div>	
+				{{/unless}}
+				<br>
+				{{{_ 'Product_One'}}}
+				{{#if formBreak}}
+				<br>
+				{{/if}}
+				<span class='vs-font'>{{_ 'VS'}}</span>
+				{{#if formBreak}}
+				<br>
+				{{/if}}
+				{{{_ 'Product_Two'}}}
+				{{#unless notFirstTimeVisit}}
+					<div id='landing-arrow'></div>
+				{{/unless}}
+				<br>
+				<br>
+				<div class='form-group landing-price-range'>
+					<span class='price-range-input-text'>{{_ 'landing_from'}}</span>
+					<input type='number' class='form-control price-range-input' id='homePriceRange1'>
+					<span class='price-range-input-text'>{{_ 'landing_to'}}</span>
+					<input type='number' class='form-control price-range-input' id='homePriceRange2'>
+					<span class='price-range-input-text'>{{_ 'landing_currency'}}</span>
+				</div>
+			</form>
+		</div>
+	</div>
+	<a id='landingCreateReview' href='#addreview' data-toggle='modal' data-target='#createReview'>
+		<button class='btn btn-info col-xs-12 landing-create-review-btn'>
+			{{_ 'landing_page_create_review'}}
+		</button>
+	</a>
+	
+	{{> reviewCategoryForm}}
+</template>

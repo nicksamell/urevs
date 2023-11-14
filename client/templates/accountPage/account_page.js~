@@ -1,0 +1,282 @@
+Template.accountPage.helpers({
+	userName: function() {
+		return Meteor.user().profile.name;
+	},
+	proPic: function() {
+		if (Meteor.user().profile.proPic) {
+			return Meteor.user().profile.proPic;
+		} else {
+			return 'pro_pic_default.png';
+		}
+	},
+	messages: function() {
+		return Meteor.user().profile.messages;
+	},
+	isYoutube: function() {
+		return Meteor.user().profile.youtubeSettings;
+	},
+	youtubeLink: function() {
+		if (Meteor.user().profile.youtubeApproved) {
+			return Meteor
+		}
+	},
+	isSearchChecked: function() {
+		if (Meteor.user().profile.searchSettings == 'single') {
+			return true;
+		} else {
+			return false;
+		}
+	},
+	isSearchBottom: function() {
+		if (Meteor.user().profile.reviewSearchBoxPref === 'bottom' || Meteor.user().profile.reviewSearchBoxPref == undefined) {
+			return true;
+		}
+	},
+	isLikeChecked: function() {
+		if (Meteor.user().profile.likeSettings == 'top') {
+			return true;
+		} else {
+			return false;
+		}
+	},
+	isShowChecked: function() {
+		if (Meteor.user().profile.showShareSettings || Meteor.user().profile.showShareSettings == undefined) {
+			return 'checked';
+		}
+	},
+	isShowRecChecked: function() {
+		if (Meteor.user().profile.showShareRecSettings || Meteor.user().profile.showShareRecSettings == undefined) {
+			return 'checked';
+		}
+	},
+	cSSSettingLeft: function() {
+		if (Meteor.user().profile.cSSSetting === 'left' || Meteor.user().profile.cSSSetting == undefined) {
+			return 'checked';
+		}
+	},
+	cSSSettingRight: function() {
+		if (Meteor.user().profile.cSSSetting === 'right') {
+			return 'checked';
+		}
+	},
+	cSSSettingBoth: function() {
+		if (Meteor.user().profile.cSSSetting === 'both') {
+			return 'checked';
+		}
+	},
+	bullHornReviews: function() {
+		return Meteor.user().profile.bullHornReviews;
+	},
+	ppDefaultChecked: function() {
+		if (Meteor.user().profile.proPic == undefined || Meteor.user().profile.proPic == 'pro_pic_default.png') {
+			return 'checked';
+		}
+	},
+	pp1Checked: function() {
+		if (Meteor.user().profile.proPic == 'pro_pic_1.png') {
+			return 'checked';
+		}
+	},
+	pp2Checked: function() {
+		if (Meteor.user().profile.proPic == 'pro_pic_2.png') {
+			return 'checked';
+		}
+	},
+	pp3Checked: function() {
+		if (Meteor.user().profile.proPic == 'pro_pic_3.png') {
+			return 'checked';
+		}
+	},
+	pp4Checked: function() {
+		if (Meteor.user().profile.proPic == 'pro_pic_4.png') {
+			return 'checked';
+		}
+	},
+	pp5Checked: function() {
+		if (Meteor.user().profile.proPic == 'pro_pic_5.png') {
+			return 'checked';
+		}
+	},
+	pp6Checked: function() {
+		if (Meteor.user().profile.proPic == 'pro_pic_6.png') {
+			return 'checked';
+		}
+	}
+});
+
+Template.bullHornReviewItem.helpers({
+	revTitleDouble: function() {
+		var title1 = this.revTitle[0];
+		var title2 = this.revTitle[1];
+		
+		var fullTitle = title1 + ' vs ' + title2; 
+		return fullTitle;
+	},
+	accountColMd: function() {
+		if (this.single) {
+			return 'col-md-3';
+		} else if (!this.single) {
+			 return 'col-md-6';
+		}
+	}
+});
+
+Template.messageItem.events({
+	'click .message-x-button': function() {
+		messageRemoveObject = {};
+		messageRemoveObject['messageText'] = this.messageText;
+		messageRemoveObject['messageId'] = this.messageId;
+		
+		$('#confirmMessageRemove').modal();
+	}
+});
+
+Template.accountPage.events({
+	'click': function(e) {
+		if ($(e.target).parents('#yesYoutube').hasClass('in')) {
+			//do nothing
+		} else {
+			if (Meteor.user().profile.youtubeSettings) {
+				$('#no-youtube').removeClass('active');
+				$('#yes-youtube').addClass('active');
+			} else {
+				$('#yes-youtube').removeClass('active');			
+				$('#no-youtube').addClass('active');
+			}
+		}
+	},
+	'click .pro-pic-settings-change-class': function() {
+		$('.pro-pic-settings-change-class').html('Save');
+		$('.pro-pic-settings-change-class').addClass('pro-pic-settings-save-class');
+		$('.pro-pic-settings-change-class').removeClass('pro-pic-settings-change-class');
+	},
+	'click .pro-pic-settings-save-class': function() {
+		let proPicOption = $('input[name=proPicSet]:checked', '#proPicSettingsForm').val();
+		
+		Meteor.call('proPicSave', proPicOption, function(error) {
+			$('.pro-pic-settings-save-class').html('Change');
+			$('.pro-pic-settings-save-class').addClass('pro-pic-settings-change-class');
+			$('.pro-pic-settings-save-class').removeClass('pro-pic-settings-save-class');
+			
+			if (error) {
+				return throwError(error);
+			}
+		});
+	},
+	'click #confirm-message-remove-yes': function() {
+		Meteor.call('userMessageRemove', messageRemoveObject, function(error) {
+			$('#confirmMessageRemove').modal('toggle');
+			messageRemoveObject = {};
+			if (error) {
+				return throwError(error);
+			}
+		})
+	},
+	'click #reviewerSetSave': function() {
+		let tubeInput = $('#youtube-input').val();
+
+		$('#reviewerSetSave').attr('value', 'Sending...');
+		
+		Meteor.call('tubeRequestSend', tubeInput, function (error) {
+			if (error) {
+				return throwError(error);
+				$('#reviewerSetSave').attr('value', 'Send');
+			}
+			
+			throwSuccess("Thanks! Keep a look out for a message on your Youtube account!");
+			$('#yesYoutube').modal('toggle');
+			$('#reviewerSetSave').attr('value', 'Send');
+			$('#yes-youtube').addClass('active');			
+			$('#no-youtube').removeClass('active');
+		});		
+	},
+	'click #no-youtube': function() {
+		$('#noYoutube').modal();
+	},
+	'click #confirm-delete-youtube-yes': function() {
+		Meteor.call('noYoutube', function(error) {
+			if (error) {
+				return throwError(error);
+			}
+			
+			$('#noYoutube').modal('toggle');
+			$('#yes-youtube').removeClass('active');			
+			$('#no-youtube').addClass('active');
+		});
+	},
+	'confirm-delete-youtube-cancel': function() {
+		$('#noYoutube').modal('toggle');
+	},
+	'click #likeSetSave': function() {
+		let pref;
+		let showShare;
+		let showShareRec;
+		let cSSSetting;
+		let reviewSearchBoxPref;
+	
+		if($("input[value='top']").is(':checked')) {
+			pref = 'top';
+		} else if($("input[value='bottom']").is(':checked')) {
+			pref = 'bottom';
+		}
+		
+		if ($('#show-share').is(':checked')) {
+			showShare = true;
+		} else {
+			showShare = false;
+		}
+		
+		if ($('#show-share-rec').is(':checked')) {
+			showShareRec = true;
+		} else {
+			showShareRec = false;
+		}
+		
+		if($("input[value='left']").is(':checked')) {
+			cSSSetting = 'left';
+		} else if($("input[value='right']").is(':checked')) {
+			cSSSetting = 'right';
+		} else if($("input[value='both']").is(':checked')) {
+			cSSSetting = 'both';
+		}
+		
+		if($("input[value='searchTop']").is(':checked')) {
+			reviewSearchBoxPref = 'top';
+		} else if($("input[value='searchBottom']").is(':checked')) {
+			reviewSearchBoxPref = 'bottom';
+		}
+		
+		Meteor.call('likeSettingsPrefSave', pref, showShare, showShareRec, cSSSetting, reviewSearchBoxPref, function (error) {
+			if (error) {
+				return throwError(error);
+			}
+		
+			throwSuccess('Your settings have been saved!');
+		});
+	}
+});
+
+//pre-beta only
+//re-do when doing Oauth and understand each line
+if (Meteor.isClient) {
+	Accounts.ui.config({
+		passwordSignupFields: "USERNAME_ONLY",
+		extraSignupFields: [
+			{
+				fieldName: 'terms',
+				fieldLabel: 'I have read, understand, and accept the terms of use and privacy policy found at the bottom of this page by clicking on "More", and then on "Legal & Privacy"',
+				inputType: 'checkbox',
+				visible: true,
+				saveToProfile: true,
+				validate: function(value, errorFunction) {
+					if (value) {
+						return true;
+					} else {
+						errorFunction('You must accept the terms and conditions in order to contribute fully to the community');
+						return false;
+					}
+				}
+			}
+		]
+	});
+}

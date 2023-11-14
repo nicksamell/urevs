@@ -1,0 +1,7 @@
+<template name='accessDenied'>
+	<div class='access-denied page jumbotron'>
+		<h1>Sorry!</h1> 
+		
+		<p>You have to be signed in to do this. Please sign in with your google, facebook, or twitter account up in the top right-hand corner of the page.</p>
+	</div>
+</template>

@@ -1,0 +1,741 @@
+<template name='reviewPage'>
+	{{#if isSearchBoxBottom}} 
+		<div id='review-page-search-wrap-div'>
+			{{#unless searchBoxSummoned}}
+				<div class='text-center' id='another-search'>
+					<button class='btn btn-info' id='another-search-button'>{{_ 'review_page_another_search'}}</button>
+				</div>
+			{{else}}
+				{{> genericSearchTemplate}}
+			{{/unless}}
+		</div>
+	{{/if}}
+	
+	{{#unless review}}
+		
+		{{> loadingReview}}
+		
+	{{else}}
+			<div id='tutorialDialog' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-xs'>
+					<div class='modal-content'>
+						<div class='modal-body'>
+							<h1 class='text-center tutorial-dialog-h1'>Welcome to Urevs!</h1> 
+							<h4 class='text-center'>It seems that you're here for the first time so here's a quick "what's what" guide</h4>
+							<br>
+							<div class='row'>
+								<div class='container'>
+									<div class='col-xs-3 col-sm-1 col-md-1'>
+										<button title='Is this snippet accurate?' type='button' class='btn btn-success disabled' style='margin-bottom: 10px;'>
+											<span style='font-family: "Courier New", Courier, monospace; font-style: oblique; font-weight: bold;'>{{_ 'review_page_grade_A'}}</span>
+										</button>
+										<button title='Is this snippet inaccurate/misleading?' type='button' class='btn btn-danger disabled'>
+											<span style='font-family: "Courier New", Courier, monospace; font-style: oblique; font-weight: bold;'>{{_ 'review_page_grade_F'}}</span>
+										</button>
+									</div>
+									<div class='col-xs-9 col-sm-8 col-md-6 col-lg-5'>
+										<span class='tutorial-font'>First off, don't be alarmed! When you go to a review page, the A+ and F- buttons will look like the ones on the left and it will seem as if the page is broken. It's not - trust me. What's going on is an experiment!<br>In order to try <b>to encourage more accurate grading of snippets</b>, these buttons are switched off for 30 seconds to give users a chance to thoroughly read through the content before making a grading decision. Let's see if this helps make urevs an excellent resource!</span>
+									</div>
+								</div>
+									<br>
+									<br>
+								<div class='container'>
+									<div class='col-xs-3 col-sm-1 col-md-1'>
+										<button title='Let others know that you want to see some more discussion on this review' type='button' class='btn btn-primary' style='margin-bottom: 80px;'>
+											<span class='glyphicon glyphicon-bullhorn'></span>
+										</button>
+									</div>
+									<div class='col-xs-9 col-sm-8 col-md-6 col-lg-5'>
+										<span class='tutorial-font'>Say that you're looking through a review and you're thinking "<b>This could use some more snippets.</b>" Then, sound the bullhorn! If enough people do the same, that review will show up on the trending page.<br>(hint - if you see a bullhorn on a review on the trending page, it means that many are looking for experts to share their experience with those products. Look at it as a bat call, if you will)</span>
+									</div>
+								</div>
+								<br>
+								<br>
+								<div class='container'>
+									<div class='col-xs-3 col-sm-1 col-md-1'>
+										<button title='Is this snippet accurate?' type='button' class='btn btn-success'>
+											<span style='font-family: "Courier New", Courier, monospace; font-style: oblique; font-weight: bold;'>{{_ 'review_page_grade_A'}}</span>
+										</button>
+									</div>
+									<div class='col-xs-9 col-sm-8 col-md-6 col-lg-5'>
+										<span class='tutorial-font'>Instead of being an arrow or a thumbs up, this button was made into a grade <b>for rewarding snippets that are accurate</b>. So if you've used the product, use this button to let others know that the snippeteer of that comment knows what they're talking about.</span>
+									</div>
+								</div>
+									<br>
+									<br>
+								<div class='container'>
+									<div class='col-xs-3 col-sm-1 col-md-1'>
+										<button title='Is this snippet inaccurate/misleading?' type='button' class='btn btn-danger'>
+											<span style='font-family: "Courier New", Courier, monospace; font-style: oblique; font-weight: bold;'>{{_ 'review_page_grade_F'}}</span>
+										</button>
+									</div>
+									<div class='col-xs-9 col-sm-8 col-md-6 col-lg-5'>
+										<span class='tutorial-font'>On the other hand, if it seems like the snippeteer's talking about something from Mars; in other words, your experience with the product tells you <b>that this snippet is inaccurate</b>, use this button to let others know that.</span>
+									</div>
+								</div>
+									<br>
+									<br>
+								<div class='container'>
+									<div class='col-xs-3 col-sm-1 col-md-1'>
+										<button title='Would you recommend this product?' type='button' class='btn btn-primary'>
+											<span class='glyphicon glyphicon-heart'></span>
+										</button>
+									</div>
+									<div class='col-xs-9 col-sm-8 col-md-6 col-lg-5'>
+										<span class='tutorial-font'>Now, below all of the snippets, you'll find this heart icon - use it to express your heart's content; that is, to indicate that you would <b>recommend this product</b> to your friends or, if you're in a versus review, to specifically indicate that you'd recommend this product over the one its being compared to.</span>
+									</div>
+								</div>
+								<br>
+								<br>
+							</div>
+							<img src="{{assetUrl 'dual_system.png'}}" class='img-thumbnail img-responsive' style='width: 100%; margin: 0 auto;' />
+							<br>
+							<br>
+							<br>
+							<span class='tutorial-font col-xs-12 col-sm-10 col-sm-offset-1 text-center'>And last but not least - the review format!<br><br>So, you may have noticed that you've got <b>two types of reviews</b>:<br>single and versus.<br><br>The example you see above is of a comparison review, where each product gets a column for review snippets from community members. <b>In the comparison format, each column lists the top rated snippets that detail in what ways your fellow internauts found that product better than the one next to it.</b> This way you can make choosing what to buy easier - by focusing on just two products at a time!<br><br>But there are also ways in which no product is better than the other - when both are lacking something they should have! The blue <b>"What both lack" button is here just for those features which snippeteers were dissapointed to find lacking.</b><br><br>On the other hand, in very similar organization, <b>we have the single format with two columns - one for the pros of the single product and the other for the cons.</b><br><br><br><h4 class='text-center'>Well, that's all from me, folks!<br><br>I hope that you find Urevs to be a great resource, powered by an even greater community, helping you find what you truly want to buy.<br><br>Happy reviewing!</h4><br>Nick,<br>urevs' founder</span>
+							<br>
+							<br>
+							<br>
+							<div class='share-dialog-btn-div'>
+								<button type='button' class='btn btn-info' data-dismiss='modal'>Thanks!</button>
+							</div>
+							<br>
+							<br>
+							<div id='ps-link'> 
+								<a data-toggle='collapse' data-target='#ps'>P.S. You can find this in the footer! <span class='caret'></span></a>
+							</div>
+		
+							<div id='ps' class='collapse'>
+								<p class='text-center'>You can check this quick tutorial out at any time by clicking on the "More" link found at the bottom of every page and then on the "Tutorial" link when it shows up.</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			{{showTutorial}}
+	
+		{{#each review}}
+			<div class='container'>
+				<div class='row'>
+					{{#if single}}
+						<h2 class='text-center'>{{productName1}}</h2>
+					{{else}}
+						{{#if xs}}
+						<h2 class='text-center'>{{productName1}}</h2>
+						<h2 class='text-center'>vs</h2>
+						<h2 class='text-center'>{{productName2}}</h2>						
+						{{else}}
+						<h2 class='text-center'>{{productName1}} vs {{productName2}}</h2>
+						{{/if}}
+					{{/if}}
+				</div>
+				<div class='row text-center'>
+					<p id='review-slogan'>{{_ 'review_page_slogan'}}</p>
+				</div>
+				{{#if currentUser}}
+					<button title='Let others know that you want to see some more discussion on this review' type='button' class='btn btn-primary review-bullhorn {{isHighlightedBullHorn}}'>
+						<span class='glyphicon glyphicon-bullhorn'></span>
+					</button>
+				{{else}}
+					<button title='Let others know that you want to see some more discussion on this review' type='button' class='btn btn-primary review-bullhorn {{isHighlightedBullHorn}}'>
+						<span class='glyphicon glyphicon-bullhorn'></span>
+					</button>
+				{{/if}}
+				<div id='shareDialog' class='modal fade' role='dialog'>
+					<div class='modal-dialog modal-xs'>
+						<div class='modal-content'>
+							<div class='modal-body'>
+								<h1 class='text-center share-dialog-h1'>{{_ 'review_page_share_header'}}</h1> 
+								<h4 class='text-center'>{{_ 'review_page_share_sub_header1'}}</h4>
+								<h4 class='text-center'>{{_ 'review_page_share_sub_header2'}}</h4>
+								<br>
+								<div class='text-center'>
+									{{> shareit shareData}}
+								</div>
+								<br>
+								<div class='text-center'>
+									<input id='dont-show-share' type='checkbox' name='dont-show'><label>{{_ 'review_page_share_opt_out'}}</label>
+								</div>
+								<br>
+								<div class='share-dialog-btn-div'>
+									<button type='button' class='btn btn-info share-dialog-btn' data-dismiss='modal'>{{_ 'review_page_share_close'}}</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class='container'>
+				{{#if single}}
+				<div class='row text-center'>
+					<div class='col-md-4 col-md-offset-4'>
+						<img src="{{assetUrl picUrl1}}" width='275px' class='img-thumbnail img-responsive' />
+						<br>
+						<a title='Photo source' data-toggle='collapse' data-target='#picSource1'>{{_ 'review_page_source'}}</a>
+							<div id='picSource1' class='collapse'>
+								{{picUrl1}}
+							</div>
+						<br>
+						{{#if likePlacement}}
+							{{#if currentUser}}
+								{{isHighlightedLike}}
+									<button title='Would you recommend this product?' type='button' class='likes-btn-flag likes-button-general btn btn-primary likes1 disabled'><span class='glyphicon glyphicon-heart likes1'></span></button>
+								{{likes1}}
+							{{else}}}
+								{{isHighlightedLike}}
+									<button title='Would you recommend this product?' type='button' class='likes-btn-flag likes-button-general btn btn-primary likes1 disabled'><span class='glyphicon glyphicon-heart likes1'></span></button>
+								{{likes1}}
+							{{/if}}
+						{{/if}}
+					</div>
+				</div>
+				{{else}}
+				<div class='row text-center' id='review-prod-1-display'>
+					<div class='col-xs-4'>
+						<h5>{{productName1}}</h5>
+						<img src="{{assetUrl picUrl1}}" width='100px' class='img-thumbnail img-responsive' />
+						<br>
+						<a title='Photo source' data-toggle='collapse' data-target='#picSource1'>{{_ 'review_page_source'}}</a>
+							<div id='picSource1' class='collapse'>
+								{{picUrl1}}
+							</div>
+						<br>
+						{{#if likePlacement}}
+							{{#if currentUser}}
+								{{isHighlightedLike}}
+									<button title='Would you recommend this product over the other one?' type='button' class='likes-btn-flag likes-button-general btn btn-primary likes1 disabled'><span class='glyphicon glyphicon-heart likes1'></span></button>
+								{{likes1}}
+							{{else}}
+								{{isHighlightedLike}}
+									<button title='Would you recommend this product over the other one?' type='button' class='likes-btn-flag likes-button-general btn btn-primary likes1 disabled'><span class='glyphicon glyphicon-heart likes1'></span></button>
+								{{likes1}}
+							{{/if}}
+						{{/if}}
+					</div>
+					<div class='col-xs-4'>VS</div>
+					<div class='col-xs-4'>
+						<h5>{{productName2}}</h5>
+						<img src="{{assetUrl picUrl2}}" width='100px' class='img-thumbnail img-responsive' />
+						<br>
+						<a title='Photo source' data-toggle='collapse' data-target='#picSource2'>{{_ 'review_page_source'}}</a>
+							<div id='picSource2' class='collapse'>
+								{{picUrl2}}
+							</div>
+						<br>
+						{{#if likePlacement}}
+							{{#if currentUser}}
+								{{isHighlightedLike}}
+									<button title='Would you recommend this product over the other one?' type='button' class='likes-btn-flag likes-button-general btn btn-primary likes2 disabled'><span class='glyphicon glyphicon-heart likes2'></span></button>
+								{{likes2}}
+							{{else}}
+								{{isHighlightedLike}}
+									<button title='Would you recommend this product over the other one?' type='button' class='likes-btn-flag likes-button-general btn btn-primary likes2 disabled'><span class='glyphicon glyphicon-heart likes2'></span></button>
+								{{likes2}}
+							{{/if}}
+						{{/if}}
+					</div>
+				</div>
+				{{/if}}
+				{{#unless single}}
+				<input type='submit' class='btn btn-primary' value='What both lack' data-toggle='modal' data-target='#bothLack' id='review-lack-button'>
+				
+				<div id='bothLack' class='modal fade' role='dialog'>
+					<div class='modal-dialog modal-xs'>
+						<div class='modal-content'>
+							<div class='modal-header'>
+								<button type='button' class='close' data-dismiss='modal'>&times;</button>
+								<h3 class='modal-title lack-navigation'>{{_ 'review_page_lack_link'}}</h3>
+							</div>
+							<div class='modal-body both-lack-modal-body'>
+								<div class='parent commentsLack'>
+									<div class='wrapper'>
+										{{#each comments}}
+											{{#each commentsLack}}
+												{{> reviewCommentItemLack}}
+											{{/each}}
+										{{/each}}
+									</div>
+								</div>
+								
+								{{> reviewCommentSubmitBoxXs}}
+								<!-- The distinction between box sizes becomes relevant in the columns. Here xs can be used as it contains the universal (when solo) col-xs class-->
+								{{#if noNavigator}}
+									{{#if hasMoreLackReviewHelper}}
+										<a href={{hasMoreLackReviewPath}} class='btn btn-info has-more-review-path'>Double Click to Change # of Comments</a>
+										<span title='If there are more snippets in the database, 3 more will be loaded. Otherwise, 3 will be hidden. If there is no change in snippet amount, check the "What Both Lack" section' class='glyphicon glyphicon-info-sign'></span>
+									{{else}}
+										<a href={{hasMoreLackReviewPath}} class='btn btn-info has-more-review-path'>Double Click to Change # of Comments</a>
+										<span title='If there are more snippets in the database, 3 more will be loaded. Otherwise, 3 will be hidden. If there is no change in snippet amount, check the "What Both Lack" section' class='glyphicon glyphicon-info-sign'></span>										
+									{{/if}}
+								{{/if}}
+							</div>
+						</div>
+					</div>
+				</div>
+				{{/unless}}
+			</div>
+
+			<div class='container'>
+				{{#if single}}
+					{{#unless xs}}
+						<div class='col-sm-4 review-the-left'>
+							<h4>{{_ 'review_page_single_col1'}}</h4>
+							<div class='parent comments1'>
+								<div class='wrapper1'>
+									{{#each comments}}
+										{{#each comments1}}
+											{{> reviewCommentItem}}
+										{{/each}}
+									{{/each}} 
+								</div>
+							</div>
+						</div>
+						
+						<div class='col-sm-4 col-sm-pull-2 review-the-right-big'>
+							<h4>{{_ 'review_page_single_col2'}}</h4>
+							<div class='parent comments2'>
+								<div class='wrapper2'>
+									{{#each comments}}
+										{{#each comments2}}
+											{{> reviewCommentItem}}
+										{{/each}}
+									{{/each}}
+								</div>
+							</div>
+						</div>
+					{{/unless}}
+			
+					{{#if xs}}
+						<div id='singleCommentsCarousel' data-keyboard='false' class='carousel slide' data-ride='carousel'>
+							<div class='carousel-inner' role='listbox'>
+								<div class='item active'>
+									<div class='col-xs-12 center-block review-the-left'>
+										<h4>{{_ 'review_page_single_col1'}}</h4>
+										<div class='parent comments1'>
+											<div class='wrapper3'>
+												{{#each comments}}
+													{{#each comments1}}
+														{{> reviewCommentItem}}
+													{{/each}} 
+												{{/each}}
+											</div>
+										</div>
+											{{> reviewCommentSubmitBoxXs}}
+									</div>
+								</div>
+								<div class='item'>
+									<div class='col-xs-12 review-the-right-small'>
+										<h4>{{_ 'review_page_single_col2'}}</h4>
+										<div class='parent comments2'>
+											<div class='wrapper4'>
+												{{#each comments}}
+													{{#each comments2}}
+														{{> reviewCommentItem}}
+													{{/each}}
+												{{/each}}
+											</div>
+										</div>
+											{{> reviewCommentSubmitBoxXs}}
+									</div>					
+								</div>	
+							</div>
+						</div>
+						
+						{{#if cSSSetting}}
+							<a class='left comments-carousel-control comments-carousel-control-xs' href='#singleCommentsCarousel' role='button' data-slide='prev'>
+								<span class='glyphicon glyphicon-chevron-right' aria-hidden='true'></span>
+									<span class='sr-only'>{{_ 'review_page_sr_previous'}}</span>
+							</a>
+						{{else}}
+							<a class='right comments-carousel-control comments-carousel-control-xs' href='#singleCommentsCarousel' role='button' data-slide='next'>
+								<span class='glyphicon glyphicon-chevron-left' aria-hidden='true'></span>
+									<span class='sr-only'>{{_ 'review_page_sr_next'}}</span>
+							</a>
+						{{/if}}
+						
+						{{#if cSSSettingBoth}}
+							<a class='left comments-carousel-control comments-carousel-control-xs' href='#singleCommentsCarousel' role='button' data-slide='prev'>
+								<span class='glyphicon glyphicon-chevron-left' aria-hidden='true'></span>
+									<span class='sr-only'>{{_ 'review_page_sr_previous'}}</span>
+							</a>
+							<a class='right comments-carousel-control comments-carousel-control-xs' href='#singleCommentsCarousel' role='button' data-slide='next'>
+								<span class='glyphicon glyphicon-chevron-right' aria-hidden='true'></span>
+									<span class='sr-only'>{{_ 'review_page_sr_next'}}</span>
+							</a>
+						{{/if}}
+							
+						{{#unless noComments}}
+							<div class='navigator-ui-wrapper'>
+								<div class='navigator-x'>		
+									<button type='button' class='navigator-x-button'><span class='glyphicon glyphicon-remove'></span></button>
+								</div>
+								<a class='change-navigator'>{{_ 'review_navigator_change'}}</a>
+								{{#if isNormalNavigator}}	
+								<button class='navigator-ui'>
+									<div style='float: left;'>{{currentCommentNumber}}</div>
+									<span class='glyphicon glyphicon-comment' aria-hidden='true'></span>
+										<span class='sr-only'>{{_ 'review_navigator_sr_next'}}</span>
+								</button>
+								{{else}}
+									{{#if hasMoreReviewHelper}}
+									<div class='navigator-ui-replace'><button class='navigator-glyphicon-repeat'><span class='glyphicon glyphicon-repeat'></span></button><a href={{hasMoreReviewPath}} class='btn btn-info navigator-has-more-review-path'>{{_ 'review_page_load_more'}}</a></div>
+									{{else}}
+									<div class='navigator-ui-replace'><button class='navigator-glyphicon-repeat'><span class='glyphicon glyphicon-repeat'></span></button><a href={{hasMoreReviewPath}} class='btn btn-info navigator-has-more-review-path'>{{_ 'review_page_hide_snippets'}}</a></div>
+									{{/if}}					
+								{{/if}}
+							</div>
+						{{else}}
+							<div class='navigator-ui-wrapper'>
+								<div class='navigator-x'>		
+									<button type='button' class='navigator-x-button'><span class='glyphicon glyphicon-remove'></span></button>
+								</div>
+								<div class='navigator-ui-replace'>
+									<p class='text-center'>{{_ 'review_navigator_no_comments'}}</p>
+									<p class='text-center'>{{_ 'review_navigator_friends_help'}}</p>
+								</div>
+							</div>
+						{{/unless}}
+
+					{{/if}}
+				{{else}}
+					{{#unless xs}}
+						<div class='col-sm-4 review-the-left'>
+							<h4>{{_ 'review_page_double_col'}}</h4>
+							<div class='parent comments1'>
+								<div class='wrapper1'>
+									{{#each comments}}
+										{{#each comments1}}
+											{{> reviewCommentItem}}
+										{{/each}} 
+									{{/each}}
+								</div>
+							</div>
+						</div>
+		
+						<div class='col-sm-4 col-sm-pull-2 review-the-right-big'>
+							<h4>{{_ 'review_page_double_col'}}</h4>
+							<div class='parent comments2'>
+								<div class='wrapper2'>
+									{{#each comments}}
+										{{#each comments2}}
+											{{> reviewCommentItem}}
+										{{/each}}
+									{{/each}}
+								</div>
+							</div>
+						</div>
+					{{/unless}}
+			
+					{{#if xs}}			
+						<div id='doubleCommentsCarousel' class='carousel slide' data-ride='carousel'>
+							<div class='carousel-inner' role='listbox'>
+								<div class='item active'>	
+									<div class='col-xs-12 center-block review-the-left'>
+										<h4 class='better-in-a'>{{productName1}} {{_ 'review_page_double_col_lowercase'}}</h4>
+										<div class='parent comments1'>
+											<div class='wrapper3'>
+												{{#each comments}}
+													{{#each comments1}}
+														{{> reviewCommentItem}}
+													{{/each}}
+												{{/each}}
+											</div> 
+										</div>
+											{{> reviewCommentSubmitBoxXs}}
+											{{#unless likePlacement}}
+												{{#if currentUser}}
+													{{isHighlightedLike}}
+														<button title='Would you recommend this product over the other one?' type='button' class='likes-btn-flag likes-button-small-double btn btn-primary likes1 disabled'><span class='glyphicon glyphicon-heart likes1'></span></button>
+													{{likes1}}
+												{{else}}
+													{{isHighlightedLike}}
+														<button title='Would you recommend this product over the other one?' type='button' class='likes-btn-flag likes-button-small-double btn btn-primary likes1 disabled'><span class='glyphicon glyphicon-heart likes1'></span></button>
+													{{likes1}}
+												{{/if}}
+											{{/unless}}
+									</div>
+								</div>
+								<div class='item'>
+									<div class='col-xs-12 review-the-right-small'>
+										<h4 class='better-in-b'>{{productName2}} {{_ 'review_page_double_col_lowercase'}}</h4>
+										<div class='parent comments2'>
+											<div class='wrapper4'>
+												{{#each comments}}
+													{{#each comments2}}
+														{{> reviewCommentItem}}
+													{{/each}}
+												{{/each}}
+											</div>
+										</div>
+										{{> reviewCommentSubmitBoxXs}}
+										{{#unless likePlacement}}
+											{{#if currentUser}}
+												{{isHighlightedLike}}
+													<button title='Would you recommend this product over the other one?' type='button' class='likes-btn-flag likes-button-small-double btn btn-primary likes2 disabled'><span class='glyphicon glyphicon-heart likes2'></span></button>
+												{{likes2}}
+											{{else}}
+												{{isHighlightedLike}}
+													<button title='Would you recommend this product over the other one?' type='button' class='likes-btn-flag likes-button-small-double btn btn-primary likes2 disabled'><span class='glyphicon glyphicon-heart likes2'></span></button>
+												{{likes2}}
+											{{/if}}
+										{{/unless}}
+									</div>					
+								</div>	
+							</div>
+						</div>
+						
+						{{#if cSSSetting}}
+							<a class='left comments-carousel-control comments-carousel-control-xs' href='#doubleCommentsCarousel' role='button' data-slide='prev'>
+								<span class='comment-glyph glyphicon glyphicon-chevron-right' aria-hidden='true'></span>
+									<span class='sr-only'>{{_ 'review_page_sr_previous'}}</span>
+							</a>
+						{{else}}
+							<a class='right comments-carousel-control comments-carousel-control-xs' href='#doubleCommentsCarousel' role='button' data-slide='next'>
+								<span class='comment-glyph glyphicon glyphicon-chevron-left' aria-hidden='true'></span>
+									<span class='sr-only'>{{_ 'review_page_sr_next'}}</span>
+							</a>
+						{{/if}}
+						
+						{{#if cSSSettingBoth}}
+							<a class='left comments-carousel-control comments-carousel-control-xs' href='#doubleCommentsCarousel' role='button' data-slide='prev'>
+								<span class='comment-glyph glyphicon glyphicon-chevron-left' aria-hidden='true'></span>
+									<span class='sr-only'>{{_ 'review_page_sr_previous'}}</span>
+							</a>
+							<a class='right comments-carousel-control comments-carousel-control-xs' href='#doubleCommentsCarousel' role='button' data-slide='next'>
+								<span class='comment-glyph glyphicon glyphicon-chevron-right' aria-hidden='true'></span>
+									<span class='sr-only'>{{_ 'review_page_sr_next'}}</span>
+							</a>
+						{{/if}}
+							
+							{{#unless noComments}}
+							<div class='navigator-ui-wrapper'>
+								<div class='navigator-x'>		
+									<button type='button' class='navigator-x-button'><span class='glyphicon glyphicon-remove'></span></button>
+								</div>
+								<a class='change-navigator'>{{_ 'review_navigator_change'}}</a>
+								{{#if isNormalNavigator}}	
+								<button class='navigator-ui'>
+									<div style='float: left;'>{{currentCommentNumber}}</div>
+									<span class='glyphicon glyphicon-comment' aria-hidden='true'></span>
+										<span class='sr-only'>{{_ 'review_navigator_sr_next'}}</span>
+								</button>
+								{{else}}
+									{{#if hasMoreReviewHelper}}
+									<div class='navigator-ui-replace'><button class='navigator-glyphicon-repeat'><span class='glyphicon glyphicon-repeat'></span></button><a href={{hasMoreReviewPath}} class='btn btn-info navigator-has-more-review-path'>{{_ 'review_page_load_more'}}</a></div>
+									{{else}}
+									<div class='navigator-ui-replace'><button class='navigator-glyphicon-repeat'><span class='glyphicon glyphicon-repeat'></span></button><a href={{hasMoreReviewPath}} class='btn btn-info navigator-has-more-review-path'>{{_ 'review_page_hide_snippets'}}</a></div>
+									{{/if}}					
+								{{/if}}
+							</div>
+							{{else}}
+								<div class='navigator-ui-wrapper'>
+									<div class='navigator-x'>		
+										<button type='button' class='navigator-x-button'><span class='glyphicon glyphicon-remove'></span></button>
+									</div>
+									<div class='navigator-ui-replace'>
+										<p class='text-center'>{{_ 'review_navigator_no_comments'}}</p>
+										<p class='text-center'>{{_ 'review_navigator_friends_help'}}</p>
+									</div>
+								</div>
+							{{/unless}}
+					{{/if}}
+				{{/if}}
+			</div>
+			
+			{{#unless xs}}
+			<div id='review-submit-div'>
+				<div class='col-sm-4'>
+					<div class='comments1'></div>
+					{{> reviewCommentSubmitBoxS}}
+					{{#unless single}}
+						{{#unless likePlacement}}
+							{{#if currentUser}}
+								{{isHighlightedLike}}
+										<button title='Would you recommend this product over the other one?' type='button' class='likes-btn-flag likes-button-under-submit btn btn-primary likes1 disabled'><span class='glyphicon glyphicon-heart likes1'></span></button>
+								{{likes1}}
+							{{else}}
+								{{isHighlightedLike}}
+									<button title='Would you recommend this product over the other one?' type='button' class='likes-btn-flag likes-button-under-submit btn btn-primary likes1 disabled'><span class='glyphicon glyphicon-heart likes1'></span></button>
+								{{likes1}}
+							{{/if}}
+						{{/unless}}
+					{{/unless}}
+				</div>
+				<div class='col-sm-4 col-sm-offset-3'>
+					<div class='comments2'></div>
+					{{> reviewCommentSubmitBoxS}}
+					{{#unless single}}
+						{{#unless likePlacement}}
+							{{#if currentuser}}
+								{{isHighlightedLike}}
+									<button title='Would you recommend this product over the other one?' type='button' class='likes-btn-flag likes-button-under-submit btn btn-primary likes2 disabled'><span class='glyphicon glyphicon-heart likes2'></span></button>
+								{{likes2}}
+							{{else}}
+								{{isHighlightedLike}}
+									<button title='Would you recommend this product over the other one?' type='button' class='likes-btn-flag likes-button-under-submit btn btn-primary likes2 disabled'><span class='glyphicon glyphicon-heart likes2'></span></button>
+								{{likes2}}
+							{{/if}}
+						{{/unless}}
+					{{/unless}}
+				</div>
+			</div>
+			{{/unless}}
+			{{#if single}}
+				{{#unless likePlacement}}
+					{{#if currentUser}}
+						{{isHighlightedLike}}
+							<button title='Would you recommend this product?' type='button' class='likes-btn-flag likes-button-small-double btn btn-primary likes1 disabled'><span class='glyphicon glyphicon-heart likes1'></span></button>
+						{{likes1}}
+					{{else}}
+						{{isHighlightedLike}}
+							<button title='Would you recommend this product?' type='button' class='likes-btn-flag likes-button-small-double btn btn-primary likes1 disabled'><span class='glyphicon glyphicon-heart likes1'></span></button>
+						{{likes1}}
+					{{/if}}
+				{{/unless}}
+			{{/if}}
+			
+			{{#if noNavigator}}
+				{{#if hasMoreReviewHelper}}
+					<a href={{hasMoreReviewPath}} class='btn btn-info has-more-review-path'>Double Click to Change # of Comments</a>
+					<span title='If there are more snippets in the database, 3 more will be loaded. Otherwise, 3 will be hidden. If there is no change in snippet amount, check the "What Both Lack" section' class='glyphicon glyphicon-info-sign'></span>
+				{{else}}
+					<a href={{hasMoreReviewPath}} class='btn btn-info has-more-review-path'>Double Click to Change # of Comments</a>
+					<span title='If there are more snippets in the database, 3 more will be loaded. Otherwise, 3 will be hidden. If there is no change in snippet amount, check the "What Both Lack" section' class='glyphicon glyphicon-info-sign'></span>
+				{{/if}}
+			{{/if}}
+			{{#unless xs}} 
+				{{#if hasMoreReviewHelper}}
+					<a href={{hasMoreReviewPath}} class='btn btn-info has-more-review-path'>Double Click to Change # of Comments</a>
+					<span title='If there are more snippets in the database, 3 more will be loaded. Otherwise, 3 will be hidden. If there is no change in snippet amount, check the "What Both Lack" section' class='glyphicon glyphicon-info-sign'></span>
+				{{else}}
+					<a href={{hasMoreReviewPath}} class='btn btn-info has-more-review-path'>Double Click to Change # of Comments</a>
+					<span title='If there are more snippets in the database, 3 more will be loaded. Otherwise, 3 will be hidden. If there is no change in snippet amount, check the "What Both Lack" section' class='glyphicon glyphicon-info-sign'></span>
+				{{/if}}
+			{{/unless}}
+
+			<div id='likeDialog' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-xs'>
+					<div class='modal-content'>
+						<div class='modal-body'>
+							<h4 class='text-center'>{{_ 'review_page_like_share_header1'}}</h4>
+							<h4 class='text-center'>{{_ 'review_page_like_share_header2'}}</h4>
+							<br>
+							<div class='text-center'>
+								{{> shareit}}
+							</div>
+							<br>
+							<div class='text-center'>
+								<input id='dont-show-like-share' type='checkbox' name='dont-show-like-share'><label>{{_ 'review_page_share_opt_out'}}</label>
+							</div>
+							<br>
+							<div class='share-dialog-btn-div'>
+								<button type='button' class='btn btn-info like-dialog-btn' data-dismiss='modal'>{{_ 'review_page_share_close'}}</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+	
+			<div class='col-md-10 text-center' id='review-share-it'>
+				{{> shareit}}
+			</div>
+			
+			{{#unless isSearchBoxBottom}}
+				<br>
+				<div id='review-page-search-wrap-div'>
+					{{#unless searchBoxSummoned}}
+						<div class='text-center' id='another-search'>
+							<button class='btn btn-info' id='another-search-button'>{{_ 'review_page_another_search'}}</button>
+						</div>
+					{{else}}
+						{{> genericSearchTemplate}}
+					{{/unless}}
+				</div>
+				<br>
+				<br>
+				<br>
+			{{/unless}}
+	
+			<input title='Report this review if it is innappropriate' type='submit' class='btn btn-danger' value='Flag This Review' data-toggle='modal' data-target='#flagModal' id='flag-button'>
+	
+			<div id='flagModal' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-xs'>
+					<div class='modal-content'>
+						<div class='modal-header'>
+							<button type='button' class='close' data-dismiss='modal'>&times;</button>
+							<h3 class='modal-title'>{{_ 'review_page_flag_header'}}</h3>
+						</div>
+						<div class='modal-body'>
+						{{#if currentUser}}
+							<p>{{_ 'review_page_flag_p1'}}</p> 
+							<p>{{_ 'review_page_flag_p2'}}</p>
+							<textarea class='form-control' rows='5' maxlength='10000' id='flagExplanation'></textarea>
+					
+							<input type='submit' class='btn btn-danger' value='Submit' id='flagSubmit'>
+							<button type='button' class='btn btn-success' data-dismiss='modal'>Cancel</button>
+						{{else}}
+							{{> accessDenied}}
+						{{/if}}
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div id='flagCommentModal' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-xs'>
+					<div class='modal-content'>
+						<div class='modal-header'>
+							<button type='button' class='close' data-dismiss='modal'>&times;</button>
+							<h3 class='modal-title'>Report this Comment</h3>
+						</div>
+						<div class='modal-body'>
+						{{#if currentUser}}
+							<p>{{_ 'review_page_flag_p1'}}</p> 
+							<p>If you feel that this comment is inappropriate in some way, please let me know how and why, and I will review it as soon as possible.</p>
+							<textarea class='form-control' rows='5' maxlength='10000' id='flagCommentExplanation'></textarea>
+					
+							<input type='submit' class='btn btn-danger' value='Submit' id='flagCommentSubmit'>
+							<button type='button' class='btn btn-success' id='comment-flag-cancel' data-dismiss='modal'>Cancel</button>
+						{{else}}
+							{{> accessDenied}}
+						{{/if}}
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div id='flagAnswerModal' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-xs'>
+					<div class='modal-content'>
+						<div class='modal-body'>
+							<p>{{_ 'review_page_flag_answer'}}</p>
+					
+							<button type='button' class='btn btn-success' data-dismiss='modal'>OK</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div id='confirmDelete' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-xs'>
+					<div class='modal-content'>
+						<div class='modal-body'>
+							<h4 class='text-center'>{{_ 'review_page_delete_confirmation_question'}}</h4>
+							<br>
+							<div class='confirm-delete-btns-div'>
+								<button type='button' class='btn btn-success' data-dismiss='modal' id='confirm-delete-cancel'>{{_ 'review_page_delete_cancel'}}</button>
+								<button type='button' class='btn btn-danger' id='confirm-delete-yes'>{{_ 'review_page_delete_confirmation_confirm'}}</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		{{/each}}	
+	{{/unless}}
+	
+	{{noCommentsHelper}}
+	{{accuracyEncouragerFunction}}
+</template>

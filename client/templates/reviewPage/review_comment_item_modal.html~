@@ -1,0 +1,23 @@
+<template name='reviewCommentItemModal'>
+	<div class='container'>
+		<div class='comment modal' style='border-style:solid;'>
+			<div class='row commentTextParent'>
+				<p contenteditable='false' class='commentText'>{{comment}}</p>
+				<!-- use Medium js? -->
+			</div>
+			<div class='row'>
+				<div style='float:left;'><button type='button' class='btn btn-primary arrow-up {{isHighlightedUpVote}}'><span class='glyphicon glyphicon-arrow-up'></span></button></div>
+				<div style='float:left'><button type='button' class='btn btn-primary arrow-down {{isHighlightedDownVote}}'><span class='glyphicon glyphicon-arrow-down'></span></button></div>
+			</div>
+			
+			<div class='row' style='margin-top: 5%'>
+				{{#if owner}}
+				<a class='editComment'>Edit</a> or <a data-toggle='modal' class='deleteComment'>Delete</a>
+				{{/if}}
+				<div style='float:right'>{{submitted}}</div>
+				<div style='float:right; margin-right: 4%;'>{{author}}</div>
+			</div>
+			</div>
+		</div>
+	<br>
+</template>

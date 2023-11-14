@@ -1,0 +1,36 @@
+<template name='genericSearchTemplate'>
+	<div class='generic-search-container'>
+		<form class='generic-site-search-form'>
+			
+				<div class='fake-search-box'>
+					{{{_ 'Product_One_Generic'}}}
+					{{{_ 'Product_Two_Generic'}}}
+				</div>
+				
+			{{#if xs}}
+			<br>
+			{{/if}}
+			
+			{{{_ 'search'}}}
+			
+			{{#unless isSearchPage}}
+			<h5 class='text-center'>
+				{{_ 'generic_set_price_range'}}
+			</h5>
+			<span class='search-page-optional'>{{_ 'generic_optional'}}</span>
+			<div class='form-group text-center'>
+				<span class='price-range-input-text'>{{_ 'generic_from'}}</span>
+				
+				<input type='number' min=1 max=10000 class='form-control price-range-input' id='homePriceRange1'>
+				
+				<span class='price-range-input-text'>{{_ 'generic_to'}}</span>
+				
+				<input type='number' min=1 max=10000 class='form-control price-range-input' id='homePriceRange2'>
+				
+				<span class='price-range-input-text'>{{_ 'generic_currency'}}</span>
+			</div>
+			{{/unless}}
+		</form>
+	</div>
+	{{checkPriceInput}}
+</template>

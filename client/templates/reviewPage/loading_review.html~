@@ -1,0 +1,23 @@
+<template name='loadingReview'>
+	<div class='col-xs-12'>
+			
+		<h1>Loading...</h1>
+			
+		<h3 class='please-wait'>{{_ 'review_page_loading_p1'}}<a href='{{pathFor route='landingPage'}}'>{{_ 'review_page_loading_p2'}}</a>.</h3>
+			
+		<section class='stage-loading'>
+			{{#each reviews}}
+				{{#if this.single}}
+					<span class='landing-reviews-anchor'>
+						<img src="{{assetUrl 'revPicUrl1'}}" height='40px' />
+					</span>
+				{{else}}
+					<span class='landing-reviews-anchor'>
+						<img src="{{assetUrl 'revPicUrl1'}}" height='40px' />
+					</span>
+				{{/if}}
+			{{/each}}
+			<figure class='ball-loading'><span class='shadow-loading'></span></figure>
+		</section>
+	</div>
+</template>

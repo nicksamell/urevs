@@ -1,0 +1,26 @@
+/*Template.loading.helpers({
+	reviews: function () {
+		return [	
+			{ 'revPicUrl1':  'books.png'},
+			{ 'revPicUrl1':  'laptops_category.png'},
+			{ 'revPicUrl1':  'phones_category.png'},
+			{ 'revPicUrl1':  'cars.png'}
+		]
+	}
+});
+
+Template.loading.onRendered(function() {
+	$('.stage-loading').children('span').each(function() {
+		
+		if ($(this).index() == 0) {
+			$(this).addClass('landing-reviews-1-loading');
+		} else if ($(this).index() == 1) {
+			$(this).addClass('landing-reviews-2-loading');
+		} else if ($(this).index() == 2) {
+			$(this).addClass('landing-reviews-3-loading');
+		} else if ($(this).index() == 3) {
+		 	$(this).addClass('landing-reviews-4-loading');
+		}
+		
+	});
+});*/

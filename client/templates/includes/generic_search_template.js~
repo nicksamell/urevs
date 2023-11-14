@@ -1,0 +1,60 @@
+Template.genericSearchTemplate.events({
+	'keyup #generic-site-search-query1': function() {
+		if ($('#generic-site-search-query2').val() == '') {
+			$('.generic-search-submit').val('Search');
+		} else {
+			$('.generic-search-submit').val('Compare');
+		}
+	},
+	'keyup #generic-site-search-query2': function() {
+		if ($('#generic-site-search-query1').val() == '') {
+			$('.generic-search-submit').val('Search');
+		} else {
+			$('.generic-search-submit').val('Compare');
+		}
+	},
+	'click .generic-search, submit .generic-site-search-form': function(e) {
+		e.preventDefault();
+		
+		let searchString1;
+		let searchString2;
+		let typeFilter = 'all';
+	
+		if (!$('#generic-site-search-query1').val()) {
+			searchString1 = 'null';
+		} else {
+			searchString1 = $('#generic-site-search-query1').val();
+		}
+	
+		if (!$('#generic-site-search-query2').val()) {
+			searchString2 = 'null';
+		} else {
+			searchString2 = $('#generic-site-search-query2').val();
+		}
+	
+		if ($('#generic-site-search-query1').val() && $('#generic-site-search-query2').val()) {
+			typeFilter = 'comparison';
+		}
+
+		Router.go('searchLandingPage', {searchString1, searchString2, typeFilter});
+	}
+});
+
+Template.genericSearchTemplate.onRendered(function(){
+	Tracker.autorun(function() {
+		if (Session.get('newSearchUrl')) {
+			if (Router.current().params.searchString1 != 'null' && Router.current().params.searchString2 != 'null') {
+				$('#generic-site-search-query1').val(Router.current().params.searchString1);
+				$('#generic-site-search-query2').val(Router.current().params.searchString2);
+			}
+			else if (Router.current().params.searchString1 != 'null') {
+				$('#generic-site-search-query1').val(Router.current().params.searchString1);
+			} 
+			else if (Router.current().params.searchString2 != 'null') {
+				$('#generic-site-search-query2').val(Router.current().params.searchString2);
+			}
+		
+			Session.set('newSearchUrl', false);
+		}
+	});
+});

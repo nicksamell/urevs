@@ -1,0 +1,29 @@
+<template name='trendingPage'>
+	<h2 class='text-center newest-trending-h2'>{{_ 'trending_header'}}</h2>
+	<h4 class='text-center'>{{_ 'trending_sub_header'}}</h4>
+	<div class='col-xs-12'>
+		{{#each trendingReviews}}
+			{{> trendingPageReviewItem}}
+		{{else}}
+			<br>
+			<h4 class='text-center'>{{_ 'trending_if_none_yet'}}</h4>
+			<p class='text-center'>(by adding review snippets and getting others involved)</p>
+		{{/each}}
+		
+		{{#if hasMoreTrendingHelper}}
+			<a href="{{hasMoreTrendingPath}}" class='btn btn-info newest-trending-load-more-less'>{{_ 'trending_load_more'}}</a>
+		{{else}}
+			<a href="{{hasMoreTrendingPath}}" class='btn btn-info newest-trending-load-more-less'>{{_ 'trending_hide_reviews'}}</a>
+		{{/if}}
+		
+		<div id='newest-trending-page-search-wrap-div'>
+			{{#unless searchBoxSummoned}}
+				<div class='text-center' id='another-search'>
+					<button class='btn btn-info' id='another-search-button'>{{_ 'trending_another_search'}}</button>
+				</div>
+			{{else}}
+				{{> genericSearchTemplate}}
+			{{/unless}}
+		</div>
+	</div>
+</template>

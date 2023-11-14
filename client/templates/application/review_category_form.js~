@@ -1,0 +1,111 @@
+Template.reviewCategoryForm.onRendered(function() {
+	Session.set('firstQuestionAnswered', false);
+});
+
+Template.reviewCategoryForm.helpers({
+	reviewFormCategories: function() {
+		return Categories.find();
+	},
+	firstQuestionAnswered: function() {
+		return Session.get('firstQuestionAnswered');
+	}
+});
+
+Template.reviewCategoryForm.events({
+	'click .first-question-pill': function() {
+		Session.set('firstQuestionAnswered', true);
+	},
+	'click #reviewsingle': function() {
+			var review = {
+				single: true,
+				category: $('#createReview').find('[id=categPick]').val(),
+				productName1: $('#srevPick').val(),
+				picUrl1: $('#suploadPic').val()
+			};
+
+			review.category = review.category.toLowerCase();
+			
+			$('#reviewsingle').attr('value', 'Creating...');
+			
+			Meteor.call('reviewInsert', review, function(error, result) {
+				if (error) {
+					$('#reviewsingle').attr('value', 'Submit');
+				
+					return throwError(error);
+				}
+				
+				if (result.reviewExists) {
+					Session.set('newReviewCategory', review.category);
+					Session.set('newReviewId', result._id);
+				
+					$('#review-already-started').modal();
+				} else {
+					newReview = true;
+			//variable set to let review page know that it must reload since new review causes shade screen
+				
+					Router.go('reviewPage', {category: review.category, _id: result._id});
+				}
+			});
+	},
+	'click #reviewcomparison': function() {
+			var review = {
+					single: false,
+					category: $('#createReview').find('[id=categPick]').val(),
+					productName1: $('#revPickA').val(),
+					productName2: $('#revPickB').val(),
+					picUrl1: $('#uploadPicA').val(),
+					picUrl2: $('#uploadPicB').val()
+				};
+			
+				review.category = review.category.toLowerCase();
+			
+				$('#reviewcomparison').attr('value', 'Creating...');			
+			
+				Meteor.call('reviewInsert', review, function(error, result) {
+					if (error) {
+						$('#reviewcomparison').attr('value', 'Submit');
+				
+						return throwError(error.reason);
+					}
+				
+					if (result.reviewExists) {
+						Session.set('newReviewCategory', review.category);
+						Session.set('newReviewId', result._id);
+				
+						$('#review-already-started').modal();
+					} else {
+						newReview = true;
+				//variable set to let review page know that it must reload since new review causes shade screen
+					
+						Router.go('reviewPage', {category: review.category, _id: result._id});
+					}
+				});
+	},
+	'click #go-to-review': function() {						
+				newReview = true;
+				//variable set to let review page know that it must reload since new review causes shade screen
+				
+				Router.go('reviewPage', {category: Session.get('newReviewCategory'), _id: Session.get('newReviewId')});
+	},
+	'click #categorycreatebutton': function() {
+			var categoryProposal = {
+				proposedName: $('#createcategPick').val()
+			};
+			
+			$('#categorycreatebutton').attr('value', 'Sending...');
+			
+				Meteor.call('newCategoryProposalInsert', categoryProposal, function(error, result) {
+					if (error) {
+						$('#categorycreatebutton').attr('value', 'Submit');
+				
+						return throwError(error);
+					}
+				
+					$('#createCategory').modal('toggle');
+					$('#thank-you-for-category').modal('toggle');
+				
+					$('#categorycreatebutton').attr('value', 'Submit');
+					$('#createcategPick').val('');
+				});
+	}			
+});

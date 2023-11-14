@@ -1,0 +1,24 @@
+<template name='bullHornReviewItem'>
+	<div class='col-xs-12 col-s-2 {{accountColMd}} account-page-bull-horn-review-item-wrapper' style='margin-bottom: 30px;'>
+		<a class='account-bull-horn-item-link' href="{{pathFor 'reviewPage' category=this.category _id=this._id}}">
+		{{#if single}}
+			<div class='row text-center'>	
+				<img src='/{{revPicUrl1}}' class='img-thumbnail img-responsive single-account-horn-img' />
+				<br>
+				<div class='text-center'>
+					{{revTitle}}
+				</div>
+			</div>
+		{{else}}
+			<div class='row text-center'>
+				<img src='/{{revPicUrl1}}' class='img-thumbnail img-responsive double-account-horn-img' />
+				<img src='/{{revPicUrl2}}' class='img-thumbnail img-responsive double-account-horn-img' />
+				<br>
+				<div class='text-center'>
+					{{revTitleDouble}}
+				</div>
+			</div>
+		{{/if}}
+		</a>
+	</div>
+</template>

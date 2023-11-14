@@ -1,0 +1,93 @@
+<template name='searchLandingPage'>
+	{{#unless searchResults}}
+
+		{{> loading}}
+		
+	{{else}}
+		<div class='text-center col-sm-10' id='search-search-div'>
+			{{> genericSearchTemplate}}
+		</div>
+
+		{{#if xs}}
+		<div class='col-xs-12 col-sm-2 filters-wrapper'>
+			<button class='btn btn-info filters-show' data-toggle='collapse' data-target='#filters'>{{_ 'search_landing_filter_title'}}<span class='glyphicon glyphicon-chevron-down filters-chevron'></span></button>
+		
+				<div id='filters' class='collapse col-xs-12 col-sm-2'>
+					<h5 class='text-center'>
+						{{_ 'search_landing_filter'}}
+					</h5>
+					<ul class='nav nav-pills nav-stacked' id='typeFilterTabs'>
+						<li>
+							<a href="{{pathFor route='searchLandingPage' searchString1=searchString1Helper searchString2=searchString2Helper typeFilter='all' searchLimit=searchLimitHelper}}" class='btn btn-info {{isAll}}'>{{_ 'All'}}</a>
+						</li>
+						<li>
+							<a href="{{pathFor route='searchLandingPage' searchString1=searchString1Helper searchString2=searchString2Helper typeFilter='single' searchLimit=searchLimitHelper}}" class='btn btn-info {{isSingle}}'>{{_ 'Single'}}</a>
+						</li>
+						<li>
+							<a href="{{pathFor route='searchLandingPage' searchString1=searchString1Helper searchString2=searchString2Helper typeFilter='comparison' searchLimit=searchLimitHelper}}" class='btn btn-info {{isDouble}}'>{{_ 'Versus'}}</a>
+						</li>
+					</ul>
+				</div>
+		</div>
+		{{/if}}
+
+		<div class='container search-results-container col-xs-12 col-sm-10'>
+				{{#each searchResults}}
+					{{> searchResultItem}}
+				{{else}}
+				<br>
+					{{#if isSingleDouble}}
+						<h3 class='text-center'>{{_ 'search_landing_cant_find_filter'}}</h3>
+						{{#if spellCheckSuggestions}}<p>{{_ 'search_landing_did_you_mean_root'}}<a href="#" id='spellCheckRedirect'>{{spellCheckSuggestions}}</a>{{_ 'search_landing_did_you_mean_root_question'}}</p>{{/if}}
+					{{else}}
+						<h3 class='text-center'>{{_ 'search_landing_cant_find_terms'}}</h3>
+						{{#if spellCheckSuggestions}}<p>{{_ 'search_landing_did_you_mean_root'}}<a href="#" id='spellCheckRedirect'>{{spellCheckSuggestions}}</a>{{_ 'search_landing_did_you_mean_root_question'}}</p>{{/if}}
+					{{/if}}
+				{{/each}}
+			
+			{{#if hasMoreSL}}
+				<a href='{{hasMoreSearchPath}}' id='has-more-search-path' class='btn btn-info'>{{_ 'search_landing_load_more'}}</a>
+				{{else}}
+				<br>
+				<p class='text-center'>{{_ 'search_landing_no_more_results'}}</p>
+			{{/if}}
+			
+			<a id='asd' href='#addreview' data-toggle='modal' data-target='#createReview'>
+				<button class='btn btn-info search-cant-find-div col-xs-12'>
+					{{_ 'search_landing_cant_find_q'}}
+				</button>
+			</a>
+		</div>
+		
+		{{#unless xs}}
+		<div class='col-xs-12 col-sm-2 filters-wrapper'>
+			<button class='btn btn-info filters-show' data-toggle='collapse' data-target='#filters'>{{_ 'search_landing_filter_title'}}<span class='glyphicon glyphicon-chevron-down filters-chevron'></span></button>
+		
+				<div id='filters' class='collapse col-xs-12 col-sm-2'>
+					<h5 class='text-center'>
+						{{_ 'search_landing_filter'}}
+					</h5>
+					<ul class='nav nav-pills nav-stacked' id='typeFilterTabs'>
+						<li>
+							<a href="{{pathFor route='searchLandingPage' searchString1=searchString1Helper searchString2=searchString2Helper typeFilter='all' searchLimit=searchLimitHelper}}" class='btn btn-info {{isAll}}'>{{_ 'All'}}</a>
+						</li>
+						<li>
+							<a href="{{pathFor route='searchLandingPage' searchString1=searchString1Helper searchString2=searchString2Helper typeFilter='single' searchLimit=searchLimitHelper}}" class='btn btn-info {{isSingle}}'>{{_ 'Single'}}</a>
+						</li>
+						<li>
+							<a href="{{pathFor route='searchLandingPage' searchString1=searchString1Helper searchString2=searchString2Helper typeFilter='comparison' searchLimit=searchLimitHelper}}" class='btn btn-info {{isDouble}}'>{{_ 'Versus'}}</a>
+						</li>
+					</ul>
+				</div>
+		</div>
+		{{/unless}}
+
+		<!--
+		<div class='col-xs-10 text-center search-share-it'>
+			{{> shareit}}
+		</div>
+		-->
+	
+		{{> reviewCategoryForm}}
+	{{/unless}}
+</template>

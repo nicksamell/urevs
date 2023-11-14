@@ -1,0 +1,14 @@
+<template name='genericSearchTemplate'>
+	<div class='generic-search-container container'>
+		<form class='generic-site-search-form'>
+			<div class='fake-search-box-wrapper'>
+				<div class='fake-search-box'>
+					{{{_ 'Product_One_Generic'}}}
+					{{{_ 'Product_Two_Generic'}}}
+				</div>
+			</div>
+			
+			{{{_ 'search'}}}
+		</form>
+	</div>
+</template>

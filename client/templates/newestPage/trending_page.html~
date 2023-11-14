@@ -1,0 +1,28 @@
+<template name='trendingPage'>
+		
+		<div class='col-xs-offset-9 col-xs-3'>
+			<input type='button' class='btn btn-success' value='What would you like to see?' data-toggle='collapse' data-target='#settings'>
+		
+			<div id='settings' class='collapse'>
+				<h3>Your Trending Settings</h3>
+				<p>Your currently saved preferences are:</p>
+						<p>{{preferencesList}}</p>
+						<p>{{#unless preferencesList}}None{{/unless}}</p>
+				<label>I want to see:</label>
+					<form role='form' id='availCategs'>
+						<fieldset>
+						{{#each availCategories}}
+								<input class='checkboxInput' type='checkbox' name='{{title}}'><label>{{title}}</label>
+
+						{{/each}}
+						</fieldset>
+					</form>
+					
+					{{#if currentUser}}
+						<input type='submit' class='btn btn-success' value='Remember These Preferences' id='trendingPrefSave'>
+					{{else}}
+						<p>Log in so that we can remember your preferences</p>	
+					{{/if}}
+			</div>
+		</div>
+</template>

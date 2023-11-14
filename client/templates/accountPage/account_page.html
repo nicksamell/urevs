@@ -1,0 +1,301 @@
+<template name='accountPage'>
+	<div class='text-center search-account-div col-sm-12'>
+		{{> genericSearchTemplate}}
+	</div>
+		{{#if currentUser}}
+	<div class='container'>
+		<div class='row'>
+		<div class='col-sm-12 text-center'>
+			<h2 id='username'>{{userName}}</h2>
+			<br>
+			{{#if ppSMChosen}}
+			<img id='account-pro-pic-large' src="{{proPic}}" />
+			{{else}}
+			<img id='account-pro-pic-large' src="{{assetUrl proPic}}" />
+			{{/if}}
+			<br>
+			<a id='pro-pic-settings-change' class='pro-pic-settings-change-class' href='#' data-toggle='collapse' data-target='#proPicSettings'>{{_ 'change_photo'}}</a>
+		
+			<div id='proPicSettings' class='collapse'>
+				<label>{{_ 'pro_pic_choice_header'}}</label>
+					<form role='form' id='proPicSettingsForm'>
+						<fieldset>
+							<input class='checkboxInput' type='radio' name='proPicSet' value='proPicSM' {{ppSMChecked}}><label>{{_ 'pic_choice_smpic'}}</label>
+							<img id='account-pro-pic-sm' class='pro-pic-option' src="{{userSMProPic}}" />
+							<br>
+							<input class='checkboxInput' type='radio' name='proPicSet' value='proPicDefault' {{ppDefaultChecked}}><label>{{_ 'pic_choice_default'}}</label>
+							<img id='account-pro-pic-default' class='pro-pic-option' src="{{assetUrl 'pro_pic_default.png'}}" />
+							<br>
+							<input class='checkboxInput' type='radio' name='proPicSet' value='proPic1' {{pp1Checked}}><label>{{_ 'pic_choice_1'}}</label>
+							<img id='account-pro-pic-1' class='pro-pic-option' src="{{assetUrl 'pro_pic_1.png'}}" />
+							<br>
+							<input class='checkboxInput' type='radio' name='proPicSet' value='proPic2' {{pp2Checked}}><label>{{_ 'pic_choice_2'}}</label>
+							<img id='account-pro-pic-2' class='pro-pic-option' src="{{assetUrl 'pro_pic_2.png'}}" />
+							<br>
+							<input class='checkboxInput' type='radio' name='proPicSet' value='proPic3' {{pp3Checked}}><label>{{_ 'pic_choice_3'}}</label>
+							<img id='account-pro-pic-3' class='pro-pic-option' src="{{assetUrl 'pro_pic_3.png'}}" />
+							<br>
+							<input class='checkboxInput' type='radio' name='proPicSet' value='proPic4' {{pp4Checked}}><label>{{_ 'pic_choice_4'}}</label>
+							<img id='account-pro-pic-4' class='pro-pic-option' src="{{assetUrl 'pro_pic_4.png'}}" />
+							<br>
+							<input class='checkboxInput' type='radio' name='proPicSet' value='proPic5' {{pp5Checked}}><label>{{_ 'pic_choice_5'}}</label>
+							<img id='account-pro-pic-5' class='pro-pic-option' src="{{assetUrl 'pro_pic_5.png'}}" />
+							<br>
+							<input class='checkboxInput' type='radio' name='proPicSet' value='proPic6' {{pp6Checked}}><label>{{_ 'pic_choice_6'}}</label>
+							<img id='account-pro-pic-6' class='pro-pic-option' src="{{assetUrl 'pro_pic_6.png'}}" />
+						</fieldset>
+					</form>
+			</div>
+			<div id='bullHornReviewPanel' class='col-sm-12'>
+				<div class='row'>
+					<h3>{{_ 'bull_horn_panel_header'}}</h3>
+				</div>
+				<div class='row col-sm-12'>
+					{{#if bullHornReviews}}
+						{{#each bullHornReviews}}
+							{{> bullHornReviewItem}}
+						{{/each}}
+					{{else}}
+						<p>{{_ 'alternate_bh_panel_text'}}</p>
+					{{/if}}
+				</div>
+			</div>
+			<br>
+			<div id='messagePanel' class='col-sm-12'>
+				<div class='row'>
+					<h3>{{_ 'messages_header'}}</h3>
+				</div>
+				<div class='row col-sm-12'>
+					{{#if messages}}
+						{{#each messages}}
+							{{> messageItem}}
+						{{/each}}
+					{{else}}
+						{{{_ 'messages_default_message'}}}
+					{{/if}}
+				</div>
+			</div>
+						
+			<div id='confirmMessageRemove' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-md'>
+					<div class='modal-content'>
+						<div class='modal-body'>
+							<h4 class='text-center'>{{_ 'delete_message_header'}}</h4>
+							<br>
+							<div class='confirm-delete-btns-div'>
+								<button type='button' class='btn btn-danger' data-dismiss='modal' id='confirm-message-remove-cancel'>{{_ 'account_page_delete_cancel'}}</button>
+								<button type='button' class='btn btn-success' id='confirm-message-remove-yes'>{{_ 'account_page_delete_confirmation_confirm'}}</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<br>
+			<br>
+			<div id='comingSoon'>
+				<h1>{{_ 'coming_soon_header'}}</h1>
+				<p>{{{_ 'coming_soon_text'}}}</p>
+			</div>	
+		</div>
+		
+		<div id='yesYoutube' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-lg'>
+					<div class='modal-content'>
+						<div class='modal-header'>
+						<button type='button' class='close' data-dismiss='modal'>&times;</button>
+						</div>
+						<div class='modal-body'>
+							<p>{{_ 'reviewer_settings_youtube_form_text_1'}}</p>
+							<p>{{_ 'reviewer_settings_youtube_form_text_2'}}</p>
+							<p>{{_ 'reviewer_settings_youtube_form_text_3'}}</p>
+							{{{_ 'reviewer_settings_youtube_form_text_4'}}}
+								<input type='text' id='youtube-input' autofocus>
+								<input type='submit' class='btn btn-success' value="Send" id='reviewerSetSave'>
+						</div>
+					</div>
+				</div>
+			</div>
+	
+			<div id='noYoutube' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-md'>
+					<div class='modal-content'>
+						<div class='modal-body'>
+							<h4 class='text-center'>{{_ 'reviewer_settings_delete_youtube_header'}}</h4>
+							<h5 class='text-center'>{{_ 'reviewer_settings_delete_youtube_sub_header'}}</h5>
+							<br>
+							<div class='text-center'>
+								<button type='button' class='btn btn-success' data-dismiss='modal' id='confirm-delete-youtube-cancel'>{{_ 'account_page_delete_cancel'}}</button>
+								<button type='button' class='btn btn-danger' id='confirm-delete-youtube-yes'>{{_ 'account_page_delete_confirmation_confirm'}}</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+		<div class='col-xs-12 settings-account-div'>
+			<h3>{{_ 'settings_header'}}</h3>
+			<button data-toggle='collapse' data-target='#settings'><span class='glyphicon glyphicon-th-list'></span></button>
+		
+		<div id='settings' class='collapse'>
+			<h3>{{_ 'reviewer_settings_header'}}</h3>
+				<div>
+					<label>{{_ 'reviewer_settings_youtube_declaration'}}</label>
+					<ul class='nav nav-pills youtube-btns'>
+						{{#if isYoutube}}
+							<li class='active' data-toggle='pill' id='yes-youtube'><a data-toggle='modal' data-target='#yesYoutube'>{{_ 'account_yes'}}</a></li>
+							<li id='no-youtube'><a data-toggle='pill'>{{_ 'account_no'}}</a></li>
+						{{else}}
+							<li data-toggle='pill' id='yes-youtube'><a data-toggle='modal' data-target='#yesYoutube'>{{_ 'account_yes'}}</a></li>
+							<li class='active' id='no-youtube'><a data-toggle='pill'>{{_ 'account_no'}}</a></li>
+						{{/if}}
+					</ul>
+				</div>
+				<br>
+				<br>
+			<hr>
+							
+			<h3>{{_ 'review_settings_header'}}</h3>
+				<label>{{_ 'review_setting1_label'}}</label>
+				<form role='form' id='likeButtonSettings'>
+					<fieldset>
+						{{#if isLikeChecked}}
+							<input class='checkboxInput' type='radio' name='likeSet' value='top'><label>{{_ 'review_setting1_top'}}</label>
+							<br>
+							<input class='checkboxInput' type='radio' name='likeSet' value='bottom' checked><label>{{_ 'review_setting1_bottom'}}</label>
+						{{else}}
+							<input class='checkboxInput' type='radio' name='likeSet' value='top' checked><label>{{_ 'review_setting1_top'}}</label>
+							<br>
+							<input class='checkboxInput' type='radio' name='likeSet' value='bottom'><label>{{_ 'review_setting1_bottom'}}</label>
+						{{/if}}
+					</fieldset>
+				</form>
+				
+				<br>
+				
+				<form role='role' id='showShareSettings'>
+					<input id='show-share' type='checkbox' name='dont-show' {{isShowChecked}}><label for='show-share'>{{_ 'review_setting2_label'}}</label>
+				</form>
+				
+				<br>
+				
+				<form role='role' id='showShareRecSettings'>
+					<input id='show-share-rec' type='checkbox' name='dont-show-rec' {{isShowRecChecked}}><label for='show-share-rec'>{{_ 'review_setting3_label'}}</label>
+				</form>
+				
+				<br>
+				
+				<label>{{_ 'review_setting4_label'}}</label>
+				<form role='form' id='commentSectionSwitcherSettings'>
+					<fieldset>
+							<input class='checkboxInput' type='radio' name='cSSSet' value='left' {{cSSSettingLeft}}><label>{{_ 'review_setting4_left'}}</label>
+							<br>
+							<input class='checkboxInput' type='radio' name='cSSSet' value='right' {{cSSSettingRight}}><label>{{_ 'review_setting4_right'}}</label>
+							<br>
+							<input class='checkboxInput' type='radio' name='cSSSet' value='both' {{cSSSettingBoth}}><label>{{_ 'review_setting4_both'}}</label>
+					</fieldset>
+				</form>
+				
+				<br>
+				
+				<label>{{_ 'review_setting5_label'}}</label>
+				<form role='form' id='searchBoxSettings'>
+					<fieldset>
+						{{#if isSearchBottom}}
+							<input class='checkboxInput' type='radio' name='searchBoxSet' value='searchTop'><label>{{_ 'review_setting1_top'}}</label>
+							<br>
+							<input class='checkboxInput' type='radio' name='searchBoxSet' value='searchBottom' checked><label>{{_ 'review_setting1_bottom'}}</label>
+						{{else}}
+							<input class='checkboxInput' type='radio' name='searchBoxSet' value='searchTop' checked><label>{{_ 'review_setting1_top'}}</label>
+							<br>
+							<input class='checkboxInput' type='radio' name='searchBoxSet' value='searchBottom'><label>{{_ 'review_setting1_bottom'}}</label>
+						{{/if}}
+					</fieldset>
+				</form>
+					<br>
+					<br>
+					<br>
+				<input type='submit' class='btn btn-success' value="{{_ 'settings_save_big'}}" id='likeSetSave'>
+						<hr>
+		</div>
+			<br>
+			{{#if deleteActive}}
+			<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#cancelAccountDeleteConfirm' id='delete-acct-btn'>{{_ 'account_deletion_cancel'}}</button>
+			{{else}}
+			<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#firstDeleteConfirm' id='delete-acct-btn'>{{_ 'account_deletion_first_confirm'}}</button>
+			{{/if}}
+			
+			<div id='firstDeleteConfirm' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-md'>
+					<div class='modal-content'>
+						<div class='modal-body'>
+							<h4 class='text-center'>{{_ 'account_deletion_second_confirm_ask'}}</h4>
+							<br>
+							<div class='text-center'>
+								<button type='button' class='btn btn-success' data-dismiss='modal' id='acct-delete-dismiss-btn1'>{{_ 'account_deletion_second_confirm_negation'}}</button>
+								<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#finalDeleteConfirm' id='first-delete-confirm-btn'>{{_ 'account_deletion_second_confirm_affirm'}}</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div id='finalDeleteConfirm' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-md'>
+					<div class='modal-content'>
+						<div class='modal-body'>
+							<h4 class='text-center'>{{_ 'account_deletion_third_confirm_h4'}}</h4>
+							<br>
+							<p>{{_ 'account_deletion_third_confirm_p1'}}</p>
+							<p>{{_ 'account_deletion_third_confirm_p2'}}</p>
+							<br>
+							<p>{{_ 'account_deletion_third_confirm_p3'}}</p>
+							<textarea class='form-control' rows='5' maxlength='10000' id='whyDeleteAccountMessage'></textarea>
+						<span id='suggestion-legal'>{{_ 'account_deletion_third_confirm_p4'}}</span>
+							<br>
+							<div class='text-center'>
+								<button type='button' class='btn btn-success' data-dismiss='modal' id='acct-delete-dismiss-btn2'>{{_ 'account_deletion_third_confirm_negation'}}</button>
+								<button type='button' class='btn btn-danger' id='second-delete-confirm-btn'>{{_ 'account_deletion_third_confirm_affirm'}}</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div id='cancelAccountDeleteConfirm' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-md'>
+					<div class='modal-content'>
+						<div class='modal-body'>
+							<h4 class='text-center'>{{_ 'account_cancel_deletion_modal_h4'}}</h4>
+							<br>
+							<div class='text-center'>
+								<button type='button' class='btn btn-success' data-dismiss='modal' id='acct-delete-cancel-confirm-btn'>{{_ 'account_cancel_deletion_modal_affirm'}}</button>
+								<button type='button' class='btn btn-danger' data-dismiss='modal'>{{_ 'account_cancel_deletion_modal_negate'}}</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div id='greatToSeeYouBack' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-md'>
+					<div class='modal-content'>
+						<div class='modal-body'>
+							<h4 class='text-center'>{{_ 'account_welcome_back_modal_h4'}}</h4>
+							<br>
+							<p>{{_ 'account_welcome_back_modal_p1'}}</p>
+							<div class='text-center'>
+								<button type='button' class='btn btn-success' data-dismiss='modal'>X</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+		</div>
+	</div>
+	{{else}}
+		<h1>{{_ 'account_page_please_login'}}</h1>
+	{{/if}}
+</template>

@@ -1,0 +1,5 @@
+<template name='homeTopCategoryItem'>
+	<div class='item'>
+			<a href='#'><img src='{{picUrl}}' width='100' class='img-thumbnail img-responsive' /></a>	
+	</div>
+</template>

@@ -1,0 +1,1416 @@
+/*$(window).scroll(function() {
+	if ($(window).scrollTop() + $(window).height() == $(document).height()) {
+		$('.navigator-ui').addClass('navigator-ui-bottom');
+		$('.navigator-ui-bottom').removeClass('navigator-ui');
+	}
+	
+	if ($(window).scrollTop() + $(window).height() < $(document).height()) {
+		$('.navigator-ui-bottom').addClass('navigator-ui');
+		$('.navigator-ui').removeClass('navigator-ui-bottom');
+	}
+});*/
+
+Template.reviewPage.onCreated(function() {
+	Session.set('review-navigator', 'Click >');
+	Session.set('isNormalNavigator', true);
+	Session.set('isCommentBoxSummoned', false);
+	Session.set('searchBoxSummonedReview', false);
+	Session.set('noNavigator', false);
+	Session.set('modalVisible', false);
+	if (Router.current().params.commentsLimit) {
+		Session.set('hasMoreLessURL', parseInt(Router.current().params.commentsLimit, 10));	
+	} else {
+		Session.set('hasMoreLessURL', 5);
+	}
+});
+
+Template.reviewPage.onRendered(function () {
+	if (newReview) {
+		newReview = false;
+		showGreenTut = true;
+		location.reload();
+	}	
+	/*
+	if (localStorage("commentInProgress") || commentInEdit.length || flagCommentInProgress.length || flagReviewInProgress.length) {
+		$('#inProgressModal').modal();
+	}*/
+	
+	if (showGreenTut) {
+		Meteor.setTimeout(function() {
+			throwSuccess('Thanks for creating a new review! Get started by bullhorning this review (blue button just below)');
+		}, 1000);
+	}
+	
+//DiscoverMeteor Start
+	this.find('.wrapper')._uihooks = {
+		insertElement: function(node, next) {
+			$(node)
+				.hide()
+				.insertBefore(next)
+				.fadeIn();
+		},
+		removeElement: function(node) {
+			$(node).fadeOut(function() {
+				$(this).remove();
+			});
+		}
+	}
+	this.find('.wrapper1')._uihooks = {
+		insertElement: function(node, next) {
+			$(node)
+				.hide()
+				.insertBefore(next)
+				.fadeIn();
+		},
+		removeElement: function(node) {
+			$(node).fadeOut(function() {
+				$(this).remove();
+			});
+		}
+	}
+	this.find('.wrapper2')._uihooks = {
+		insertElement: function(node, next) {
+			$(node)
+				.hide()
+				.insertBefore(next)
+				.fadeIn();
+		},
+		removeElement: function(node) {
+			$(node).fadeOut(function() {
+				$(this).remove();
+			});
+		}
+	}
+	this.find('.wrapper3')._uihooks = {
+		insertElement: function(node, next) {
+			$(node)
+				.hide()
+				.insertBefore(next)
+				.fadeIn();
+		},
+		removeElement: function(node) {
+			$(node).fadeOut(function() {
+				$(this).remove();
+			});
+		}
+	}
+	this.find('.wrapper4')._uihooks = {
+		insertElement: function(node, next) {
+			$(node)
+				.hide()
+				.insertBefore(next)
+				.fadeIn();
+		},
+		removeElement: function(node) {
+			$(node).fadeOut(function() {
+				$(this).remove();
+			});
+		}
+	}
+	//DiscoverMeteor End
+});
+
+Template.reviewPage.helpers({
+	/*
+	commentInProgress: function() {
+		if (commentInProgress.length) {
+			return commentInProgress;
+		} else {
+			return false;
+		}
+	},
+	commentInEdit: function() {},
+	flagCommentInProgress: function() {},
+	flagReviewInProgress: function() {},*/
+	shareData: function() {
+		let title; 
+		let description;
+		let image = 'urevs_mascot.png';
+		
+		if (Mongo.Collection.get(Router.current().params.category).find({_id: Router.current().params._id}).fetch()[0]['single']) {
+			title = Mongo.Collection.get(Router.current().params.category).find({_id: Router.current().params._id}).fetch()[0]['productName1'];
+			description = 'Check out and contribute to the community review of the ' + title + '. Save yourself time when choosing what to buy with urevs!';
+		} else {
+			title = Mongo.Collection.get(Router.current().params.category).find({_id: Router.current().params._id}).fetch()[0]['productName1'] + ' vs ' + Mongo.Collection.get(Router.current().params.category).find({_id: Router.current().params._id}).fetch()[0]['productName2'];
+			description = 'Check out and contribute to the community review of ' + title + '. Save yourself time when choosing what to buy with urevs!';
+		}
+		return {
+			title: title,
+			description: description,
+			thumbnail: image
+		};
+	},
+	picUrl1: function() {
+		if (this.picUrl1 == 'pending approval') {
+			return 'pending.png';
+		} else {
+			return this.picUrl1;
+		}
+	},
+	picUrl2: function() {
+		if (this.picUrl2 == 'pending approval') {
+			return 'pending.png';
+		} else {
+			return this.picUrl2;
+		}
+	},
+	xs: function() {
+		if ($(window).width() < 768) {
+			return true;
+		} else {
+			return false;
+		}		
+	},
+	currentCommentNumber: function() {
+		if (Session.get('review-navigator') == 'Click >') {
+			return Session.get('review-navigator');
+		}
+		
+		return parseInt(Session.get('review-navigator'), 10);
+	},
+	isNormalNavigator: function() {
+		return Session.get('isNormalNavigator');
+	},
+	cSSSetting: function() {
+		if (Meteor.user().profile.cSSSetting === 'left' || Meteor.user().profile.cSSSetting == undefined) {
+			return true;
+		}
+	},
+	cSSSettingBoth: function() {
+		if (Meteor.user().profile.cSSSetting === 'both') {
+			return true;
+		}
+	},
+	hasMoreReviewHelper: function() {
+		if (Session.get('hasMoreURLBoolean') || Session.get('hasMoreURLBoolean') === false) {
+			return Session.get('hasMoreURLBoolean');
+		} else {
+			let commentsLimit;
+			if (Router.current().params.commentsLimit) {
+				commentsLimit = parseInt(Router.current().params.commentsLimit, 10);
+			} else {
+				commentsLimit = 5;
+			}
+			
+			if ($(window).width() < 768) {
+				if (RSCount1 > commentsLimit) { 
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				if (RSCount1 > RSCount2) {
+					if (RSCount1 > commentsLimit) { 
+						return true;
+					} else {
+						return false;
+					}
+				} else {
+					if (RSCount2 > commentsLimit) { 
+						return true;
+					} else {
+						return false;
+					}
+				}
+			}
+		}
+	},
+	hasMoreLackReviewHelper: function() {
+		return hasMoreLackRS;
+	},
+	hasMoreReviewPath: function() {
+		let commentsLimit;
+		let collection = Router.current().params.category;
+		let reviewId = Router.current().params._id;
+		let url;
+		
+		commentsLimit = Session.get('hasMoreLessURL');
+
+		url = '/' + collection + '/' + reviewId + '/' + commentsLimit;
+	
+		return url;
+	},
+	hasMoreLackReviewPath: function() {
+		return hasMoreLackReviewPath;
+	},
+	noNavigator: function() {
+		return Session.get('noNavigator');
+	},
+	isHighlightedBullHorn: function() {
+		let collection = Router.current().params.category;
+		let reviewId = Router.current().params._id;
+
+		return ReactiveMethod.call('isHighlightedBullHorn', collection, reviewId);
+	},
+	isHighlightedLike: function() {
+		var collection = Router.current().params.category;
+		var reviewId = Router.current().params._id;
+		var single = this.single;
+		
+		if (ReactiveMethod.call('isHighlightedLike', collection, reviewId, single) == 'likes1') {
+			$('.btn.likes1').addClass('active');
+		} else if (ReactiveMethod.call('isHighlightedLike', collection, reviewId, single) == 'likes2') {
+			$('.btn.likes2').addClass('active');
+		}
+	},	
+	comments: function() {
+		var collection = Router.current().params.category;
+		collection += 'comments';
+		
+		return Mongo.Collection.get(collection).find({_id: Router.current().params._id}).fetch();
+	},
+	likePlacement: function() {
+		var userObject = Meteor.users.find({_id: Meteor.userId()}).fetch();
+
+		if (userObject[0]['profile']['likeSettings'] == 'top') {
+			return true;
+		} else {
+			return false;
+			//otherwise, set to bottom as default or because user prefers so
+		}
+	},
+	isSearchBoxBottom: function() {
+		var userObject = Meteor.users.find({_id: Meteor.userId()}).fetch();
+
+		if (userObject[0]['profile']['reviewSearchBoxPref'] === 'top') {
+			return true;
+		} else {
+			return false;
+			//otherwise, set to bottom as default or because user prefers so
+		} 
+	},
+	noCommentsHelper: function() {	
+		if (Mongo.Collection.get(Router.current().params.category + 'comments').find().fetch()[0]['comments1'].length == 0) {
+			return Session.set('noComments', true);
+		} else {
+			return Session.set('noComments', false);
+		}
+	},
+	noComments: function() {
+		return Session.get('noComments');
+	},
+	searchBoxSummoned: function() {
+		return Session.get('searchBoxSummonedReview');
+	},
+	showTutorial: function() {
+		Meteor.setTimeout(function() {
+			if (localStorage.getItem('visitedRev')) {
+				//do nothing
+			} else {
+				$('#tutorialDialog').modal();
+				localStorage.setItem('visitedRev', true);
+			}
+		}, 750);
+	},
+	accuracyEncouragerFunction: function() {
+		Meteor.setTimeout(function() {
+			$('.F-btn-flag').addClass('arrow-down');
+			$('.F-btn-flag').removeClass('disabled');
+			
+			$('.A-btn-flag').addClass('arrow-up');
+			$('.A-btn-flag').removeClass('disabled');
+			
+			$('.likes-btn-flag').addClass('likes-button');
+			$('.likes-btn-flag').removeClass('disabled');
+		}, 30000);
+	}
+});
+
+Template.reviewCommentItem.helpers({
+	commentsCount1: function() {
+		let array = Mongo.Collection.get(Router.current().params.category + 'comments').find().fetch()[0]['comments1'];
+		 
+		for(let i = 0; i < array.length; i++) { 
+			if(array[i]['_id'] === this._id) { 
+				return i + 1;
+			} 
+		} 
+		return -1; 
+	},	
+	commentsCount2: function() {
+		let array = Mongo.Collection.get(Router.current().params.category + 'comments').find().fetch()[0]['comments2'];
+		
+		for(let i = 0; i < array.length; i++) { 
+			if(array[i]['_id'] === this._id) { 
+				return i + 1;
+			} 
+		} 
+		return -1;
+	},
+	whichComment: function() {
+		if (this.commentsGroup == 'comments1') {
+			return true;
+		} else {
+			return false;
+		}
+	},
+	commentId: function() {
+		return this._id;
+	},
+	bigComment: function() {		
+		if (this.comment.length > 500) {
+			return true;
+		}
+	},
+	filteredComment: function() {
+		if (this.comment.length > 500) {
+			return this.comment.substring(0, 500);
+		}
+	},
+	owner: function() {
+		var commentsGroup = this.commentsGroup;
+		var collection = Router.current().params.category;
+		var commentId = this._id;
+		var reviewId = Router.current().params._id;
+
+		return ReactiveMethod.call('checkOwner', commentId, commentsGroup, collection, reviewId, Meteor.user()._id);
+	},
+	isHighlightedUpVote: function() {
+		var collection = Router.current().params.category;
+		var reviewId = Router.current().params._id;
+		var commentId = this._id;
+		var commentsGroup = $(this)[0]['commentsGroup'];
+		
+		return ReactiveMethod.call('isHighlightedUpVote', collection, reviewId, commentsGroup, commentId);
+	},	
+	isHighlightedDownVote: function() {
+		var collection = Router.current().params.category;
+		var reviewId = Router.current().params._id;
+		var commentId = this._id;
+		var commentsGroup = $(this)[0]['commentsGroup'];
+		
+		return ReactiveMethod.call('isHighlightedDownVote', collection, reviewId, commentsGroup, commentId);
+	},
+	isYoutubeLink: function() {
+		if (Meteor.user().profile.youtubeLink && Meteor.user().profile.youtubeLink != 'null') {
+			return true;
+		}
+	},
+	youtubeLink: function() {
+		return Meteor.user().profile.youtubeLink;
+	},
+	proPic: function() {
+		let collection = Router.current().params.category;
+		let reviewId = Router.current().params._id;
+		let commentId = this._id;
+		let commentsGroup = this.commentsGroup;
+		
+		return ReactiveMethod.call('commentProPic', collection, reviewId, commentId, commentsGroup);
+	}
+});
+
+Template.reviewCommentItemLack.helpers({
+	commentsCount3: function() {
+		let array = Mongo.Collection.get(Router.current().params.category + 'comments').find().fetch()[0]['commentsLack'];
+		 
+		for(let i = 0; i < array.length; i++) { 
+			if(array[i]['_id'] === this._id) { 
+				return i + 1;
+			} 
+		} 
+		return -1;
+	},
+	
+	bigComment: function() {		
+		if (this.comment.length > 500) {
+			return true;
+		}
+	},
+	
+	filteredComment: function() {
+		if (this.comment.length > 500) {
+			return this.comment.substring(0, 500);
+		}
+	},
+
+	owner: function() {
+		var commentsGroup = this.commentsGroup;
+		var collection = Router.current().params.category;
+		var commentId = this._id;
+		var reviewId = Router.current().params._id;
+
+		return ReactiveMethod.call('checkOwner', commentId, commentsGroup, collection, reviewId, Meteor.user()._id);
+	},
+	
+	isHighlightedUpVote: function() {
+		var collection = Router.current().params.category;
+		var reviewId = Router.current().params._id;
+		var commentId = this._id;
+		var commentsGroup = $(this)[0]['commentsGroup'];
+		
+		return ReactiveMethod.call('isHighlightedUpVote', collection, reviewId, commentsGroup, commentId);
+	},
+	
+	isHighlightedDownVote: function() {
+		var collection = Router.current().params.category;
+		var reviewId = Router.current().params._id;
+		var commentId = this._id;
+		var commentsGroup = $(this)[0]['commentsGroup'];
+		
+		return ReactiveMethod.call('isHighlightedDownVote', collection, reviewId, commentsGroup, commentId);
+	},
+	
+	isYoutubeLink: function() {
+		if (Meteor.user().profile.youtubeLink && Meteor.user().profile.youtubeLink != 'null') {
+			return true;
+		}
+	},
+	
+	youtubeLink: function() {
+		return Meteor.user().profile.youtubeLink;
+	},
+	
+	proPic: function() {
+		let collection = Router.current().params.category;
+		let reviewId = Router.current().params._id;
+		let commentId = this._id;
+		let commentsGroup = this.commentsGroup;
+		
+		return ReactiveMethod.call('commentProPic', collection, reviewId, commentId, commentsGroup);
+	}
+});
+
+Template.reviewCommentSubmitBoxS.helpers({
+	isCommentBoxSummoned: function() {
+		return Session.get('isCommentBoxSummoned');
+	}
+});
+
+Template.reviewCommentSubmitBoxXs.helpers({
+	isCommentBoxSummoned: function() {
+		return Session.get('isCommentBoxSummoned');
+	}
+});
+
+Template.reviewPage.events({
+	'click': function () {
+		if (Session.get('visitedLack')) {
+			if ($('#a1').parents('.item.active').length > 0) {
+				
+				if ($('#a1').parents().length == 0) {
+					Session.set('noComments', true);
+				} else {
+					Session.set('noComments', false);
+				}
+				
+			} else {
+				
+				if ($('#b1').parents().length == 0) {
+					Session.set('noComments', true);
+				} else {
+					Session.set('noComments', false);
+				}
+			
+			}
+			
+			Session.set('visitedLack', false); 
+		}
+	},
+	'click #review-lack-button': function() {
+		if ($(window).width() < 768) {
+			if ($('#c1').parents().length == 0) {
+				Session.set('noComments', true);
+			} else {
+				Session.set('noComments', false);
+			}
+		
+			Session.set('visitedLack', true);
+		}
+	},
+	'click .change-navigator': function(e) {
+		e.preventDefault();
+	
+		let currentComment = parseInt(Session.get('review-navigator'), 10);
+		if (Session.get('review-navigator') == 'Click >') {
+			currentComment = '1';
+		}
+		
+		$('.navigator-ui-wrapper').append("<form class='navigator-ui-input-form'><input class='navigator-ui-input' onfocus='this.value = this.value;' value=" + currentComment + " /></form>");
+		$('.change-navigator').detach();
+		$('.navigator-ui-wrapper').append("<a class='confirm-change-navigator'>OK</a>");
+		$('.navigator-ui-input').focus().select();
+	},
+	'submit .navigator-ui-input-form, click .confirm-change-navigator': function(e) {
+		e.preventDefault();
+		
+		Session.set('review-navigator', Math.floor($('.navigator-ui-input').val().toString()));
+		
+		$('.navigator-ui-input').detach();
+		$('.confirm-change-navigator').detach();
+		$('.navigator-ui-wrapper').append("<a class='change-navigator'>Change</a>");
+		
+		let target;
+		let postTarget;
+		
+		if ($('#bothLack').is('.fade.in')) {
+			target = '#c' + Session.get('review-navigator');
+
+			postTargetNo = Session.get('review-navigator') + 1;
+			postTarget = '#c' + postTargetNo;
+
+			if ($(postTarget).parents().length == 0) {
+				Session.set('isNormalNavigator', false);
+			} else {
+				Session.set('isNormalNavigator', true);
+			}
+			
+			if ($(target).parents().length == 0) {
+				throwError("Such a comment doesn't exist or isn't loaded yet.");
+			}
+			
+			$('#bothLack').animate({ scrollTop: $(target).position().top}, 500);
+		} else if ($('h4').parents('.item.active').find('h4').html() == "The Good..." 
+				|| $('h4').parents('.item.active').find('h4').hasClass('better-in-a')) {
+			target = '#a' + Session.get('review-navigator');
+			
+			postTargetNo = Session.get('review-navigator') + 1;
+			postTarget = '#a' + postTargetNo;
+			
+			if ($(postTarget).parents().length == 0) {
+				Session.set('isNormalNavigator', false);
+			} else {
+				Session.set('isNormalNavigator', true);
+			}
+			
+			if ($(target).parents().length == 0) {
+				throwError("Such a comment doesn't exist or isn't loaded yet.");
+			}
+			
+			$('html, body').animate({ scrollTop: $(target).offset().top}, 500);
+		} else if ($('h4').parents('.item.active').find('h4').html() == "The Bad..." 
+							|| $('h4').parents('.item.active').find('h4').hasClass('better-in-b')) {
+			target = '#b' + Session.get('review-navigator');
+			
+			postTargetNo = Session.get('review-navigator') + 1;
+			postTarget = '#c' + postTargetNo;
+		b
+			if ($(postTarget).parents().length == 0) {
+				Session.set('isNormalNavigator', false);
+			} else {
+				Session.set('isNormalNavigator', true);
+			}
+			
+			if ($(target).parents().length == 0) {
+				throwError("Such a comment doesn't exist or isn't loaded yet.");
+			}
+			
+			$('html, body').animate({ scrollTop: $(target).offset().top}, 500);
+		}
+	},
+	'click .navigator-ui': function() {
+		let preTarget = parseInt(Session.get('review-navigator'), 10) + 1;
+		if (Session.get('review-navigator') == undefined || Session.get('review-navigator') == 'Click >') {
+			preTarget = 1;
+		}
+		
+		let target;
+		let postTarget;
+		
+		if ($('#bothLack').is('.fade.in')) {
+			target = '#c' + preTarget.toString();
+			preTarget += 1;
+			postTarget = '#c' + preTarget.toString();
+			preTarget -= 1;
+			
+			let actualCommentsLimit;
+			if (Router.current().params.commentsLimit) {
+				actualCommentsLimit = parseInt(Router.current().params.commentsLimit, 10);
+			} else {
+				actualCommentsLimit = 5;
+			}
+			
+			if (RSCount3 > actualCommentsLimit) {
+				Session.set('hasMoreLessURL', actualCommentsLimit + 3);
+				if (!Session.get('hasMoreURLBoolean')) {	
+					Session.set('hasMoreURLBoolean', true);
+				}
+			} else {
+				if (actualCommentsLimit - 3 < 1) {
+					Session.set('hasMoreLessURL', 1);
+				} else {
+					Session.set('hasMoreLessURL', actualCommentsLimit - 3);
+				}
+				
+				if (Session.get('hasMoreURLBoolean')) {
+					Session.set('hasMoreURLBoolean', false);
+				}
+			}
+		} else if ($('h4').parents('.item.active').find('h4').html() == "The Good..." 
+				|| $('h4').parents('.item.active').find('h4').hasClass('better-in-a')) {
+			target = '#a' + preTarget.toString();
+			preTarget += 1;
+			postTarget = '#a' + preTarget.toString();
+			preTarget -= 1;
+			
+			let actualCommentsLimit;
+			if (Router.current().params.commentsLimit) {
+				actualCommentsLimit = parseInt(Router.current().params.commentsLimit, 10);
+			} else {
+				actualCommentsLimit = 5;
+			}
+			
+			if (RSCount1 > actualCommentsLimit) {
+				Session.set('hasMoreLessURL', actualCommentsLimit + 3);
+				if (!Session.get('hasMoreURLBoolean')) {	
+					Session.set('hasMoreURLBoolean', true);
+				}
+			} else {
+				if (actualCommentsLimit - 3 < 1) {
+					Session.set('hasMoreLessURL', 1);
+				} else {
+					Session.set('hasMoreLessURL', actualCommentsLimit - 3);
+				}
+				
+				if (Session.get('hasMoreURLBoolean')) {
+					Session.set('hasMoreURLBoolean', false);
+				}
+			}
+		} else if ($('h4').parents('.item.active').find('h4').html() == "The Bad..." 
+							|| $('h4').parents('.item.active').find('h4').hasClass('better-in-b')) {
+			target = '#b' + preTarget.toString();
+			preTarget += 1;
+			postTarget = '#b' + preTarget.toString();
+			preTarget -= 1;
+			
+			let actualCommentsLimit;
+			if (Router.current().params.commentsLimit) {
+				actualCommentsLimit = parseInt(Router.current().params.commentsLimit, 10);
+			} else {
+				actualCommentsLimit = 5;
+			}
+			
+			if (RSCount2 > actualCommentsLimit) {
+				Session.set('hasMoreLessURL', actualCommentsLimit + 3);
+				if (!Session.get('hasMoreURLBoolean')) {	
+					Session.set('hasMoreURLBoolean', true);
+				}
+			} else {
+				if (actualCommentsLimit - 3 < 1) {
+					Session.set('hasMoreLessURL', 1);
+				} else {
+					Session.set('hasMoreLessURL', actualCommentsLimit - 3);
+				}
+				
+				if (Session.get('hasMoreURLBoolean')) {
+					Session.set('hasMoreURLBoolean', false);
+				}
+			}
+		}
+		
+		if ($(target).parents().length != 0) {
+			newNavigator = preTarget.toString();
+			Session.set('review-navigator', newNavigator);
+			
+			if ($('#bothLack').is('.fade.in')) {
+				$('#bothLack').animate({ scrollTop: $(target).position().top}, 500);				
+			} else {
+				$('html, body').animate({ scrollTop: $(target).offset().top}, 500);
+			}
+		}
+		
+		if ($(postTarget).parents().length == 0) {
+			Session.set('isNormalNavigator', false);
+		}
+	},
+	'click .navigator-glyphicon-repeat': function() {
+		Session.set('review-navigator', '1');
+			
+		if ($('#bothLack').is('.fade.in')) {
+			target = '#c' + Session.get('review-navigator');
+		} else if ($('h4').parents('.item.active').find('h4').html() == "The Good..." 
+				|| $('h4').parents('.item.active').find('h4').hasClass('better-in-a')) {
+			target = '#a' + Session.get('review-navigator');
+		} else if ($('h4').parents('.item.active').find('h4').html() == "The Bad..." 
+							|| $('h4').parents('.item.active').find('h4').hasClass('better-in-b')) {
+			target = '#b' + Session.get('review-navigator');
+		}
+		
+		if ($('#bothLack').is('.fade.in')) {
+			$('#bothLack').animate({ scrollTop: $(target).position().top}, 500);
+		} else {
+			$('html, body').animate({ scrollTop: $(target).offset().top}, 500);
+		}
+		
+		Session.set('isNormalNavigator', true);
+	},
+	'click .navigator-has-more-review-path': function() {
+		if($('.navigator-has-more-review-path').html() == 'Hide Review Snippets') {
+			let currentLastCommentNumber;
+			if (Router.current().params.commentsLimit) {
+				if ((parseInt(Router.current().params.commentsLimit, 10) - 3) < 1) {
+					currentLastCommentNumber = 1;
+				} else {
+					currentLastCommentNumber = parseInt(Router.current().params.commentsLimit, 10) - 3;
+				}
+			} else {
+				currentLastCommentNumber = 2;
+			}
+			
+			Session.set('review-navigator', currentLastCommentNumber);
+
+			if ($('#bothLack').is('.fade.in')) {
+				target = '#c' + Session.get('review-navigator');
+				$('#bothLack').animate({ scrollTop: $(target).position().top}, 500);
+				
+				if (Router.current().params.commentsLimit) {
+					Session.set('hasMoreLessURL', parseInt(Router.current().params.commentsLimit, 10));
+				} else {
+					Session.set('hasMoreLessURL', 2);
+				}
+				Session.set('hasMoreURLBoolean', true);
+			} else if ($('h4').parents('.item.active').find('h4').html() == "The Good..." 
+					|| $('h4').parents('.item.active').find('h4').hasClass('better-in-a')) {
+				target = '#a' + Session.get('review-navigator');
+				$('html, body').animate({ scrollTop: $(target).offset().top}, 500);
+				
+				if (Router.current().params.commentsLimit) {
+					Session.set('hasMoreLessURL', parseInt(Router.current().params.commentsLimit, 10));
+				} else {
+					Session.set('hasMoreLessURL', 2);
+				}
+				Session.set('hasMoreURLBoolean', true);
+			} else if ($('h4').parents('.item.active').find('h4').html() == "The Bad..." 
+								|| $('h4').parents('.item.active').find('h4').hasClass('better-in-b')) {
+				target = '#b' + Session.get('review-navigator');
+				$('html, body').animate({ scrollTop: $(target).offset().top}, 500);
+				
+				if (Router.current().params.commentsLimit) {
+					Session.set('hasMoreLessURL', parseInt(Router.current().params.commentsLimit, 10));
+				} else {
+					Session.set('hasMoreLessURL', 2);
+				}
+				Session.set('hasMoreURLBoolean', true);
+			}
+			
+			Session.set('isNormalNavigator', false);
+		} else {
+			Session.set('hasMoreURLBoolean', false);
+			Session.set('isNormalNavigator', true);
+			let currentLastCommentNumber;
+			if (Router.current().params.commentsLimit) {
+				currentLastCommentNumber = parseInt(Router.current().params.commentsLimit, 10);
+			} else {
+				currentLastCommentNumber = 5;
+			}
+			Session.set('review-navigator', currentLastCommentNumber);
+		}
+	},
+	'click .navigator-x': function() {
+		$('.navigator-ui-wrapper').detach();
+		
+		Session.set('noNavigator', true);
+	},
+	'click .has-more-review-path': function() {
+		let actualCommentsLimit;
+		if (Router.current().params.commentsLimit) {
+			actualCommentsLimit = parseInt(Router.current().params.commentsLimit, 10);
+		} else {
+			actualCommentsLimit = 5;
+		}
+		
+		if (RSCount1 > RSCount2) {
+			if (RSCount1 > actualCommentsLimit) {
+				Session.set('hasMoreLessURL', actualCommentsLimit + 3);
+				if (!Session.get('hasMoreURLBoolean')) {	
+					Session.set('hasMoreURLBoolean', true);
+				}
+			} else {
+				if (actualCommentsLimit - 3 < 1) {
+					Session.set('hasMoreLessURL', 1);
+				} else {
+					Session.set('hasMoreLessURL', actualCommentsLimit - 3);
+				}
+			
+				if (Session.get('hasMoreURLBoolean')) {
+					Session.set('hasMoreURLBoolean', false);
+				}
+			}
+		} else {
+			if (RSCount2 > actualCommentsLimit) {
+				Session.set('hasMoreLessURL', actualCommentsLimit + 3);
+				if (!Session.get('hasMoreURLBoolean')) {	
+					Session.set('hasMoreURLBoolean', true);
+				}
+			} else {
+				if (actualCommentsLimit - 3 < 1) {
+					Session.set('hasMoreLessURL', 1);
+				} else {
+					Session.set('hasMoreLessURL', actualCommentsLimit - 3);
+				}
+				
+				if (Session.get('hasMoreURLBoolean')) {
+					Session.set('hasMoreURLBoolean', false);
+				}
+			}
+		}
+	},
+	'click .comments-carousel-control-xs': function(e) {
+		e.preventDefault();
+		
+		let preTarget = parseInt(Session.get('review-navigator'), 10) + 1;
+		if (Session.get('review-navigator') == undefined || Session.get('review-navigator') == 'Click >') {
+			preTarget = 1;
+		}
+		
+		let target;
+		let postTarget;
+		let firstTarget;
+		
+		if ($('h4').parents('.item.active').find('h4').html() == "The Good..." 
+				|| $('h4').parents('.item.active').find('h4').hasClass('better-in-a')) {
+			target = '#b' + preTarget.toString();
+			preTarget += 1;
+			postTarget = '#b' + preTarget.toString();
+			preTarget -= 1;
+			firstTarget = '#b1';
+			
+			let actualCommentsLimit;
+			if (Router.current().params.commentsLimit) {
+				actualCommentsLimit = parseInt(Router.current().params.commentsLimit, 10);
+			} else {
+				actualCommentsLimit = 5;
+			}
+			
+			if (RSCount2 > actualCommentsLimit) {
+				Session.set('hasMoreLessURL', actualCommentsLimit + 3);
+				Session.set('hasMoreURLBoolean', true);
+				Session.set('review-navigator', actualCommentsLimit);
+			} else {
+				if ((RSCount2 - 3) < 1) {
+					Session.set('hasMoreLessURL', 1);
+				} else {
+					Session.set('hasMoreLessURL', (RSCount2 - 3));
+				}
+				
+				Session.set('hasMoreURLBoolean', false);
+				Session.set('review-navigator', RSCount2);
+				let RStarget = '#b' + RSCount2.toString();
+				$('html, body').animate({ scrollTop: $(RStarget).offset().top}, 500);
+			}
+		} else if ($('h4').parents('.item.active').find('h4').html() == "The Bad..." 
+							|| $('h4').parents('.item.active').find('h4').hasClass('better-in-b')) {
+			target = '#a' + preTarget.toString();
+			preTarget += 1;
+			postTarget = '#a' + preTarget.toString();
+			preTarget -= 1;
+			firstTarget = '#a1';
+			
+			let actualCommentsLimit;
+			if (Router.current().params.commentsLimit) {
+				actualCommentsLimit = parseInt(Router.current().params.commentsLimit, 10);
+			} else {
+				actualCommentsLimit = 5;
+			}
+			
+			if (RSCount1 > actualCommentsLimit) {
+				Session.set('hasMoreLessURL', actualCommentsLimit + 3);
+				Session.set('hasMoreURLBoolean', true);
+				Session.set('review-navigator', actualCommentsLimit);
+			} else {
+				if ((RSCount1 - 3) < 1) {
+					Session.set('hasMoreLessURL', 1);
+				} else {
+					Session.set('hasMoreLessURL', (RSCount1 - 3));
+				}
+				
+				Session.set('hasMoreURLBoolean', false);
+				Session.set('review-navigator', RSCount2);
+				let RStarget = '#a' + RSCount1.toString();
+				$('html, body').animate({ scrollTop: $(RStarget).offset().top}, 500);
+			}
+		}
+		
+		if ($(target).parents().length == 0) {
+			Session.set('isNormalNavigator', false);
+		} else {
+			Session.set('isNormalNavigator', true);
+		}
+		
+		if ($(firstTarget).parents().length == 0) {
+			Session.set('noComments', true);
+		} else {
+			Session.set('noComments', false);
+		}
+	},
+	'click .showCommentBox': function() {
+		Session.set('isCommentBoxSummoned', true);
+	},
+	'click #another-search-button': function() {
+		Session.set('searchBoxSummonedReview', true);
+		
+		if (Meteor.user().profile.reviewSearchBoxPref != 'top') { 
+			$('html, body').animate({ scrollTop: '+=200px'}, 500);
+		}
+	},
+	'click .review-bullhorn': function() {
+		var collection = Router.current().params.category;
+		var reviewId = Router.current().params._id;
+		var single = this.single;
+		
+		var checkBHActivation = function () {
+			if ($('.review-bullhorn').hasClass('active')) {
+				$('.review-bullhorn').removeClass('active');
+			} else {
+				$('.review-bullhorn').addClass('active');
+			}
+		};
+		
+		checkBHActivation();
+		
+		Meteor.call('bullHornAdd', collection, reviewId, single, function(error, voted) {
+			if (error) {
+				checkBHActivation();
+				return throwError(error);
+			}
+			
+			if (!voted) {
+				throwSuccess('Bullhorn Cancelled');
+			}
+			
+			if (voted) {
+				throwSuccess('Bullhorned!');
+				
+				if (Meteor.user().profile.showShareSettings || Meteor.user().profile.showShareSettings == undefined) {
+					$('#shareDialog').modal('show');
+				}
+			}
+		});
+	},
+	
+	'click .share-dialog-btn': function() {
+		if ($('#dont-show-share').is(':checked')) {
+			let showShare = false;
+			let showShareRec;
+			let pref;
+			
+			Meteor.call('likeSettingsPrefSave', pref, showShare, showShareRec, function (error) {
+				if (error) {
+					return throwError(error);
+				}
+			
+				throwSuccess('Your settings have been saved!');
+			});
+		}
+	},
+	
+	'click .like-dialog-btn': function() {
+		if ($('#dont-show-like-share').is(':checked')) {
+			let showShareRec = false;
+			let showShare;
+			let pref;
+			
+			Meteor.call('likeSettingsPrefSave', pref, showShare, showShareRec, function (error) {
+				if (error) {
+					return throwError(error);
+				}
+			
+				throwSuccess('Your settings have been saved!');
+			});
+		}
+	},
+	
+	'click .likes-button': function(e) {
+		var collection = Router.current().params.category;
+		var reviewId = Router.current().params._id;
+		var single = this.single;
+		var likes;
+		
+		if ($(e.target).hasClass('likes1')) {
+			likes = 'likes1';
+		} else if ($(e.target).hasClass('likes2')) {
+			likes = 'likes2';
+		}
+		
+		var checkLBActivation = function () {
+			if (likes == 'likes1') {
+				if ($('.btn.likes1').hasClass('active')) {
+					$('.btn.likes1').removeClass('active');
+				} else {
+					$('.btn.likes1').addClass('active');
+				}
+			} else if (likes == 'likes2') {
+				if ($('.btn.likes2').hasClass('active')) {
+					$('.btn.likes2').removeClass('active');
+				} else {
+					$('.btn.likes2').addClass('active');
+				}
+			}
+		};
+		
+		checkLBActivation();
+		
+		Meteor.call('revLike', collection, reviewId, single, likes, function(error, liked) {
+			if (error) {
+				checkLBActivation();
+				return throwError(error);
+			}
+			
+			if (liked) {
+				if (Meteor.user().profile.showShareRecSettings || Meteor.user().profile.showShareRecSettings == undefined) {
+					$('#likeDialog').modal('show');
+				}
+			}
+		});
+	},
+	
+	'click .show-more': function(e) {
+		e.preventDefault();
+		
+		var etargetParent = $(e.target).parent('.commentText');
+		
+		etargetParent.html(this.comment);
+		etargetParent.append("<a class='show-less'>...show less</a>");
+		$(e.target).detach();
+	},
+	
+	'click .show-less': function(e) {
+		e.preventDefault();
+		
+		var etargetParent = $(e.target).parent('.commentText');
+		
+		var shorterComment = this.comment.substring(0, 500);
+
+		etargetParent.html(shorterComment);
+		etargetParent.append("<a class='show-more'>...show more</a>");
+		$(e.target).detach();
+	},
+		
+	'click .arrow-up': function(e) {
+		var collection = Router.current().params.category;
+		var reviewId = Router.current().params._id;
+		var commentId = this._id;
+		var commentsGroup;
+		if ($(e.target).parents('.parent').hasClass('comments1')){
+			commentsGroup = 'comments1';
+		} else if ($(e.target).parents('.parent').hasClass('comments2')){
+			commentsGroup = 'comments2';
+		} else if ($(e.target).parents('.parent').hasClass('commentsLack')){
+			commentsGroup = 'commentsLack';
+		};
+		
+		var checkAUActivation = function() {
+			if ($(e.target).is('button')) {
+				if ($(e.target).hasClass('active')) {
+					$(e.target).removeClass('active');
+				} else {
+					$(e.target).addClass('active');
+				}
+			} else {
+				if ($(e.target).parent().hasClass('active')) {
+					$(e.target).parent().removeClass('active');
+				} else {
+					$(e.target).parent().addClass('active');
+				}
+			}
+		};
+		
+		checkAUActivation();
+		
+		Meteor.call('commentVoteUp', collection, reviewId, commentsGroup, commentId, function(error) {
+			if (error) {
+				checkAUActivation();
+				return throwError(error);
+			}
+		});
+	},
+	
+	'click .arrow-down': function(e) {
+		var collection = Router.current().params.category;
+		var reviewId = Router.current().params._id;
+		var commentId = this._id;
+		var commentsGroup;
+		if ($(e.target).parents('.parent').hasClass('comments1')){
+			commentsGroup = 'comments1';
+		} else if ($(e.target).parents('.parent').hasClass('comments2')){
+			commentsGroup = 'comments2';
+		} else if ($(e.target).parents('.parent').hasClass('commentsLack')){
+			commentsGroup = 'commentsLack';
+		};
+		
+		var checkADActivation = function() {
+			if ($(e.target).is('button')) {
+
+				if ($(e.target).hasClass('active')) {
+					$(e.target).removeClass('active');
+				} else {
+					$(e.target).addClass('active');
+				}
+			
+			} else {
+		
+				if ($(e.target).parent().hasClass('active')) {
+					$(e.target).parent().removeClass('active');
+				} else {
+					$(e.target).parent().addClass('active');
+				}
+			
+			}
+		};
+		
+		checkADActivation();
+		
+		Meteor.call('commentVoteDown', collection, reviewId, commentsGroup, commentId, function(error) {
+			if (error) {
+				checkADActivation();
+				return throwError(error);
+			}
+		});
+	},
+	
+	'click .glyphicon-edit': function(e) {
+		if ($(e.target).parents('.container').find('.edit-table').length > 0) {
+			$('.edit-table').detach();
+		} else {
+			$(e.target).append("<ul class='edit-table'><li class='edit-table-li'><a class='editComment'>Edit</a></li><li class='edit-table-li'><a class='deleteComment'>Delete</a></li></ul>");
+		}
+	},
+	
+	'click .glyphicon-chevron-down': function(e) {
+		$(e.target).removeClass('glyphicon-chevron-down');
+		$(e.target).addClass('glyphicon-chevron-up');
+	},
+	
+	'click .glyphicon-chevron-up': function(e) {
+		$(e.target).removeClass('glyphicon-chevron-up');
+		$(e.target).addClass('glyphicon-chevron-down');
+	},
+	
+	//Content Editor
+	'click .editComment': function(e) {
+		e.preventDefault();
+		
+		if($('.ceDoneButton').length == 0){	
+			var text = $(e.target).parents('.edit-glyph').siblings('.commentTextParent');
+			originalText = text.find('.commentText').html();
+			text.find('.commentText').remove();
+			text.append("<textarea class='commentText' rows='10'>" + originalText + "</textarea>");
+		
+			text.append("<a class='ceDoneButton'>Done</a><a class='ceCancelButton'>Cancel</a>");
+			text.find('.commentText').focus();
+		} else {
+			throwError('Please edit one comment at a time');
+		}
+	},
+	/*
+	//Populate Emergency
+	'keyup .commentText': function(e) {
+		var body = $(e.target);
+		
+		commentInEdit = body.val();
+	},*/
+	
+	//Edit Comment
+	'click .ceDoneButton': function(e) {
+		e.preventDefault();
+		
+		var text = $(e.target).siblings('.commentText');
+		var newText = text.val();
+		
+		var collection = Router.current().params.category;
+		
+		var reviewId = Router.current().params._id;
+		
+		var commentId = this._id;
+		
+		var commentsGroup;
+		if ($(e.target).parents('.parent').hasClass('comments1')){
+			commentsGroup = 'comments1';
+		} else if ($(e.target).parents('.parent').hasClass('comments2')){
+			commentsGroup = 'comments2';
+		} else if ($(e.target).parents('.parent').hasClass('commentsLack')){
+			commentsGroup = 'commentsLack';
+		};
+
+		Meteor.call('reviewCommentEdit', newText, collection, reviewId, commentId, commentsGroup, function(error, newSavedText) {
+			if (error) {
+				return throwError(error);
+			}
+			
+			text.detach();
+			$(e.target).parent('.commentTextParent').append("<span class='commentText'>" + newSavedText + "</span>");
+					
+			if($('.ceDoneButton').length == 1){
+				$('.ceDoneButton').detach();
+				$('.ceCancelButton').detach();
+			};
+			
+			/*commentInEdit = '';*/
+		});
+	},
+	
+	'click .ceCancelButton': function(e) {
+		e.preventDefault();
+		
+		var text = $(e.target).siblings('.commentText');
+		
+		text.detach();
+		$(e.target).parent('.commentTextParent').append("<p class='commentText'>" + originalText + "</p>");
+					
+		if($('.ceDoneButton').length == 1){
+			$('.ceDoneButton').detach();
+			$('.ceCancelButton').detach();
+		};
+	},
+	
+	//Delete Comment Modal Open
+	'click .deleteComment': function(e) {
+		e.preventDefault();
+		
+		deleteCommentObject = this;
+		
+		if ($(e.target).parents('.parent').hasClass('comments1')){
+			deleteCommentObject.commentsGroup = 'comments1';
+		} else if ($(e.target).parents('.parent').hasClass('comments2')){
+			deleteCommentObject.commentsGroup = 'comments2';
+		} else if ($(e.target).parents('.parent').hasClass('commentsLack')){
+			deleteCommentObject.commentsGroup = 'commentsLack';
+		};
+		
+		$('#confirmDelete').modal();
+	},
+	
+	//Carry Out Delete Comment
+	'click #confirm-delete-yes': function() {
+		var collection = Router.current().params.category;
+	
+		var reviewId = Router.current().params._id;
+		var commentsGroup = deleteCommentObject.commentsGroup;
+		
+		var comment = deleteCommentObject.comment;
+		var submitted = deleteCommentObject.submitted;
+		var commentId = deleteCommentObject._id;
+		
+		deleteCommentObject = {};
+		
+		Meteor.call('reviewCommentDelete', collection, reviewId, commentsGroup, comment, submitted, commentId, function(error) {
+			if (error) {
+				$('#confirmDelete').modal('toggle');
+				
+				return throwError(error);
+			}
+			
+			$('#confirmDelete').modal('toggle');
+		});
+	},
+	
+	//Cancel Comment Delete
+	'click #confirm-delete-cancel': function() {
+		deleteCommentObject = {};
+	},
+	/*
+	'keyup #review-comment-box-normal, keyup #review-comment-box-x-small': function(e) {
+		var body = $(e.target);
+		
+		commentInProgress = body.val();
+	},*/
+	
+	//Insert Comment
+	"submit .comment-form": function(e) {
+		e.preventDefault();
+		
+		var body = $(e.target).find('[name=body]');
+		
+		if(body.val() == '') {
+			return throwError("We're sorry. We couldn't save your comment because we didn't get any text. Please submit a comment with content.");
+		};
+		
+		var bareComment = {
+			comment: body.val()
+		};
+		
+		if (bareComment.comment.length > 1000) {
+			return throwError('Please limit your snippet to 1000 characters');
+		}
+		
+		var collection = Router.current().params.category;
+
+		var reviewId = Router.current().params._id;
+		
+		var commentsGroup;
+		if ($(e.target).prev().hasClass('comments1')){
+			commentsGroup = 'comments1';
+		} else if ($(e.target).prev().hasClass('comments2')){
+			commentsGroup = 'comments2';
+		} else if ($(e.target).prev().hasClass('commentsLack')) {
+			commentsGroup = 'commentsLack';
+		};
+		
+		Meteor.call('reviewCommentInsert', bareComment, collection, reviewId, commentsGroup, function(error) {
+			if (error) {
+				return throwError(error.reason);
+			}
+			
+			Session.set('noComments', false);
+		});
+		
+		body.val('');
+		/*commentInProgress = '';*/
+	},
+	'click .flagComment': function(e) {
+		e.preventDefault();
+		
+		flagCommentObject = this;
+		
+		if ($(e.target).parents('.parent').hasClass('comments1')){
+			flagCommentObject.commentsGroup = 'comments1';
+		} else if ($(e.target).parents('.parent').hasClass('comments2')){
+			flagCommentObject.commentsGroup = 'comments2';
+		} else if ($(e.target).parents('.parent').hasClass('commentsLack')){
+			flagCommentObject.commentsGroup = 'commentsLack';
+		};
+
+		$('#flagCommentModal').modal();
+	},/*
+	'keyup #flagCommentExplanation': function(e) {
+		var body = $(e.target);
+		
+		flagCommentInProgress = body.val();
+	},*/
+	'click #flagCommentSubmit': function() {
+		var flagCommentExplanation = $('#flagCommentExplanation').val();
+		
+		var category = Router.current().params.category;
+		var reviewId = Router.current().params._id;
+		var flagComment = flagCommentObject.comment;
+		var flagCommentsGroup = flagCommentObject.commentsGroup;
+		var flagCommentId = flagCommentObject._id;
+		
+		flagCommentObject = {};
+		
+		Meteor.call('flagCommentInsert', category, reviewId, flagCommentExplanation, flagComment, flagCommentsGroup, flagCommentId, function(error) {
+			if (error) {
+				return throwError(error);				
+			}
+			
+			$('#flagCommentModal').modal('toggle');
+			$('#flagCommentExplanation').val('');
+			$('#flagAnswerModal').modal();
+			/*flagCommentInProgress = '';*/
+		});
+	},
+	//Cancel Comment Flag
+	'click #comment-flag-cancel': function() {
+		flagCommentObject = {};
+	},/*
+	'keyup #flagExplanation': function(e) {
+		var body = $(e.target);
+		
+		flagReviewInProgress = body.val();
+	},*/
+	'click #flagSubmit': function() {
+		var flagExplanation = $('#flagExplanation').val();
+		var category = Router.current().params.category;
+		var reviewId = Router.current().params._id;
+		
+		Meteor.call('flagInsert', flagExplanation, category, reviewId, function(error) {
+			if (error) {
+				return throwError(error);				
+			}
+			
+			$('#flagModal').modal('toggle');
+			$('#flagExplanation').val('');
+			$('#flagAnswerModal').modal();
+			/*flagReviewInProgress = '';*/
+		});
+	}
+});

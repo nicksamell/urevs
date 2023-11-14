@@ -1,0 +1,70 @@
+<template name='trendingPageReviewItem'>
+	<div class='review-item-wrapper {{postsCount}} col-xs-12 col-md-12 row'>
+		<a href="{{pathFor 'reviewPage' category=this.category _id=this._id}}">
+		{{#if single}}
+			<div class='row text-center review-item-wrapper-inner'>
+				{{#if isHorn}}
+					<div title='This review needs your input!' class='singleHorn'>
+						<span class='glyphicon glyphicon-bullhorn trending-bullhorn'></span>
+					</div>
+				{{/if}}
+				<div class='photo-portion'>	
+					<img src="{{assetUrl 'revPicUrl1'}}" class='img-thumbnail img-responsive single-photo' />
+				</div>
+				<br>
+				<div class='bottom-portion-single'>
+					<div class='text-center'>
+						{{revTitle}}
+					</div>
+					<div class='col-xs-6 col-xs-offset-3'>
+						<button type='button' class='btn btn-primary disabled'><span class='glyphicon glyphicon-heart'></span></button>
+						<div class='col-xs-4 col-xs-offset-3'>
+							{{likes1}}
+						</div>
+					</div>
+				</div>
+			</div>
+		{{else}}
+			<div class='row text-center review-item-wrapper-inner'>
+				{{#if isHorn}}
+					<div title='This review needs your input!' class='singleHorn'>
+						<span class='glyphicon glyphicon-bullhorn trending-bullhorn'></span>
+					</div>
+				{{/if}}
+				<div class='photo-portion'>
+					<img src="{{assetUrl 'revPicUrl1'}}" class='double-photo double-photo-left img-thumbnail img-responsive' />
+					<img src="{{assetUrl 'revPicUrl2'}}" class='double-photo double-photo-right img-trending-double img-thumbnail img-responsive' />
+				</div>
+				<br>
+				<div class='bottom-portion'>
+					<div class='text-center'>
+						{{revTitleDouble}}
+					</div>
+					<div class='col-xs-6 newest-trending-item-like-column-1'>
+						<button type='button' class='btn btn-primary disabled'><span class='glyphicon glyphicon-heart'></span></button>
+						<div>
+							{{likes1}}
+						</div>
+					</div>
+					<div class='newest-trending-item-like-column-2'>
+						<button type='button' class='btn btn-primary disabled'><span class='glyphicon glyphicon-heart'></span></button>
+						<div>
+							{{likes2}}
+						</div>
+					</div>
+				</div>
+			</div>
+		{{/if}}
+		</a>
+	</div>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+</template>

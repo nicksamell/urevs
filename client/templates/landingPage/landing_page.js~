@@ -1,0 +1,88 @@
+Template.landingPage.helpers({
+	xs: function() {
+		if ($(window).width() < 768) {
+			return true;
+		} else {
+			return false;
+		}		
+	}
+});
+
+Template.landingPage.events({
+	'click, keyup #site-search-query1': function() {
+		if ($('#site-search-query2').val() == '') {
+			$('.search-circle-submit').val('Search');
+		} else {
+			$('.search-circle-submit').val('Compare');
+		}
+		/*
+		if ($('#site-search-query1').val() == '' && $('#site-search-query2').val() == '') {
+			$('.search-circle-submit').addClass('disabled');
+		} else {
+			$('.search-circle-submit').removeClass('disabled');			
+		}
+		*/
+	},
+	'click, keyup #site-search-query2': function() {
+		if ($('#site-search-query1').val() == '') {
+			$('.search-circle-submit').val('Search');
+		} else {
+			$('.search-circle-submit').val('Compare');
+		}
+		/*
+		if ($('#site-search-query1').val() == '' && $('#site-search-query2').val() == '') {
+			$('.search-circle-submit').addClass('disabled');
+		} else {
+			$('.search-circle-submit').removeClass('disabled');			
+		}
+		*/
+	},
+	//add on backspace
+	'submit #hp-site-search': function(e) {
+		e.preventDefault();
+		
+		if ($('.search-circle-submit').hasClass('disabled')) {
+			return;
+		}
+		
+		let searchString1;
+		let searchString2;
+		let typeFilter = 'all';
+		
+		if (!$('#site-search-query1').val()) {
+			searchString1 = 'null';
+		} else {
+			searchString1 = $('#site-search-query1').val();
+		}
+		
+		if (!$('#site-search-query2').val()) {
+			searchString2 = 'null';
+		} else {
+			searchString2 = $('#site-search-query2').val();
+		}
+		
+		if ($('#site-search-query1').val() && $('#site-search-query2').val()) {
+			typeFilter = 'comparison';
+		}
+				
+		Router.go('searchLandingPage', {searchString1, searchString2, typeFilter});
+	}
+});
+
+/*
+Template.landingPage.onRendered(function() {
+	$('.stage').children('a').each(function() {
+		
+		if ($(this).index() == 0) {
+			$(this).addClass('landing-reviews-1');
+		} else if ($(this).index() == 1) {
+			$(this).addClass('landing-reviews-2');
+		} else if ($(this).index() == 2) {
+			$(this).addClass('landing-reviews-3');
+		} else if ($(this).index() == 3) {
+		 	$(this).addClass('landing-reviews-4');
+		}
+		
+	});
+});
+*/

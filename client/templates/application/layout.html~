@@ -1,0 +1,280 @@
+<template name='layout'>
+	<div class='container layout-container'>
+		<header class='navbar navbar-default layout-navbar' role='navigation'>
+			<div class='navbar-header layout-navbar-header'>
+				<a title='Go to my home page' class='navbar-brand glyphicon glyphicon-globe' href="{{pathFor 'landingPage'}}"><span id='beta-tag'>Alpha</span></a>
+				<div class='layout-login-div'>
+					{{> loginButtons}}
+					{{#if currentUser}}
+						<br>
+						<a id='my-account' title='Go to my account page' href="{{pathFor route='accountPage'}}">{{_ 'My_Account'}}</a>
+					{{/if}}
+				</div>
+			</div>
+		</header>
+		{{> successes}}
+		{{> errors}}
+		
+		<div id='main'>
+		{{> yield}}
+		</div>
+		
+	<div id='gratitudes' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-header'>
+				<button type='button' class='close' data-dismiss='modal'>&times;</button>
+				<h3 class='modal-title'>{{_ 'Gratitudes'}}</h3>
+				</div>
+				<div class='modal-body'>
+					<p>{{_ 'gratitudes_modal_p1'}}</p>
+					<p>{{_ 'gratitudes_modal_p2'}}</p>
+					<p>{{_ 'gratitudes_modal_meteor'}}</p>
+					<p>{{_ 'gratitudes_modal_don'}}</p>
+					<p>{{_ 'gratitudes_modal_p3'}}</p>
+					<p>{{_ 'gratitudes_modal_p4'}}</p>
+					<p>{{_ 'gratitudes_modal_p5'}}</p>
+					<br>
+					<br>
+					<br>
+					<p>{{_ 'gratitudes_modal_signature'}}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id='ourMission' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-header'>
+				<button type='button' class='close' data-dismiss='modal'>&times;</button>
+				<h3 class='modal-title'>{{_ 'our_mission_modal_header'}}</h3>
+				</div>
+				<div class='modal-body'>
+					<p>{{{_ 'our_mission_modal_p1'}}}</p>
+					<p>{{_ 'our_mission_modal_contact'}}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id='tutorial' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-body'>
+					<h1 class='text-center tutorial-footer-h1'>Here is a Quick Refresher!</h1>
+					<br>
+					<div class='row'>
+						<div class='container'>
+							<div class='col-xs-3 col-sm-1 col-md-1'>
+								<button title='Let others know that you want to see some more discussion on this review' type='button' class='btn btn-primary' style='margin-bottom: 80px;'>
+									<span class='glyphicon glyphicon-bullhorn'></span>
+								</button>
+							</div>
+							<div class='col-xs-9 col-sm-8 col-md-6 col-lg-5'>
+								<span class='tutorial-font'>Say that you're looking through a review and you're thinking "<b>This could use some more snippets.</b>" Then, sound the bullhorn! If enough people do the same, that review will show up on the trending page.<br>(hint - if you see a bullhorn on a review on the trending page, it means that many are looking for experts to share their experience with those products. Look at it as a bat call, if you will)</span>
+							</div>
+						</div>
+						<br>
+						<br>
+						<div class='container'>
+							<div class='col-xs-3 col-sm-1 col-md-1'>
+								<button title='Is this snippet accurate?' type='button' class='btn btn-success'>
+									<span style='font-family: "Courier New", Courier, monospace; font-style: oblique; font-weight: bold;'>{{_ 'review_page_grade_A'}}</span>
+								</button>
+							</div>
+							<div class='col-xs-9 col-sm-8 col-md-6 col-lg-5'>
+								<span class='tutorial-font'>Instead of being an arrow or a thumbs up, this button was made into a grade <b>for rewarding snippets that are accurate</b>. So if you've used the product, use this button to let others know that the snippeteer of that comment knows what they're talking about.</span>
+							</div>
+						</div>
+							<br>
+							<br>
+						<div class='container'>
+							<div class='col-xs-3 col-sm-1 col-md-1'>
+								<button title='Is this snippet inaccurate/misleading?' type='button' class='btn btn-danger'>
+									<span style='font-family: "Courier New", Courier, monospace; font-style: oblique; font-weight: bold;'>{{_ 'review_page_grade_F'}}</span>
+								</button>
+							</div>
+							<div class='col-xs-9 col-sm-8 col-md-6 col-lg-5'>
+								<span class='tutorial-font'>On the other hand, if it seems like the snippeteer's talking about something from Mars; in other words, your experience with the product tells you <b>that this snippet is inaccurate</b>, use this button to let others know that.</span>
+							</div>
+						</div>
+							<br>
+							<br>
+						<div class='container'>
+							<div class='col-xs-3 col-sm-1 col-md-1'>
+								<button title='Is this snippet accurate?' type='button' class='btn btn-success disabled' style='margin-bottom: 10px;'>
+									<span style='font-family: "Courier New", Courier, monospace; font-style: oblique; font-weight: bold;'>{{_ 'review_page_grade_A'}}</span>
+								</button>
+								<button title='Is this snippet inaccurate/misleading?' type='button' class='btn btn-danger disabled'>
+									<span style='font-family: "Courier New", Courier, monospace; font-style: oblique; font-weight: bold;'>{{_ 'review_page_grade_F'}}</span>
+								</button>
+							</div>
+							<div class='col-xs-9 col-sm-8 col-md-6 col-lg-5'>
+								<span class='tutorial-font'>You may notice that when you go to a review page, the A+ and F- buttons will, at first, look like the ones on the left and it will seem as if the page is broken. It's not - trust me. What's going on is an experiment!<br>In order <b>to encourage more accurate grading of snippets</b>, these buttons are switched off for 30 seconds to give users a chance to thoroughly read through the content before making a grading decision. Let's see if this helps make urevs an excellent resource!</span>
+							</div>
+						</div>
+							<br>
+							<br>
+						<div class='container'>
+							<div class='col-xs-3 col-sm-1 col-md-1'>
+								<button title='Would you recommend this product?' type='button' class='btn btn-primary'>
+									<span class='glyphicon glyphicon-heart'></span>
+								</button>
+							</div>
+							<div class='col-xs-9 col-sm-8 col-md-6 col-lg-5'>
+								<span class='tutorial-font'>Now, below all of the snippets, you'll find this heart icon - use it to express your heart's content; that is, use this button to indicate that you would <b>recommend this product</b> to your friends or, if you're in a versus review, to specifically indicate that you'd recommend this product over the one it's being compared to.</span>
+							</div>
+						</div>
+						<br>
+						<br>
+					</div>
+					<img src="{{assetUrl 'dual_system.png'}}" class='img-thumbnail img-responsive' style='width: 100%; margin: 0 auto;' />
+					<br>
+					<br>
+					<br>
+					<span class='tutorial-font col-xs-12 col-sm-10 col-sm-offset-1 text-center'>And last but not least - the review format!<br><br>So, you may have noticed that we have <b>two types of reviews</b>:<br>single and versus.<br><br>The example you see above is of a comparison review, where each product gets a column for review snippets from community members. <b>In the comparison format, each column lists the top rated snippets that detail in what ways your fellow internauts found that product better than the one next to it.</b> This way you can make choosing what to buy easier - by focusing on just two products at a time!<br><br>But there are also ways in which no product is better than the other - when both are lacking something they should have! The blue <b>"What both lack" button is here just for those features which snippeteers were dissapointed to find lacking.</b><br><br>On the other hand, in very similar organization, <b>we have the single format with two columns - one for the pros of the single product and the other for the cons.</b><br><br><br><h4 class='text-center'>Well, that's all from me, folks!<br><br>I hope that you find Urevs to be a great resource, powered by an even greater community, helping you find what you truly want to buy.<br><br>Happy reviewing!</h4></span>
+					<br>
+					<br>
+					<br>
+					<div class='share-dialog-btn-div'>
+						<button type='button' class='btn btn-info' data-dismiss='modal'>Thanks!</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	
+	<div id='legalPrivacy' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-header'>
+				<button type='button' class='close' data-dismiss='modal'>&times;</button>
+				<h3 class='modal-title'>{{_ 'legal_privacy_modal_header'}}</h3>
+				</div>
+				<div class='modal-body'>
+					<h4>{{_ 'legal_privacy_modal_terms_header'}}</h4>
+					<p>{{_ 'legal_privacy_modal_p1'}}</p>
+					
+					<p>{{{_ 'legal_privacy_definitions'}}}</p>
+
+					<p>{{_ 'legal_privacy_modal_p2'}}</p>
+	
+					<p>{{_ 'legal_privacy_modal_p3'}}</p>
+
+					<p>{{_ 'legal_privacy_modal_p4'}}</p>
+
+					<p>{{_ 'legal_privacy_modal_p5'}}</p>
+	
+					<p>{{_ 'legal_privacy_modal_p6'}}</p>
+	
+					<p>{{_ 'legal_privacy_modal_p7'}}</p>
+	
+					<p>{{_ 'legal_privacy_modal_p8'}}</p>
+	
+					<p>{{_ 'legal_privacy_modal_p9'}}</p>
+	
+					<p>{{_ 'legal_privacy_modal_p10'}}</p>
+					
+					<p>{{_ 'legal_privacy_modal_p11'}}</p>
+	
+					<p>{{_ 'legal_privacy_modal_p12'}}</p>
+	
+					<p>{{_ 'legal_privacy_modal_p13'}}</p>
+					
+					<p>{{_ 'legal_privacy_modal_p14'}}</p>
+	
+					<p>{{_ 'legal_privacy_modal_p15'}}</p>
+					<br>	
+					<br>
+					<h4>{{_ 'legal_privacy_modal_privacy_header'}}</h4>
+					<h5>{{_ 'legal_privacy_modal_privacy_mini_header'}}</h5>
+					<p>{{_ 'legal_privacy_modal_p16'}}</p>
+
+					<p>{{_ 'legal_privacy_modal_p17'}}</p>
+					
+					<h5>{{_ 'legal_privacy_modal_privacy_mini_header2'}}</h5>
+
+					<p>{{_ 'legal_privacy_modal_p18'}}</p>
+					
+					<p>{{_ 'legal_privacy_modal_p19'}}</p>
+					
+					<p>{{_ 'legal_privacy_modal_p20'}}</p>
+					<br>
+					<br>	
+					<h4>{{_ 'legal_privacy_modal_plans_header'}}</h4>
+					<p>{{_ 'legal_privacy_modal_p21'}}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id='suggestions' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-header'>
+				<button type='button' class='close' data-dismiss='modal'>&times;</button>
+				<h3 class='modal-title'>{{_ 'suggestions_modal_header'}}</h3>
+				</div>
+				<div class='modal-body'>
+					{{#if currentUser}}
+						<p>{{_ 'suggestions_modal_p1'}}</p> 
+						<p>{{_ 'suggestions_modal_p2'}}</p>
+						<textarea class='form-control' rows='5' maxlength='10000' id='suggestion'></textarea>
+						<span id='suggestion-legal'>{{_ 'suggestions_modal_legal'}}</span>
+						<br>
+						<br>
+						<div class='share-dialog-btn-div'>
+							<input type='submit' class='btn btn-success' value='Submit' id='suggestion-submit'>
+						</div>
+					{{else}}
+						{{> accessDenied}}
+					{{/if}}
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id='privacyFirstContactDialog' class='modal fade' role='dialog'>
+		<div class='modal-dialog modal-xs'>
+			<div class='modal-content'>
+				<div class='modal-body'>
+					<div>
+						<span>Cookies and similar technologies (like localStorage) are packets of data that a website stores on your computer to help better its service of its users. Urevs stores such data for exactly this purpose. By using this website, you indicate that you understand and agree to the terms of use and privacy policy outlined <a title='Read about your rights and obligations when using the site' href='#' data-toggle='modal' data-target='#legalPrivacy'>here</a>. Thank you and happy reviewing!</span>
+					</div>
+					
+					<div class='share-dialog-btn-div'>
+						<button type='button' class='btn btn-info privacy-fc-understand-btn' data-dismiss='modal'>I understand.</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+		
+		{{privacyFirstContact}}
+		
+		<footer id='{{layoutClass}}' class='text-center col-xs-12'>
+			<a title='See the newest reviews added today' href="{{pathFor route='newestPage'}}" id='layout-newest'>{{_ 'Newest'}}</a>
+			&#8226;
+			<a title="See today's most active reviews" href="{{pathFor route='trendingPage'}}" id='layout-trending'>{{_ 'Trending'}}</a>
+			&#8226;
+			<a title='Send us a suggestion!' href='#' data-toggle='modal' data-target='#suggestions'>{{_ 'Suggestions'}}</a>
+			&#8226;
+			<a id='moretext' data-toggle='collapse' data-target='#more'>{{_ 'More'}}</a>
+				<div id='more' class='collapse'>
+					<a title='All the people without whom urevs would not be what it is today' href='#' data-toggle='modal' data-target='#gratitudes'>{{_ 'Gratitudes'}}</a>
+					&#8226;
+					<a title='Learn about the moral purpose of this site' href='#' data-toggle='modal' data-target='#ourMission'>{{_ 'Our_Mission'}}</a>
+					&#8226;
+					<a title='Check out our quick how-to' href='#' data-toggle='modal' data-target='#tutorial'>Tutorial</a>
+					&#8226;
+					<a title='Read about your rights and obligations when using the site' href='#' data-toggle='modal' data-target='#legalPrivacy'>{{_ 'Legal_&_Privacy'}}</a>
+					&#8226;
+					<a title='Learn more about our platform' href="{{pathFor route='blogPage'}}">Urevs Blog</a>
+					<h5>{{{_ 'Copyright_Line'}}}</h5>
+					<h5>Public Alpha</h5>
+				</div>	
+		</footer>
+	</div>
+</template>

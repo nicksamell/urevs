@@ -1,0 +1,994 @@
+<template name='reviewPage'>
+	{{#if isSearchBoxBottom}} 
+		<div id='review-page-search-wrap-div'>
+			{{#unless searchBoxSummoned}}
+				<div class='text-center' id='another-search'>
+					<button class='btn btn-info' id='another-search-button'>{{_ 'review_page_another_search'}}</button>
+				</div>
+			{{else}}
+				{{> genericSearchTemplate}}
+			{{/unless}}
+		</div>
+	{{/if}}
+	
+	{{#if noReview}}
+		<h3 class='please-wait'>{{_ 'review_no_url'}}<a href='{{pathFor route='landingPage'}}'>{{_ 'review_page_loading_p2'}}</a>.</h3>
+	{{/if}}
+	
+	{{#unless review}}
+		
+		{{> loadingReview}}
+		
+	{{else}}
+			
+		{{#each review}}
+			<div class='container'>
+				<div class='row'>
+					{{#if single}}
+						<h2 class='text-center'>{{productName1}}</h2>
+					{{/if}}
+				</div>
+				<div id='shareDialog' class='modal fade' role='dialog'>
+					<div class='modal-dialog modal-xs'>
+						<div class='modal-content'>
+							<div class='modal-body'>
+								<h1 class='text-center share-dialog-h1'>{{_ 'review_page_share_header'}}</h1>
+								{{#if isInTrending}}
+								<h4 class='text-center'>{{_ 'review_page_share_sub_header1_already_on_trending'}}</h4>
+								<br>
+								<h4 class='text-center'>{{_ 'review_page_share_sub_header1_part1'}}<span id='hornCountLeftColor'>{{review_page_share_sub_header1}}</span>{{_ 'review_page_share_sub_header1_part2_trending_amended'}}</h4>
+								<br>
+								<h4 class='text-center'>{{_ 'review_page_share_sub_header2'}}</h4>
+								<br>
+								<div class='text-center'>
+									{{> shareit shareData}}
+								</div>
+								<br>
+								{{else}} 
+								<h4 class='text-center'>{{_ 'review_page_share_sub_header1_part1'}}<span id='hornCountLeftColor'>{{review_page_share_sub_header1}}</span>{{_ 'review_page_share_sub_header1_part2'}}</h4>
+								<h4 class='text-center'>{{_ 'review_page_share_sub_header2'}}</h4>
+								<br>
+								<div class='text-center'>
+									{{> shareit shareData}}
+								</div>
+								<br>
+								{{/if}}
+								<div class='text-center'>
+									<input id='dont-show-share' type='checkbox' name='dont-show'><label>{{_ 'review_page_share_opt_out'}}</label>
+								</div>
+								<br>
+								<div class='share-dialog-btn-div'>
+									<button type='button' class='btn btn-info share-dialog-btn' data-dismiss='modal'>{{_ 'review_page_share_close'}}</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class='container'>
+				{{#if single}}
+				<div class='row text-center both-prod-display'>
+					<div class='col-md-4 col-md-offset-4'>
+						<img src="{{assetUrl picUrl1}}"  class='img-thumbnail img-responsive product-single-img' />
+						<br>
+						<br>
+						{{#if picSource1}}
+						{{{_ 'review_srcs_single'}}}
+						{{/if}}
+							<div id='picSource1' class='collapse'>
+								{{picSource1}}
+							</div>
+						<br>
+						<br>
+						{{#unless likePlacement}}
+							{{#unless notFirstVisitReviewPage}}
+								<div id='likeInfoBox2TOP'>&#62;<br>{{_ 'review_short_tutorial_1'}}{{productName1}}<br><br><span class='click-thanks'>{{_ 'review_short_tutorial_1_ok'}}</span></div>
+							{{/unless}}
+							<h5>{{_ 'review_page_single_recommend'}}</h5>
+							{{#if currentUser}}
+								{{isHighlightedLike}}
+									{{{_ 'review_likes1_recommend_btn_single'}}}
+								{{likes1}}
+							{{else}}
+								{{isHighlightedLike}}
+									{{{_ 'review_likes1_recommend_btn_single'}}}
+								{{likes1}}
+							{{/if}}
+						{{/unless}}
+					</div>
+				</div>
+				{{else}}
+				<div class='row text-center both-prod-display' id='review-prod-1-display'>
+					<div class='text-center'>
+						<img src="{{assetUrl picUrl1}}" class='img-thumbnail img-responsive productName1-img-anchor productName1-img' />
+						<img src="{{assetUrl picUrl2}}" class='img-thumbnail img-responsive productName2-img productName2-img-anchor' />
+						<div class='col-xs-6'>
+							<span class='product1-font text-center'>{{productName1}}</span>
+						</div>
+						<div class='col-xs-6'>
+							<span class='product2-font text-center'>{{productName2}}</span>
+						</div>
+						<br>
+						<br>
+						{{#if picSourcesDouble}}
+						{{{_ 'review_srcs_double'}}}
+						{{/if}}
+					</div>
+					{{#unless likePlacement}}
+						<h5>{{_ 'review_which_product'}}</h5>
+					{{/unless}}
+					<div class='col-xs-6'>
+						<div class='picSource collapse'>
+							{{picSource1}}
+						</div>
+						<br>
+						{{#unless likePlacement}}
+							{{#unless notFirstVisitReviewPage}}
+								<div id='likeInfoBoxTOP'>{{#if xs}}^<br>{{else}}&#62;<br>{{/if}}{{_ 'review_short_tutorial_1'}}{{productName1}}{{_ 'review_short_tutorial_2'}}{{productName2}}<br><br><span class='click-thanks'>{{_ 'review_short_tutorial_1_ok'}}</span></div>
+							{{/unless}}
+							{{#if currentUser}}
+								{{isHighlightedLike}}
+									{{{_ 'review_likes1_recommend_btn_double'}}}
+								{{likes1}}
+							{{else}}
+								{{isHighlightedLike}}
+									{{{_ 'review_likes1_recommend_btn_double'}}}
+								{{likes1}}
+							{{/if}}
+						{{/unless}}
+					</div>
+					<div class='col-xs-6'>
+						<div class='picSource collapse'>
+							{{picSource2}}
+						</div>
+						<br>
+						{{#unless likePlacement}}
+							{{#if currentUser}}
+								{{isHighlightedLike}}
+									{{{_ 'review_likes2_recommend_btn_double'}}}
+								{{likes2}}
+							{{else}}
+								{{isHighlightedLike}}
+									{{{_ 'review_likes2_recommend_btn_double'}}}
+								{{likes2}}
+							{{/if}}
+						{{/unless}}
+					</div>
+				</div>
+				{{/if}}
+				<br>
+				{{#if single}}
+					{{#unless likePlacement}}
+					<br>
+					{{/unless}}
+				{{/if}}
+				{{#if single}}
+					{{#unless notFirstVisitReviewPage}}
+						<div id='bhInfoBox'>{{#unless xs}}&#62;<br>{{else}}&#60;<br>{{/unless}}{{_ 'review_short_tutorial_3'}}<br><br><span class='click-thanks'>{{_ 'review_short_tutorial_1_ok'}}</span></div>
+					{{/unless}}
+				{{else}}
+					{{#unless notFirstVisitReviewPage}}
+						<div id='bhInfoBox2'>{{#unless xs}}&#62;<br>{{else}}&#60;<br>{{/unless}}{{_ 'review_short_tutorial_3'}}<br><br><span class='click-thanks'>{{_ 'review_short_tutorial_1_ok'}}</span></div>
+					{{/unless}}
+				{{/if}}
+				<div class='text-center'>
+				{{#if currentUser}}
+					{{isHighlightedBullHorn}}
+					{{{_ 'review_bullhorn_btn'}}}
+				{{else}}
+					{{isHighlightedBullHorn}}
+					{{{_ 'review_bullhorn_btn'}}}
+				{{/if}}
+				</div>
+				{{#unless single}}
+					<h3 class='text-center'>{{_ 'review_which_better_header'}}</h3>
+					<div class='criteria-panel'>
+						{{#unless notFirstVisitReviewPage}}
+							<div id='dQuickVoteInfoBox'>&#62;<br>{{_ 'review_short_tutorial_4'}}<br><br><span class='click-thanks'>{{_ 'review_short_tutorial_1_ok'}}</span></div>
+							<div id='critDescInfoBox'>&#62;<br>{{_ 'review_short_tutorial_7'}}<br><br><span class='click-thanks'>{{_ 'review_short_tutorial_1_ok'}}</span></div>
+						{{/unless}}
+						{{#each comparisonCriteria}}
+							<div class='compCriteriaUnit'>
+								<span class='compCriteriaPercent1'>{{compCriteriaPercent1}} %</span>
+								<button type='button' class='btn btn-primary compCritBtn compCrit1 {{isHighlightedLeftCompBtn}}'><img src="{{assetUrl compCritPicUrl1}}" height=40px width=40px class='compCrit1' /></button>
+								{{compCriteriaName}}
+								<span data-toggle='collapse' data-target='#desc{{_id}}' class='glyphicon glyphicon-question-sign'></span>
+								<button type='button' class='btn btn-primary compCritBtn compCrit2 {{isHighlightedRightCompBtn}}'><img src="{{assetUrl compCritPicUrl2}}" height=40px width=40px class='compCrit2' /></button>
+								<span class='compCriteriaPercent2'>{{compCriteriaPercent2}} %</span>
+								<br>
+								<span>{{_ 'review_total_votes'}}{{totalVotes}}</span>
+								<div id='desc{{_id}}' class='collapse'>
+									{{compCriteriaDescription}}
+								</div>
+							</div>
+						{{/each}}
+						
+						<div class='text-center'>
+							<a href='#' id='more-criteria-suggestions'>{{_ 'review_vote_crit_sug'}}</a>
+						</div>
+						<br>
+						
+						<div id='criteriaSuggestionsModal' class='modal fade' role='dialog'>
+							<div class='modal-dialog modal-xs'>
+								<div class='modal-content'>
+									<div class='modal-header'>
+										<h4 id='criteria-suggestion-h4'>{{_ 'review_which_cates'}}</h4>
+										<button type='button' class='close' data-dismiss='modal' id='criteria-suggestion-close-btn'>&times;</button>
+									</div>
+									<div class='modal-body'>
+										{{#each criteriaSuggestions}}
+											<div class='text-center'>
+												{{criteriaSuggestion}} - {{criteriaDescription}}
+												<button type='button' class='btn btn-primary criteria-suggestion-vote {{isHighlightedSuggestionVoteBtn}}'>{{_ 'review_want_this'}}</button>
+												{{criteriaSuggestionUpvotesAmount}}
+											</div>
+											<hr>
+											<br>
+										{{/each}}
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div id='congratsUpgradedCriteria' class='modal fade' role='dialog'>
+							<div class='modal-dialog modal-xs'>
+								<div class='modal-content'>
+									<div class='modal-body'>
+										<h3 class='text-center'>{{_ 'review_congrats'}}</h3>
+										<br>
+										<div class='text-center'>
+											<span>{{_ 'review_congrats_1'}}</span>
+											<br>
+											<br>
+											<span>{{_ 'review_congrats_share'}}</span>
+											<br>
+											<br>
+											{{> shareit shareData}}
+										</div>
+										<br>
+										<div class='share-dialog-btn-div'>
+											<button type='button' class='btn btn-info' data-dismiss='modal'>{{_ 'review_page_share_close'}}</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						{{#unless maxSugReached}}
+							<form class='new-criteria-form'>
+								{{{_ 'review_add_criteria_btn'}}}
+								{{#if keyupCriteriaAdd}}
+									{{{_ 'review_add_criteria_desc_btn'}}}
+									<div class='text-center'>
+									{{desCharCount}}
+									</div>
+									{{{_ 'review_add_criteria_sbmt_btn'}}}
+								{{/if}}
+							</form>
+							{{#if keyupCriteriaAdd}}
+							<div class='text-center'>
+								<sub class='fade-in-approval'>{{_ 'review_please_check_spelling'}}</sub>
+							</div>
+							{{/if}}
+						{{/unless}}
+					</div>
+					
+					{{#unless xs}}
+						<span data-toggle='collapse' data-target='#differentExplanation' class='glyphicon glyphicon-question-sign' id='differentQuestionMark'></span>
+							<div id='differentExplanation' class='collapse text-center'>
+								Not every feature is strictly either a pro or con for every user, so here are some more details on, simply, what's different between the products.
+							</div>
+					
+						<div class='col-sm-6 review-the-left'>
+							<h3 class='snippet-column-header'><div id='productName1-title'>{{productName1}}</div><div class='better-in-titles'>{{_ 'review_page_double_col'}}</div></h3>
+							{{#unless notFirstVisitReviewPage}}
+								<div id='inDepthAreaInfoBox'>&#62;<br>{{_ 'review_short_tutorial_5_double'}}<br><br><span class='click-thanks'>{{_ 'review_short_tutorial_1_ok'}}</span></div>
+							{{/unless}}
+							<div class='parent comments1'>
+								<div class='wrapper1'>
+									{{#each comments}}
+										{{#each comments1}}
+											{{> reviewCommentItem}}
+										{{else}}
+											<p class='text-center'>{{_ 'review_no_snippets'}}</p>
+										{{/each}}
+									{{/each}}
+								</div>
+							</div>
+							{{#if isCommentBoxSummoned}}
+							<sub>{{_ 'write_snippet_comp'}}{{productName1}}</sub>
+							{{/if}}
+							{{> reviewCommentSubmitBoxXs}}
+						</div>
+		
+						<div class='col-sm-6 review-the-right-big'>
+							<h3 class='snippet-column-header'><div id='productName2-title'>{{productName2}}</div><div class='better-in-titles'>{{_ 'review_page_double_col'}}</div></h3>
+							<div class='parent comments2'>
+								<div class='wrapper2'>
+									{{#each comments}}
+										{{#each comments2}}
+											{{> reviewCommentItem}}
+										{{else}}
+											<p class='text-center'>{{_ 'review_no_snippets'}}</p>
+										{{/each}}
+									{{/each}}
+								</div>
+							</div>
+							{{#if isCommentBoxSummoned}}
+							<sub>{{_ 'write_snippet_comp'}}{{productName2}}</sub>
+							{{/if}}
+							{{> reviewCommentSubmitBoxXs}}
+						</div>
+						
+						<div>
+							{{#if hasMoreReviewHelper}}
+								<a href={{hasMoreReviewPath}} class='btn btn-info has-more-review-path'>{{_ '2X'}}{{nextSnippetAmount}}</a>
+							{{else}}
+								<a href={{hasMoreReviewPath}} class='btn btn-info has-more-review-path'>{{_ '2X'}}{{nextSnippetAmount}}</a>
+							{{/if}}
+						</div>
+					{{/unless}}
+			
+					{{#if xs}}	
+						<span data-toggle='collapse' data-target='#differentExplanation' class='glyphicon glyphicon-question-sign' id='differentQuestionMark'></span>
+							<div id='differentExplanation' class='collapse text-center'>
+								Not every feature is strictly either a pro or con for every user, so here are some more details on, simply, what's different between the products.
+							</div>
+									
+						<div id='doubleCommentsCarousel' class='carousel slide' data-interval='false'>
+							<div class='carousel-inner' role='listbox'>
+								<div class='item active'>	
+									<div class='col-xs-12 center-block review-the-left'>
+										<h3 class='snippet-column-header better-in-a'><div id='productName1-title' class='productName1-font-animation'>{{productName1}}</div><div class='better-in-titles'>{{_ 'review_page_double_col_lowercase'}}</div></h3>
+										{{#unless notFirstVisitReviewPage}}
+											<div id='inDepthAreaInfoBox'>&#62;<br>{{_ 'review_short_tutorial_5_double'}}<br><br><span class='click-thanks'>{{_ 'review_short_tutorial_1_ok'}}</span></div>
+										{{/unless}}
+										<div class='parent comments1'>
+											<div class='wrapper3'>
+												{{#each comments}}
+													{{#each comments1}}
+														{{> reviewCommentItem}}
+													{{else}}
+														<p class='text-center'>{{_ 'review_no_snippets'}}</p>
+													{{/each}}
+												{{/each}}
+											</div> 
+										</div>
+											{{#if isCommentBoxSummoned}}
+											<sub>{{_ 'write_snippet_comp'}}{{productName1}}</sub>
+											{{/if}}
+											{{> reviewCommentSubmitBoxXs}}
+									</div>
+								</div>
+								<div class='item'>
+									<div class='col-xs-12 review-the-right-small'>
+										<h3 class='snippet-column-header better-in-b'><div id='productName2-title'>{{productName2}}</div><div class='better-in-titles'>{{_ 'review_page_double_col_lowercase'}}</div></h3>
+										<div class='parent comments2'>
+											<div class='wrapper4'>
+												{{#each comments}}
+													{{#each comments2}}
+														{{> reviewCommentItem}}
+													{{else}}
+														<p class='text-center'>{{_ 'review_no_snippets'}}</p>
+													{{/each}}
+												{{/each}}
+											</div>
+										</div>
+										{{#if isCommentBoxSummoned}}
+										<sub>{{_ 'write_snippet_comp'}}{{productName2}}</sub>
+										{{/if}}
+										{{> reviewCommentSubmitBoxXs}}
+									</div>					
+								</div>	
+							</div>
+						</div>
+						
+						{{#if cSSSetting}}
+							<a class='left comments-carousel-control comments-carousel-control-xs' href='#doubleCommentsCarousel' role='button' data-slide='prev'>
+								<span class='comment-glyph glyphicon glyphicon-chevron-left' aria-hidden='true'></span>
+									<span class='sr-only'>{{_ 'review_page_sr_previous'}}</span>
+							</a>
+						{{else}}
+							<a class='right comments-carousel-control comments-carousel-control-xs' href='#doubleCommentsCarousel' role='button' data-slide='next'>
+								<span class='comment-glyph glyphicon glyphicon-chevron-right' aria-hidden='true'></span>
+									<span class='sr-only'>{{_ 'review_page_sr_next'}}</span>
+							</a>
+						{{/if}}
+						
+						{{#if cSSSettingBoth}}
+							<a class='left comments-carousel-control comments-carousel-control-xs' href='#doubleCommentsCarousel' role='button' data-slide='prev'>
+								<span class='comment-glyph glyphicon glyphicon-chevron-left' aria-hidden='true'></span>
+									<span class='sr-only'>{{_ 'review_page_sr_previous'}}</span>
+							</a>
+							<a class='right comments-carousel-control comments-carousel-control-xs' href='#doubleCommentsCarousel' role='button' data-slide='next'>
+								<span class='comment-glyph glyphicon glyphicon-chevron-right' aria-hidden='true'></span>
+									<span class='sr-only'>{{_ 'review_page_sr_next'}}</span>
+							</a>
+						{{/if}}
+					
+					<div>
+						{{#if hasMoreReviewHelper}}
+							<a href={{hasMoreReviewPath}} class='btn btn-info has-more-review-path'>{{_ '2X'}}{{nextSnippetAmount}}</a>
+						{{else}}
+							<a href={{hasMoreReviewPath}} class='btn btn-info has-more-review-path'>{{_ '2X'}}{{nextSnippetAmount}}</a>
+						{{/if}}
+						<sub class='other-side'>If no change, check the other side</sub>
+					</div>
+					<br>
+					<br>
+					<br>
+					
+					{{/if}}
+					
+						{{{_ 'review_lack_btn'}}}
+						
+						{{#unless notFirstVisitReviewPage}}
+							<div id='bothLackInfoBox'>&#62;<br>{{_ 'review_short_tutorial_6'}}<br><br><span class='click-thanks'>{{_ 'review_short_tutorial_1_ok'}}</span></div>
+						{{/unless}}
+						
+					<div id='bothLack' class='modal fade' role='dialog'>
+						<div class='modal-dialog modal-xs'>
+							<div class='modal-content'>
+								<div class='modal-header'>
+									<button type='button' class='close' data-dismiss='modal'>&times;</button>
+									<h3 class='modal-title lack-navigation'>{{_ 'review_page_lack_link'}}</h3>
+								</div>
+								<div class='modal-body both-lack-modal-body'>
+									<div class='parent commentsLack'>
+										<div class='wrapper'>
+											{{#each comments}}
+												{{#each commentsLack}}
+													{{> reviewCommentItemLack}}
+												{{else}}
+													<p class='text-center'>No snippets yet. :(</p>
+												{{/each}}
+											{{/each}}
+										</div>
+									</div>
+							
+									{{#if isCommentBoxSummoned}}
+									<sub>{{_ 'write_snippet_lacks'}}{{productName1}}{{_ 'write_snippet_lacks_2'}}{{productName2}}</sub>
+									{{/if}}
+									{{> reviewCommentSubmitBoxXs}}
+									<!-- The distinction between box sizes becomes relevant in the columns. Here xs can be used as it contains the universal (when solo) col-xs class-->
+									{{#if hasMoreLackReviewHelper}}
+										<a href={{hasMoreLackReviewPath}} class='btn btn-info has-more-lack-review-path'>{{_ '2X'}}{{nextSnippetAmount}}</a>
+									{{else}}
+										<a href={{hasMoreLackReviewPath}} class='btn btn-info has-more-lack-review-path'>{{_ '2X'}}{{nextSnippetAmount}}</a>
+									{{/if}}
+									<sub class='other-side-lack'>If no change, check the other side</sub>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					
+					<div id='price-div'>
+						<h3 class='text-center'>{{_ 'review_pricing_double'}}</h3>
+						<span class='best-prices'>{{_ 'review_best_found_prices_d'}}</span>
+						<br>
+						<div class='col-xs-6 text-center'>
+							<span class='product1-font text-center'>{{productName1}}</span>
+							<br>
+							<span>{{product1Price}}</span>
+							{{_ 'landing_currency'}}
+							{{_ 'review_from'}}
+							<a href='{{product1PricePlaceLink}}'>{{product1PricePlaceName}}</a>
+						</div>
+						<div class='col-xs-6 text-center'>
+							<span class='product2-font text-center'>{{productName2}}</span>
+							<br>
+							<span>{{product2Price}}</span>
+							{{_ 'landing_currency'}}
+							{{_ 'review_from'}}
+							<a href='{{product2PricePlaceLink}}'>{{product2PricePlaceName}}</a>
+						</div>
+						{{#if priceNotChecked}}
+							<div class='text-center'>
+								<sub>{{_ 'not_checked_by_urevs'}}</sub>
+							</div>
+							{{#if possibleNotTruePrice}}
+								<div class='text-center'>
+								<sub>{{_ 'possible_not_true_price'}}</sub>
+							</div>
+							{{/if}}
+						{{/if}}
+						{{#if morePrices}}
+						<div>
+							<span data-toggle='collapse' data-target='#morePrices'><a href='#'>Show more prices</a></span>
+								<div id='morePrices' class='collapse'>
+									{{#each morePrices}}
+										<span>{{extraProductName}} - </span>
+										<span>{{extraPrice}}</span>
+										{{_ 'review_from'}}
+										<a href='{{extraProduct1PriceLink}}'>{{extraProduct1PricePlace}}</a>
+									{{/each}}
+								</div>
+						</div>
+						{{/if}}
+						<br>
+						<div>
+							<form class='new-price-form'>
+								{{{_ 'review_add_price_btn'}}}
+							</form>
+						</div>
+					</div>
+					
+				{{else}}
+				{{#unless notFirstVisitReviewPage}}
+					<div id='sQuickVoteInfoBox'>{{_ 'review_short_tutorial_4'}}<br>&#62;<br><br><span class='click-thanks'>{{_ 'review_short_tutorial_1_ok'}}</span></div>
+					<div id='critDescInfoBox'>&#62;<br>{{_ 'review_short_tutorial_7'}}<br><br><span class='click-thanks'>{{_ 'review_short_tutorial_1_ok'}}</span></div>
+				{{/unless}}
+				<h3 class='text-center'>{{_ 'review_single_rating_header'}}</h3>
+					<div class='criteria-panel'>
+						{{#each comparisonCriteria}}
+							<div class='compCriteriaUnit' id={{_id}}>
+								<b>{{compCriteriaName}}</b>
+								<br>
+								<span data-toggle='collapse' data-target='#desc{{_id}}' class='glyphicon glyphicon-question-sign'></span>
+									<div id='desc{{_id}}' class='collapse'>
+										{{compCriteriaDescription}}
+									</div>
+								{{> starsRating rating=rating size=25 mutable=true class='rateCritBtn stars-rating-position'}}
+								{{rating}}
+								<br>
+								{{#if currentUser}}
+									{{#if lastRating}}
+								<sub class='lastRating'>{{_ 'last_rating'}}{{lastRating}}</sub>
+									{{/if}}
+								{{/if}}
+								<br>
+								<span>{{_ 'review_total_ratings'}}{{totalRates}}</span>
+							</div>
+						{{/each}}
+						
+						<div class='text-center'>
+							<a href='#' id='more-criteria-suggestions'>{{_ 'review_vote_crit_sug'}}</a>
+						</div>
+						<br>
+						
+						<div id='criteriaSuggestionsModal' class='modal fade' role='dialog'>
+							<div class='modal-dialog modal-xs'>
+								<div class='modal-content'>
+									<div class='modal-header'>
+										<h4 id='criteria-suggestion-h4'>{{_ 'review_which_cates'}}</h4>
+										<button type='button' class='close' data-dismiss='modal' id='criteria-suggestion-close-btn'>&times;</button>
+									</div>
+									<div class='modal-body'>
+										{{#each criteriaSuggestions}}
+											<div class='text-center'>
+												{{criteriaSuggestion}} - {{criteriaDescription}}
+												<button type='button' class='btn btn-primary criteria-suggestion-vote {{isHighlightedSuggestionVoteBtn}}'>{{_ 'review_want_this'}}</button>
+												{{criteriaSuggestionUpvotesAmount}}
+											</div>
+											<br>
+										{{/each}}
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div id='congratsUpgradedCriteria' class='modal fade' role='dialog'>
+							<div class='modal-dialog modal-xs'>
+								<div class='modal-content'>
+									<div class='modal-body'>
+										<h3 class='text-center'>{{_ 'review_congrats'}}</h3>
+										<br>
+										<div class='text-center'>
+											<span>{{_ 'review_congrats_1'}}</span>
+											<br>
+											<br>
+											<span>{{_ 'review_congrats_share'}}</span>
+											<br>
+											<br>
+											{{> shareit shareData}}
+										</div>
+										<br>
+										<div class='share-dialog-btn-div'>
+											<button type='button' class='btn btn-info' data-dismiss='modal'>{{_ 'review_page_share_close'}}</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						{{#unless maxSugReached}}
+							<form class='new-criteria-form'>
+								{{{_ 'review_add_criteria_btn'}}}
+								{{#if keyupCriteriaAdd}}
+									{{{_ 'review_add_criteria_desc_btn'}}}
+									<div class='text-center'>
+									{{desCharCount}}
+									</div>
+									{{{_ 'review_add_criteria_sbmt_btn'}}}
+								{{/if}}
+							</form>
+							{{#if keyupCriteriaAdd}}
+							<div class='text-center'>
+								<sub class='fade-in-approval'>{{_ 'review_please_check_spelling'}}</sub>
+							</div>
+							{{/if}}
+						{{/unless}}
+					</div>
+					<br>
+					
+					{{#unless xs}}
+						<div class='col-sm-6 review-the-left'>
+							<h3 class='snippet-column-header' id='single-good'>{{_ 'review_page_single_col1'}}</h3>
+							{{#unless notFirstVisitReviewPage}}
+								<div id='inDepthAreaInfoBox'>&#62;<br>{{_ 'review_short_tutorial_5_single'}}<br><br><span class='click-thanks'>{{_ 'review_short_tutorial_1_ok'}}</span></div>
+							{{/unless}}
+							<div class='parent comments1 single'>
+								<div class='wrapper1'>
+									{{#each comments}}
+										{{#each comments1}}
+											{{> reviewCommentItem}}
+										{{else}}
+											<p class='text-center'>{{_ 'review_no_snippets'}}</p>	
+										{{/each}}
+									{{/each}}
+									{{singleCommentColor}} 
+								</div>
+							</div>
+							{{#if isCommentBoxSummoned}}
+											<sub>{{_ 'write_snippet_good'}}{{productName1}}</sub>
+							{{/if}}
+							{{> reviewCommentSubmitBoxXs}}
+						</div>
+						
+						<div class='col-sm-6 review-the-right-big'>
+							<h3 class='snippet-column-header' id='single-bad'>{{_ 'review_page_single_col2'}}</h3>
+							<div class='parent comments2 single'>
+								<div class='wrapper2'>
+									{{#each comments}}
+										{{#each comments2}}
+											{{> reviewCommentItem}}
+										{{else}}
+											<p class='text-center'>{{_ 'review_no_snippets'}}</p>
+										{{/each}}
+									{{/each}}
+									{{singleCommentColor}}
+								</div>
+							</div>
+							
+							{{#if isCommentBoxSummoned}}
+											<sub>{{_ 'write_snippet_bad'}}{{productName1}}</sub>
+							{{/if}}
+							{{> reviewCommentSubmitBoxXs}}
+						</div>
+						
+						<div>
+							{{#if hasMoreReviewHelper}}
+								<a href={{hasMoreReviewPath}} class='btn btn-info has-more-review-path'>{{_ '2X'}}{{nextSnippetAmount}}</a>
+							{{else}}
+								<a href={{hasMoreReviewPath}} class='btn btn-info has-more-review-path'>{{_ '2X'}}{{nextSnippetAmount}}</a>
+							{{/if}}
+						</div>
+					{{/unless}}
+			
+					{{#if xs}}
+						<div id='singleCommentsCarousel' data-keyboard='false' class='carousel slide' data-interval='false'>
+							<div class='carousel-inner' role='listbox'>
+								<div class='item active'>
+									<div class='col-xs-12 center-block review-the-left'>
+										<h3 class='snippet-column-header' id='single-good'>{{_ 'review_page_single_col1'}}</h3>
+										{{#unless notFirstVisitReviewPage}}
+											<div id='inDepthAreaInfoBox'>&#62;<br>{{_ 'review_short_tutorial_5_single'}}<br><br><span class='click-thanks'>{{_ 'review_short_tutorial_1_ok'}}</span></div>
+										{{/unless}}
+										<div class='parent comments1 single'>
+											<div class='wrapper3'>
+												{{#each comments}}
+													{{#each comments1}}
+														{{> reviewCommentItem}}
+													{{else}}
+														<p class='text-center'>{{_ 'review_no_snippets'}}</p>
+													{{/each}}
+												{{/each}}
+												{{singleCommentColor}}
+											</div>
+										</div>
+											{{#if isCommentBoxSummoned}}
+											<sub>{{_ 'write_snippet_good'}}{{productName1}}</sub>
+											{{/if}}
+											{{> reviewCommentSubmitBoxXs}}
+											
+									</div>
+								</div>
+								<div class='item'>
+									<div class='col-xs-12 review-the-right-small'>
+										<h3 class='snippet-column-header' id='single-bad'>{{_ 'review_page_single_col2'}}</h3>
+										<div class='parent comments2 single'>
+											<div class='wrapper4'>
+												{{#each comments}}
+													{{#each comments2}}
+														{{> reviewCommentItem}}
+													{{else}}
+														<p class='text-center'>{{_ 'review_no_snippets'}}</p>
+													{{/each}}
+												{{/each}}
+												{{singleCommentColor}}
+											</div>
+										</div>
+											{{#if isCommentBoxSummoned}}
+											<sub>{{_ 'write_snippet_bad'}}{{productName1}}</sub>
+											{{/if}}
+											{{> reviewCommentSubmitBoxXs}}
+									</div>					
+								</div>	
+							</div>
+						</div>
+						
+						<div>
+							{{#if hasMoreReviewHelper}}
+								<a href={{hasMoreReviewPath}} class='btn btn-info has-more-review-path'>{{_ '2X'}}{{nextSnippetAmount}}</a>
+							{{else}}
+								<a href={{hasMoreReviewPath}} class='btn btn-info has-more-review-path'>{{_ '2X'}}{{nextSnippetAmount}}</a>
+							{{/if}}
+							<sub class='other-side'>If no change, check the other side</sub>
+						</div>
+						
+						{{#if cSSSetting}}
+							<a class='left comments-carousel-control comments-carousel-control-xs' href='#singleCommentsCarousel' role='button' data-slide='prev'>
+								<span class='glyphicon glyphicon-chevron-left' aria-hidden='true'></span>
+									<span class='sr-only'>{{_ 'review_page_sr_previous'}}</span>
+							</a>
+						{{else}}
+							<a class='right comments-carousel-control comments-carousel-control-xs' href='#singleCommentsCarousel' role='button' data-slide='next'>
+								<span class='glyphicon glyphicon-chevron-right' aria-hidden='true'></span>
+									<span class='sr-only'>{{_ 'review_page_sr_next'}}</span>
+							</a>
+						{{/if}}
+						
+						{{#if cSSSettingBoth}}
+							<a class='left comments-carousel-control comments-carousel-control-xs' href='#singleCommentsCarousel' role='button' data-slide='prev'>
+								<span class='glyphicon glyphicon-chevron-left' aria-hidden='true'></span>
+									<span class='sr-only'>{{_ 'review_page_sr_previous'}}</span>
+							</a>
+							<a class='right comments-carousel-control comments-carousel-control-xs' href='#singleCommentsCarousel' role='button' data-slide='next'>
+								<span class='glyphicon glyphicon-chevron-right' aria-hidden='true'></span>
+									<span class='sr-only'>{{_ 'review_page_sr_next'}}</span>
+							</a>
+						{{/if}}
+					{{/if}}
+					
+					<div id='price-div'>
+						<h3 class='text-center'>{{_ 'review_pricing_single'}}</h3>
+						<span class='best-prices'>{{_ 'review_best_found_prices_s'}}</span>
+						<br>
+						<div class='text-center'>
+							<span class='product1-font text-center'>{{productName1}}</span>
+							<br>
+							<span>{{product1Price}}</span>
+							{{_ 'landing_currency'}}
+							{{_ 'review_from'}}
+							<a href='{{product1PricePlaceLink}}'>{{product1PricePlaceName}}</a>
+						</div>
+						{{#if priceNotChecked}}
+							<div class='text-center'>
+								<sub>{{_ 'not_checked_by_urevs'}}</sub>
+							</div>
+							{{#if possibleNotTruePrice}}
+								<div class='text-center'>
+								<sub>{{_ 'possible_not_true_price'}}</sub>
+							</div>
+							{{/if}}
+						{{/if}}
+					</div>
+					{{#if morePrices}}
+						<div>
+							<span data-toggle='collapse' data-target='#morePrices'><a href='#'>Show more prices</a></span>
+								<div id='morePrices' class='collapse'>
+									{{#each morePrices}}
+										<span>{{extraProductName}} - </span>
+										<span>{{extraPrice}}</span>
+										{{_ 'review_from'}}
+										<a href='{{extraProduct1PriceLink}}'>{{extraProduct1PricePlace}}</a>
+									{{/each}}
+								</div>
+						</div>
+						{{/if}}
+						<br>
+						<br>
+						<div>
+							<form class='new-price-form'>
+								{{{_ 'review_add_price_btn'}}}
+							</form>
+						</div>
+						
+				{{/unless}}
+			</div>
+
+			{{#unless single}}
+				<div class='container bottom-likesDouble-div'>
+					{{#if likePlacement}}
+					<h5 class='text-center'>{{_ 'review_which_product'}}</h5>
+
+						<div class='col-xs-6 text-center'>
+							{{#if currentUser}}
+								<span class='product1-font text-center'>{{productName1}}</span>
+								<br>
+								{{isHighlightedLike}}
+									{{{_ 'review_likes1_recommend_btn_double_BOTTOM'}}}
+								{{likes1}}
+							{{else}}
+								<span class='product1-font text-center'>{{productName1}}</span>
+								<br>
+								{{isHighlightedLike}}
+									{{{_ 'review_likes1_recommend_btn_double_BOTTOM'}}}
+								{{likes1}}
+							{{/if}}
+						</div>
+					{{/if}}
+				
+					{{#if likePlacement}}
+						<div class='col-xs-6 text-center'>
+							{{#if currentUser}}
+								<span class='product2-font text-center'>{{productName2}}</span>
+								<br>
+								{{isHighlightedLike}}
+									{{{_ 'review_likes2_recommend_btn_double_BOTTOM'}}}
+								{{likes2}}
+							{{else}}
+								<span class='product2-font text-center'>{{productName2}}</span>
+								<br>
+								{{isHighlightedLike}}
+									{{{_ 'review_likes2_recommend_btn_double_BOTTOM'}}}
+								{{likes2}}
+							{{/if}}
+						</div>
+						{{#unless notFirstVisitReviewPage}}
+							<div id='likeInfoBox'>{{_ 'review_short_tutorial_1'}}{{productName1}}{{_ 'review_short_tutorial_2'}}{{productName2}}<br><br><span class='click-thanks'>{{_ 'review_short_tutorial_1_ok'}}</span></div>
+						{{/unless}}
+					{{/if}}
+				</div>
+			
+			{{else}}
+			
+				{{#if likePlacement}}
+					<div class='col-xs-12 text-center bottom-likesSingle-div'>
+						<h5>{{_ 'review_page_single_recommend'}}</h5>
+						{{#if currentUser}}
+							{{isHighlightedLike}}
+								<button title={{singleLikesTitle}} type='button' class='likes-button js-single-likes likes-btn-flag likes-button-small-double btn btn-primary likes1'><span class='glyphicon glyphicon-heart likes1'></span></button>
+							{{likes1}}
+						{{else}}
+							{{isHighlightedLike}}
+								<button title={{singleLikesTitle}} type='button' class='likes-button js-single-likes likes-btn-flag likes-button-small-double btn btn-primary likes1'><span class='glyphicon glyphicon-heart likes1'></span></button>
+							{{likes1}}
+						{{/if}}
+					</div>
+					{{#unless notFirstVisitReviewPage}}
+						<div id='likeInfoBox2'>&#62;<br>{{_ 'review_short_tutorial_1'}}{{productName1}}<br><br><span class='click-thanks'>{{_ 'review_short_tutorial_1_ok'}}</span></div>
+					{{/unless}}
+				{{/if}}
+				
+			{{/unless}}
+
+			<div id='likeDialog' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-xs'>
+					<div class='modal-content'>
+						<div class='modal-body'>
+							<h4 class='text-center'>{{_ 'review_page_like_share_header1'}}</h4>
+							<h4 class='text-center'>{{_ 'review_page_like_share_header2'}}</h4>
+							<br>
+							<div class='text-center'>
+								{{> shareit shareData}}
+							</div>
+							<br>
+							<div class='text-center'>
+								<input id='dont-show-like-share' type='checkbox' name='dont-show-like-share'><label>{{_ 'review_page_share_opt_out'}}</label>
+							</div>
+							<br>
+							<div class='share-dialog-btn-div'>
+								<button type='button' class='btn btn-info like-dialog-btn' data-dismiss='modal'>{{_ 'review_page_share_close'}}</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+	
+			<div class='col-md-10 text-center' id='review-share-it'>
+				{{> shareit shareData}}
+			</div>
+			
+			{{#unless isSearchBoxBottom}}
+				<br>
+				<div id='review-page-search-wrap-div'>
+					{{#unless searchBoxSummoned}}
+						<div class='text-center' id='another-search'>
+							<button class='btn btn-info' id='another-search-button'>{{_ 'review_page_another_search'}}</button>
+						</div>
+					{{else}}
+						{{> genericSearchTemplate}}
+					{{/unless}}
+				</div>
+				<br>
+				<br>
+				<br>
+			{{/unless}}
+	
+			{{{_ 'review_flag_review_btn'}}}
+			
+			<!--
+			{{#unless notFirstVisitReviewPage}}
+				<div id='staticTutorialInfoBox'>Check out the tutorial anytime by clicking on "More" below and then on "Tutorial"<br><br><span class='click-thanks'>Ok</span></div>
+			{{/unless}}
+			-->
+	
+			<div id='flagModal' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-xs'>
+					<div class='modal-content'>
+						<div class='modal-header'>
+							<button type='button' class='close' data-dismiss='modal'>&times;</button>
+							<h3 class='modal-title'>{{_ 'review_page_flag_header'}}</h3>
+						</div>
+						<div class='modal-body'>
+						{{#if currentUser}}
+							<p>{{_ 'review_page_flag_p1'}}</p> 
+							<p>{{_ 'review_page_flag_p2'}}</p>
+							<textarea class='form-control' rows='5' maxlength='10000' id='flagExplanation'></textarea>
+					
+							{{{_ 'review_flag_review_submit_btn'}}}
+							<button type='button' class='btn btn-success' data-dismiss='modal'>{{_ 'cancel'}}</button>
+						{{else}}
+							{{> accessDenied}}
+						{{/if}}
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div id='flagCommentModal' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-xs'>
+					<div class='modal-content'>
+						<div class='modal-header'>
+							<button type='button' class='close' data-dismiss='modal'>&times;</button>
+							<h3 class='modal-title'>{{_ 'review_report_snippet'}}</h3>
+						</div>
+						<div class='modal-body'>
+						{{#if currentUser}}
+							<p>{{_ 'review_page_flag_p1'}}</p> 
+							<p>{{_ 'review_report_snippet_text'}}</p>
+							<textarea class='form-control' rows='5' maxlength='10000' id='flagCommentExplanation'></textarea>
+					
+							<button type='button' class='btn btn-success flag-btn' id='comment-flag-cancel' data-dismiss='modal'>{{_ 'cancel'}}</button>
+							{{{_ 'review_flag_snippet_submit_btn'}}}
+						{{else}}
+							{{> accessDenied}}
+						{{/if}}
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div id='flagAnswerModal' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-xs'>
+					<div class='modal-content'>
+						<div class='modal-body'>
+							<p>{{_ 'review_page_flag_answer'}}</p>
+					
+							<button type='button' class='btn btn-success' data-dismiss='modal'>{{_ 'ok'}}</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div id='confirmDelete' class='modal fade' role='dialog'>
+				<div class='modal-dialog modal-xs'>
+					<div class='modal-content'>
+						<div class='modal-body'>
+							<h4 class='text-center'>{{_ 'review_page_delete_confirmation_question'}}</h4>
+							<br>
+							<div class='confirm-delete-btns-div'>
+								<button type='button' class='btn btn-success' data-dismiss='modal' id='confirm-delete-cancel'>{{_ 'review_page_delete_cancel'}}</button>
+								<button type='button' class='btn btn-danger' id='confirm-delete-yes'>{{_ 'review_page_delete_confirmation_confirm'}}</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		{{/each}}
+	{{/unless}}
+</template>
