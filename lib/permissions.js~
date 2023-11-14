@@ -1,0 +1,27 @@
+//ReviewPage Permissions
+/*ReviewPage.deny({
+	update: 
+});
+*/
+//ADD PERMISSIONS TO MAKE SURE USERS DON'T BYPASS METHODS
+//CAN user just add permissions on the client or do the permissions also have to be on the server?
+
+
+//block profile writes from client
+//- even if you aren't concerned about this, it isn't a good idea to let malicious users store arbitrary amounts of data in your database
+
+Meteor.users.allow({
+	insert() { return false; },
+	update() { return false; },
+	remove() { return false; }
+});
+
+Meteor.users.deny({
+	insert() { return true; },
+	update() { return true; },
+	remove() { return true; }
+});
+
+//rest of allow and denies are in their respective collection definition files
+
+//remember during beta to develop process for account removal

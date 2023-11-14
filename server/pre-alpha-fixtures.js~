@@ -1,0 +1,29 @@
+//ONLY DEVELOPMENT
+
+if (Categories.find().count() === 0) {
+	Categories.insert({
+		"title" : "Cameras",
+		"reviews" : "camerasreviews",
+		"categPicUrl" : "cameras_category.png"
+	});
+	Categories.insert({
+		"title" : "Phones & Related",
+		"reviews" : "phonesreviews",
+		"categPicUrl" : "phones_category.png"
+	});
+	Categories.insert({
+		"title" : "Computers, Tablets & Related",
+		"reviews" : "computersreviews",
+		"categPicUrl" : "computers_category.png"
+	});
+	Categories.insert({
+		"title" : "TVs & Related",
+		"reviews" : "tvsreviews",
+		"categPicUrl" : "tvs_category.png"
+	});
+	Categories.insert({
+		"title" : "Consoles & VR",
+		"reviews" : "consolesreviews",
+		"categPicUrl" : "consoles_category.png"
+	});
+};

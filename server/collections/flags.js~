@@ -1,0 +1,4 @@
+//un-comment when creating new server
+Flags = new Mongo.Collection('flags');
+
+//move over other one

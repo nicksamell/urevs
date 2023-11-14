@@ -1,0 +1,5 @@
+var proImageStore = new FS.Store.GridFS('profileImages');
+
+proImages = new FS.Collection('proimages', {
+	stores: [proImageStore]
+});

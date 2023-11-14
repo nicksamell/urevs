@@ -1,0 +1,25 @@
+//Search Methods
+
+Meteor.methods({
+	search: function(searchString) {
+		check(searchString, String);
+		var cursor = SpellCheck.find({revTitleBit: searchString}).fetch();
+									
+									console.log(cursor);
+									
+		if(cursor.length == 0) {
+			var tempCursor = SpellCheck.find({}, { revTitleBit: true }).fetch();
+									
+									console.log(tempCursor);
+									console.log(searchString);
+			var bestWord = mostSimilarString(tempCursor, "revTitleBit", searchString, -1, false);
+			
+									console.log(bestWord);
+			
+			console.log(SearchIndex.find({$text: {$search: bestWord}}, {score: {$meta: "textScore"}}).fetch());  
+		} else {
+			return SearchIndex.find({$text: {$search: cursor}}, {score: {$meta: "textScore"}}).sort({score:{$meta:"textScore"}}).fetch();
+		}
+	}
+});
+

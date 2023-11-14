@@ -1,0 +1,4 @@
+//un-comment when creating new server
+Suggestions = new Mongo.Collection('suggestions');
+
+//move over other one

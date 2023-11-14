@@ -1,0 +1,328 @@
+Meteor.publish('categories', function() {
+	return Categories.find();
+});
+/*
+let categories_publish = {
+	type: 'subscription',
+	name: 'categories'
+};
+DDPRateLimiter.addRule(categories_publish, 5, 1000);
+*/
+
+//ReviewPage
+Meteor.publish('reviewPage', function(category, reviewId, limit) {
+	check(category, String);
+	check(reviewId, String);
+	check(limit, Number);
+	
+	if (category === 'camerasreviews' || category === 'phonesreviews' || category === 'computersreviews' || category === 'tvsreviews' || category === 'consolesreviews') {
+		//proceed
+	} else {
+		//else exit to avoid malevolent action but assume innocence
+		throw new Meteor.Error("Internal Server Error", "If you encountered this error while normally using this app (by using the provided buttons), please let us know by sending a suggestion (at the bottom of the page).");
+	}
+	//basic security practice - limit input value possiblities as much as possible
+	
+	if (limit > 30) {
+		limit = 30;
+	} else if (limit < 1) {
+		limit = 1;
+	}
+	
+	let categoryComments = category;
+	categoryComments += 'comments';
+	
+	return [Mongo.Collection.get(category).find({_id: reviewId}, { fields: {'_id': 1, 'single': 1, 'category': 1, 'productName1': 1, 'productName2': 1, 'picUrl1': 1, 'picUrl2': 1, 'likes1': 1, 'likes2': 1, 'hornCount': 1 /*, 'userId': 0, 'author': 0, 'submitted': 0, 'likes1Users': 0, 'likes2Users': 0, 'hornCountUsers': 0 */ }}), Mongo.Collection.get(categoryComments).find({_id: reviewId}, { fields: {'comments1.comment': 1, 'comments2.comment': 1, 'commentsLack.comment': 1, 'comments1.author': 1, 'comments2.author': 1, 'commentsLack.author': 1, 'comments1.submitted': 1, 'comments2.submitted': 1, 'commentsLack.submitted': 1, 'comments1.commentsGroup': 1, 'comments2.commentsGroup': 1, 'commentsLack.commentsGroup': 1, 'comments1._id': 1, 'comments2._id': 1, 'commentsLack._id': 1, 'comments1.upvotes': 1, 'comments2.upvotes': 1, 'commentsLack.upvotes': 1, 'comments1.downvotes': 1, 'comments2.downvotes': 1, 'commentsLack.downvotes': 1, 'comments1.totalScore': 1, 'comments2.totalScore': 1, 'commentsLack.totalScore': 1,  /*'comments1.userId': 0, 'comments2.userId': 0, 'commentsLack.userId': 0, 'comments1.upvoteUsers': 0, 'comments1.downvoteUsers': 0, 'comments2.upvoteUsers': 0, 'comments2.downvoteUsers': 0, 'commentsLack.upvoteUsers': 0, 'commentsLack.downvoteUsers': 0,*/ 'comments1': { $slice: limit }, 'comments2': { $slice: limit }, 'commentsLack': { $slice: limit } } })];
+
+});
+/*
+let review_page_publish = {
+	type: 'subscription',
+	name: 'reviewPage'
+};
+DDPRateLimiter.addRule(review_page_publish, 5, 1000);
+*/
+
+//NewestPage
+
+Meteor.publish('newestSubscription', function(newestPostsLimit) {
+	check(newestPostsLimit, Number);
+
+	if (newestPostsLimit > 1000) {
+		newestPostsLimit = 1000;
+	} else if (newestPostsLimit < 1) {
+		newestPostsLimit = 1;
+	}
+	
+	return ReactiveAggregate(this, SearchIndex, [
+					{ $match: {} }, 
+					{ $project: { single: 1, revTitle: 1, category: 1, revPicUrl1: 1, revPicUrl2: 1, submitted: 1, likes1: 1, likes2: 1 } },
+					{ $sort: { submitted: -1 } },
+					{ $limit: newestPostsLimit}
+				]);
+});
+/*
+let newest_subscription_publish = {
+	type: 'subscription',
+	name: 'newestSubscription'
+};
+//For performance security, all publications with a limit of 1000 must have a DDPRateLimiter of 1 per 1 second
+DDPRateLimiter.addRule(newest_subscription_publish, 1, 1000);
+*/
+
+//TrendingPage
+
+Meteor.publish('trendingSubscription', function(trendingPostsLimit) {
+		check(trendingPostsLimit, Number);
+		
+		if (trendingPostsLimit > 1000) {
+			trendingPostsLimit = 1000;
+		} else if (trendingPostsLimit < 1) {
+			trendingPostsLimit = 1;
+		}
+		
+		let date = new Date();
+		date = date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear();
+	
+
+		let query = {};
+		query['$query'] = {};
+		query['$query']['trendingUpdate'] = date;
+		query['$query']['trendingCount'] = {};
+		query['$query']['trendingCount']['$gte'] = 10;
+		query['$orderby'] = {};
+		query['$orderby']['trendingCount'] = -1;
+
+		trendingPostsLimit = Math.ceil(trendingPostsLimit);
+
+		let options = {};
+		options['limit'] = trendingPostsLimit;
+
+		return SearchIndex.find(query, options);
+});
+/*
+let trending_subscription_publish = {
+	type: 'subscription',
+	name: 'trendingSubscription'
+};
+DDPRateLimiter.addRule(trending_subscription_publish, 1, 1000);
+*/
+
+Meteor.publish('trendingSubscriptionAmended', function(trendingPostsLimit) {
+		check(trendingPostsLimit, Number);
+
+		if (trendingPostsLimit > 1000) {
+			trendingPostsLimit = 1000;
+		} else if (trendingPostsLimit < 0) {
+			trendingPostsLimit = 0;
+			//0 case is caught later on in publication
+		}
+		
+		let date = new Date();
+		date = date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear();
+	
+
+		let query = {};
+		query['$query'] = {};
+		query['$query']['hornDay'] = date;
+		query['$orderby'] = {};
+		query['$orderby']['hornTime'] = -1;
+		//sort by newest to keep constantly popular reviews up high
+		
+		let options = {};
+
+		trendingPostsLimit = Math.floor(trendingPostsLimit);
+
+		if (trendingPostsLimit != 0) {
+			options['limit'] = trendingPostsLimit;
+			
+			return SearchIndex.find(query, options);
+		} else {
+			return;
+		}
+});
+/*
+let trending_subscription_amended_publish = {
+	type: 'subscription',
+	name: 'trendingSubscriptionAmended'
+};
+DDPRateLimiter.addRule(trending_subscription_amended_publish, 1, 1000);
+*/
+
+//searchLandingPage
+Meteor.publish('searchLandingSubscription', function(searchString1, searchString2, typeFilter, searchLimit) {
+	check(searchString1, String);
+	check(searchString2, String);
+	check(typeFilter, String);
+	check(searchLimit, Number);
+	
+	if (searchLimit > 1000) {
+		searchLimit = 1000;
+	} else if (searchLimit < 1) {
+		searchLimit = 1;
+	}
+	
+	if (typeFilter === 'single' || typeFilter === 'comparison' || typeFilter === 'all') {
+		//proceed
+	} else {
+		//else exit to avoid malevolent but assume innocence
+		throw new Meteor.Error("Internal Server Error", "Please check that the type filter is spelled correctly in the url.");
+	}
+	//basic security practice - limit input value possiblities as much as possible
+
+	///search 'Methods'
+	if (searchString1 != 'null' && searchString2 != 'null') {
+		var searchPhrase1 = searchString1;
+		var searchPhrase2 = searchString2;
+		
+		//eliminate all spaces
+		var cleanPhrase1 = searchPhrase1.replace(/ /gi, "");
+
+		var finalregPhrase1 = '\\s*';
+		var regPhrase1 = cleanPhrase1.match(/.{0,1}/g);
+		finalregPhrase1 += regPhrase1.join('\\s*');
+		
+		//eliminate all spaces
+		var cleanPhrase2 = searchPhrase2.replace(/ /gi, "");
+
+		var finalregPhrase2 = '\\s*';
+		var regPhrase2 = cleanPhrase2.match(/.{0,1}/g);
+		finalregPhrase2 += regPhrase2.join('\\s*');
+		
+		var array = [];
+		array[0] = new RegExp(finalregPhrase1, "i");
+		array[1] = new RegExp(finalregPhrase2, "i");
+
+		if (SearchIndex.find({revTitle: { $in: array }}, {score: {$meta: "textScore"}, limit: searchLimit}).fetch().length > 0) {
+			if (typeFilter === 'all') {
+				return ReactiveAggregate(this, SearchIndex, [
+					{ $match: {revTitle: { array } } }, 
+					{ $project: { single: 1, revTitle: 1, category: 1, revPicUrl1: 1, revPicUrl2: 1, likes1: 1, likes2: 1, difference: { $abs: { $subtract: ['$likes1', '$likes2'] } }, summation: { $add: ['$likes1', '$likes2'] } } },
+					{ $sort: { summation: -1 } },
+					{ $sort: { difference: 1 } },
+					{ $sort: { single: -1 } },
+					{ $limit: searchLimit}
+				]);
+			} else if (typeFilter === 'single') {
+				return ReactiveAggregate(this, SearchIndex, [
+					{ $match: {revTitle: { $in: array }, single: true } }, 
+					{ $project: { single: 1, revTitle: 1, category: 1, revPicUrl1: 1, likes1: 1 } },
+					{ $sort: { likes1: -1 } },
+					{ $sort: { single: -1 } },
+					//another sort here in an attempt to stop limit from working before sort has a chance to sort whole interest group
+					{ $limit: searchLimit }
+				]);
+			} else if (typeFilter === 'comparison') {
+				return ReactiveAggregate(this, SearchIndex, [
+					{ $match: { $text: {$search: { $and: array[0], array[1] } }, single: false } }, 
+					{ $project: { single: 1, revTitle: 1, category: 1, revPicUrl1: 1, revPicUrl2: 1, likes1: 1, likes2: 1, difference: { $abs: { $subtract: ['$likes1', '$likes2'] } }, summation: { $add: ['$likes1', '$likes2'] } } },
+					{ $sort: { summation: -1 } },
+					{ $sort: { difference: 1 } },
+					{ $sort: { single: -1 } },
+					//another sort here in an attempt to stop limit from working before sort has a chance to sort whole interest group
+					{ $limit: searchLimit }
+				]);
+			}
+		} else {
+			throw new Meteor.Error("No-Match", "Sorry! No match was found. You can start a new review though!");
+		}
+	/// now searchSingle 'Methods'
+	} else if (searchString1 === 'null' || searchString2 === 'null') {
+		if (searchString1 != 'null') {
+			//eliminate all spaces
+			var cleanPhrase1 = searchString1.replace(/ /gi, "");
+
+			var finalregPhrase1 = '\\s*';
+			var regPhrase1 = cleanPhrase1.match(/.{0,1}/g);
+			finalregPhrase1 += regPhrase1.join('\\s*');
+
+			var array = [];
+			array[0] = new RegExp(finalregPhrase1, "i");
+
+			if (SearchIndex.find({revTitle: { $in: array }}, {score: {$meta: "textScore"}, limit: searchLimit}).fetch().length > 0) {
+				if (typeFilter === 'all') {
+					return ReactiveAggregate(this, SearchIndex, [
+						{ $match: {revTitle: { $in: array } } }, 
+						{ $project: { single: 1, revTitle: 1, category: 1, revPicUrl1: 1, revPicUrl2: 1, likes1: 1, likes2: 1, difference: { $abs: { $subtract: ['$likes1', '$likes2'] } }, summation: { $add: ['$likes1', '$likes2'] } } },
+						{ $sort: { summation: -1 } },
+						{ $sort: { difference: 1 } },
+						{ $sort: { single: -1 } },
+						{ $limit: searchLimit}
+					]);
+				} else if (typeFilter === 'single') {
+					return ReactiveAggregate(this, SearchIndex, [
+						{ $match: {revTitle: { $in: array }, single: true } }, 
+						{ $project: { single: 1, revTitle: 1, category: 1, revPicUrl1: 1, likes1: 1 } },
+						{ $sort: { likes1: -1 } },
+						{ $sort: { single: -1 } },
+						//another sort here in an attempt to stop limit from working before sort has a chance to sort whole interest group
+						{ $limit: searchLimit }
+					]);
+				} else if (typeFilter === 'comparison') {
+					return ReactiveAggregate(this, SearchIndex, [
+						{ $match: {revTitle: { $in: array }, single: false } }, 
+						{ $project: { single: 1, revTitle: 1, category: 1, revPicUrl1: 1, revPicUrl2: 1, likes1: 1, likes2: 1, difference: { $abs: { $subtract: ['$likes1', '$likes2'] } }, summation: { $add: ['$likes1', '$likes2'] } } },
+						{ $sort: { summation: -1 } },
+						{ $sort: { difference: 1 } },
+						{ $sort: { single: -1 } },
+						//another sort here in an attempt to stop limit from working before sort has a chance to sort whole interest group
+						{ $limit: searchLimit }
+					]);
+				}
+			} else {
+				throw new Meteor.Error("No-Match", "Sorry! No match was found. You can start a new review though!");
+			}
+		} else if (searchString2 != 'null') {
+			//eliminate all spaces
+			var cleanPhrase2 = searchString2.replace(/ /gi, "");
+
+			var finalregPhrase2 = '\\s*';
+			var regPhrase2 = cleanPhrase2.match(/.{0,1}/g);
+			finalregPhrase2 += regPhrase2.join('\\s*');
+		
+			var array = [];
+			array[0] = new RegExp(finalregPhrase2, "i");
+
+			if (SearchIndex.find({revTitle: { $in: array }}, {score: {$meta: "textScore"}, limit: searchLimit}).fetch().length > 0) {
+				if (typeFilter === 'all') {
+					return ReactiveAggregate(this, SearchIndex, [
+						{ $match: {revTitle: { $in: array } } }, 
+						{ $project: { single: 1, revTitle: 1, category: 1, revPicUrl1: 1, revPicUrl2: 1, likes1: 1, likes2: 1, difference: { $abs: { $subtract: ['$likes1', '$likes2'] } }, summation: { $add: ['$likes1', '$likes2'] } } },
+						{ $sort: { summation: -1 } },
+						{ $sort: { difference: 1 } },
+						{ $sort: { single: -1 } },
+						{ $limit: searchLimit}
+					]);
+				} else if (typeFilter === 'single') {
+					return ReactiveAggregate(this, SearchIndex, [
+						{ $match: {revTitle: { $in: array }, single: true } }, 
+						{ $project: { single: 1, revTitle: 1, category: 1, revPicUrl1: 1, likes1: 1 } },
+						{ $sort: { likes1: -1 } },
+						{ $sort: { single: -1 } },
+						//another sort here in an attempt to stop limit from working before sort has a chance to sort whole interest group
+						{ $limit: searchLimit }
+					]);
+				} else if (typeFilter === 'comparison') {
+					return ReactiveAggregate(this, SearchIndex, [
+						{ $match: {revTitle: { $in: array }, single: false } }, 
+						{ $project: { single: 1, revTitle: 1, category: 1, revPicUrl1: 1, revPicUrl2: 1, likes1: 1, likes2: 1, difference: { $abs: { $subtract: ['$likes1', '$likes2'] } }, summation: { $add: ['$likes1', '$likes2'] } } },
+						{ $sort: { summation: -1 } },
+						{ $sort: { difference: 1 } },
+						{ $sort: { single: -1 } },
+						//another sort here in an attempt to stop limit from working before sort has a chance to sort whole interest group
+						{ $limit: searchLimit }
+					]);
+				}
+			} else {
+				throw new Meteor.Error("No-Match", "Sorry! No match was found. You can start a new review though!");
+			}
+		}
+	}
+});
+/*
+let search_landing_subscription_publish = {
+	type: 'subscription',
+	name: 'searchLandingSubscription'
+};
+DDPRateLimiter.addRule(search_landing_subscription_publish, 1, 1000);
+*/

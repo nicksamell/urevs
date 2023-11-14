@@ -1,0 +1,12 @@
+/*Meteor.methods({
+	getCategoryReviews: function(category) {
+		console.log(category);
+		check(category, String);
+		Mongo.Collection.get('laptopsreviews').aggregate([
+				{'$project': {'_id': false, 'revUrl': true, 'picUrl1': true, 'picUrl2': true}},
+				{'$sort': {'activity': -1}},
+				{'$limit': 30}
+				// what's best amount?
+			], { cursor: { batchSize: 1 } });
+	}
+});

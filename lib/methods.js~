@@ -1,0 +1,1132 @@
+//DDP Rate Limiter
+//shout out to the MDG - Meteor Guide
+if (Meteor.isServer) {
+	const search_landing_methods = [
+		'spellCheckNecessaryMethod',
+		'spellCheckSuggestionsMethod',
+		'hasMoreSearchMethod'
+	];
+
+	var methodRule1 = {
+		name(name) {
+			return _.contains(search_landing_methods, name);
+		},
+	
+		//rate limit per connection id
+		connectionId() { return true; }
+	};
+
+	//Only allow 5 operations per connection per second
+	DDPRateLimiter.addRule(methodRule1, 5, 1000);
+
+	const account_page_methods = [
+		'proPicSave',
+		'userMessageRemove',
+		'noYoutube',
+		'likeSettingsPrefSave',
+		'tubeRequestSend'
+	];
+
+	var methodRule2 = {
+		name(name) {
+			return _.contains(account_page_methods, name);
+		},
+	
+		//rate limit per connection id
+		connectionId() { return true; }
+	};
+
+	//Only allow 5 operations per connection per second
+	DDPRateLimiter.addRule(methodRule2, 5, 1000);
+
+
+
+	const newest_page_methods = [
+		'hasMoreNewestMethod'
+	];
+
+	var methodRule3 = {
+		name(name) {
+			return _.contains(newest_page_methods, name);
+		},
+	
+		//rate limit per connection id
+		connectionId() { return true; }
+	};
+
+	//Only allow 5 operations per connection per second
+	DDPRateLimiter.addRule(methodRule3, 5, 1000);
+
+
+
+	const trending_page_methods = [
+		'hasMoreTrendingMethod'
+	];
+
+	var methodRule4 = {
+		name(name) {
+			return _.contains(trending_page_methods, name);
+		},
+	
+		//rate limit per connection id
+		connectionId() { return true; }
+	};
+
+	//Only allow 5 operations per connection per second
+	DDPRateLimiter.addRule(methodRule4, 5, 1000);
+
+
+
+	const review_category_form_methods = [
+		'reviewInsert',
+		'newCategoryProposalInsert'
+	];
+
+	var methodRule5 = {
+		name(name) {
+			return _.contains(review_category_form_methods, name);
+		},
+	
+		//rate limit per connection id
+		connectionId() { return true; }
+	};
+
+	//Only allow 5 operations per connection per second
+	DDPRateLimiter.addRule(methodRule5, 5, 1000);
+
+
+
+	const review_page_methods = [
+		'getReviewSEO',
+		'isHighlightedBullHorn',
+		'isHorn',
+		'RSCountMethod1',
+		'RSCountMethod2',
+		'hasMoreLackMethod',
+		'checkOwner',
+		'isHighlightedLike',
+		'isHighlightedUpVote',
+		'isHighlightedDownVote',
+		'reviewCommentInsert',
+		'bullHornAdd',
+		'revLike',
+		'commentVoteUp',
+		'commentVoteDown',
+		'commentProPic',
+		'reviewCommentEdit',
+		'reviewCommentDelete'
+	];
+
+	var methodRule6 = {
+		name(name) {
+			return _.contains(review_page_methods, name);
+		},
+	
+		//rate limit per connection id
+		connectionId() { return true; }
+	};
+
+	//Only allow 5 operations per connection per second
+	DDPRateLimiter.addRule(methodRule6, 5, 1000);
+
+
+
+	const user_feedback_methods = [
+		'suggestionInsert',
+		'flagCommentInsert',
+		'flagInsert'
+	];
+
+	//Only allow 5 operations per connection per second
+	DDPRateLimiter.addRule({
+		name(name) {
+			return _.contains(user_feedback_methods, name);
+		},
+	
+		//rate limit per connection id
+		connectionId() { return true; }
+	}, 5, 1000);
+	
+	
+	
+	const landing_page_methods = [
+		'IUnderstandAndAgreeToTheCurrentlyEnforcedUrevsLegalAgreement'
+	];
+
+	//Only allow 5 operations per connection per second
+	DDPRateLimiter.addRule({
+		name(name) {
+			return _.contains(landing_page_methods, name);
+		},
+	
+		//rate limit per connection id
+		connectionId() { return true; }
+	}, 5, 1000);
+}
+
+/*
+if(Meteor.isServer) {
+//deprecated createindex instead?
+	SearchIndex._ensureIndex({
+		"revTitle": 1
+	});
+}
+*/
+
+Meteor.methods({
+	//Landing Page Methods
+	IUnderstandAndAgreeToTheCurrentlyEnforcedUrevsLegalAgreement: function() {
+		if (!this.userId) {
+			return;
+		} //return to avoid unnecessary errors
+		
+		Meteor.users.update({_id: this.userId},{$set: {'profile.privacyFCUnderstand': true}}, function(error){
+			if (error) {
+				throw new Meteor.Error(error);
+			}
+		});
+	},
+
+	//Search Landing Page Methods	
+	spellCheckSuggestionsMethod: function(searchString1, searchString2) {
+		check(searchString1, String);
+		check(searchString2, String);
+
+		if(searchString1 != 'null' && searchString2 != 'null') {
+			let cursor1 = SpellCheck.find({revTitleBit: searchString1}).fetch();
+			let cursor2 = SpellCheck.find({revTitleBit: searchString2}).fetch();
+
+			if(cursor1.length === 0 || cursor2.length === 0) {
+				let tempCursor = SpellCheck.find({}, { revTitleBit: true }).fetch();
+
+				let bestWord1 = mostSimilarString(tempCursor, "revTitleBit", searchString1, -1, false);
+				let bestWord2 = mostSimilarString(tempCursor, "revTitleBit", searchString2, -1, false);
+				let bestWordPhrase = bestWord1 + ' vs ' + bestWord2;
+				
+				return bestWordPhrase;
+			}	
+		} else if (searchString1 != 'null' || searchString2 != 'null') {
+			if (searchString1 != 'null') {
+				let cursor1 = SpellCheck.find({revTitleBit: searchString1}).fetch();
+				
+				if (cursor1.length === 0) {
+					let tempCursor = SpellCheck.find({}, { revTitleBit: true }).fetch();
+
+					let bestWord1 = mostSimilarString(tempCursor, "revTitleBit", searchString1, -1, false);
+					
+					let bestWordPhrase = bestWord1;
+
+					return bestWordPhrase;
+				}
+			} else if (searchString2 != 'null') {
+				let cursor2 = SpellCheck.find({revTitleBit: searchString2}).fetch();
+
+				if (cursor2.length === 0) {
+					let tempCursor = SpellCheck.find({}, { revTitleBit: true }).fetch();
+
+					let bestWord2 = mostSimilarString(tempCursor, "revTitleBit", searchString2, -1, false);
+					
+					let bestWordPhrase = bestWord2;
+					
+					return bestWordPhrase;
+				}
+			}
+		}
+	},
+	
+	hasMoreSearchMethod: function(searchString1, searchString2, typeFilter, searchLimit) {
+		check(searchString1, String);
+		check(searchString2, String);
+		check(typeFilter, String);
+		check(searchLimit, Number);
+		
+		if (typeFilter === 'single' || typeFilter === 'comparison' || typeFilter === 'all') {
+			//proceed
+		} else {
+			//else exit to avoid malevolent but assume innocence
+			throw new Meteor.Error("Internal Server Error", "If you encountered this error while normally using this app (by using the provided buttons), please let me know, if you'd like, by sending a quick notice (click on the \"Ask or Tell\" at the bottom of the page).");
+		}
+		//basic security practice - limit input value possiblities as much as possible
+	
+		let collectionDocument;
+	
+		if (searchString1 != 'null' && searchString2 != 'null') {
+			var searchPhrase1 = searchString1;
+			var searchPhrase2 = searchString2;
+		
+			//eliminate all spaces
+			var cleanPhrase1 = searchPhrase1.replace(/ /gi, "");
+
+			var finalregPhrase1 = '\\s*';
+			var regPhrase1 = cleanPhrase1.match(/.{0,1}/g);
+			finalregPhrase1 += regPhrase1.join('\\s*');
+		
+			//eliminate all spaces
+			var cleanPhrase2 = searchPhrase2.replace(/ /gi, "");
+
+			var finalregPhrase2 = '\\s*';
+			var regPhrase2 = cleanPhrase2.match(/.{0,1}/g);
+			finalregPhrase2 += regPhrase2.join('\\s*');
+		
+			var array = [];
+			array[0] = new RegExp(finalregPhrase1, "i");
+			array[1] = new RegExp(finalregPhrase2, "i");
+
+			if (typeFilter === 'single') {
+				collectionDocument = SearchIndex.find({'single': true, revTitle: { $in: array }}, {score: {$meta: "textScore"}});
+			} else if (typeFilter === 'comparison') {
+				collectionDocument = SearchIndex.find({'single': false, revTitle: { $in: array }}, {score: {$meta: "textScore"}});
+			} else if (typeFilter === 'all') {
+				collectionDocument = SearchIndex.find({ revTitle: { $in: array }}, {score: {$meta: "textScore"}});
+			}
+		/// now searchSingle 'Methods'
+		} else if (searchString1 === 'null' || searchString2 === 'null') {
+			if (searchString1 != 'null') {
+				//eliminate all spaces
+				var cleanPhrase1 = searchString1.replace(/ /gi, "");
+
+				var finalregPhrase1 = '\\s*';
+				var regPhrase1 = cleanPhrase1.match(/.{0,1}/g);
+				finalregPhrase1 += regPhrase1.join('\\s*');
+
+				var array = [];
+				array[0] = new RegExp(finalregPhrase1, "i");
+
+				if (typeFilter === 'single') {
+					collectionDocument = SearchIndex.find({'single': true, revTitle: { $in: array }}, {score: {$meta: "textScore"}});
+				} else if (typeFilter === 'comparison') {
+					collectionDocument = SearchIndex.find({'single': false, revTitle: { $in: array }}, {score: {$meta: "textScore"}});
+				} else if (typeFilter === 'all') {
+					collectionDocument = SearchIndex.find({ revTitle: { $in: array }}, {score: {$meta: "textScore"}});
+				}
+			} else if (searchString2 != 'null') {
+				//eliminate all spaces
+				var cleanPhrase2 = searchString2.replace(/ /gi, "");
+
+				var finalregPhrase2 = '\\s*';
+				var regPhrase2 = cleanPhrase2.match(/.{0,1}/g);
+				finalregPhrase2 += regPhrase2.join('\\s*');
+		
+				var array = [];
+				array[0] = new RegExp(finalregPhrase2, "i");
+				
+				if (typeFilter === 'single') {
+					collectionDocument = SearchIndex.find({'single': true, revTitle: { $in: array }}, {score: {$meta: "textScore"}});
+				} else if (typeFilter === 'comparison') {
+					collectionDocument = SearchIndex.find({'single': false, revTitle: { $in: array }}, {score: {$meta: "textScore"}});
+				} else if (typeFilter === 'all') {
+					collectionDocument = SearchIndex.find({ revTitle: { $in: array }}, {score: {$meta: "textScore"}});
+				}
+			}
+		}
+
+		if (searchLimit < collectionDocument.fetch().length) {
+			return true;
+		} else if (searchLimit >= collectionDocument.fetch().length){
+			return false;
+		}
+	},
+	
+	//Account Page Methods
+	proPicSave: function(proPicOption) {
+		check(proPicOption, String);
+		
+		let proPicOptionTranslated;
+		
+		if (proPicOption === 'proPicDefault' || proPicOption === 'proPic1' || proPicOption === 'proPic2' || proPicOption === 'proPic3' || proPicOption === 'proPic4' || proPicOption === 'proPic5' || proPicOption === 'proPic6') {
+			switch (proPicOption) {
+				case 'proPicDefault':
+					proPicOptionTranslated = 'pro_pic_default.png';
+					break;
+				case 'proPic1':
+					proPicOptionTranslated = 'pro_pic_1.png';
+					break;
+				case 'proPic2':
+					proPicOptionTranslated = 'pro_pic_2.png';
+					break;
+				case 'proPic3':
+					proPicOptionTranslated = 'pro_pic_3.png';
+					break;
+				case 'proPic4':
+					proPicOptionTranslated = 'pro_pic_4.png';
+					break;
+				case 'proPic5':
+					proPicOptionTranslated = 'pro_pic_5.png';
+					break;
+				case 'proPic6':
+					proPicOptionTranslated = 'pro_pic_6.png';
+					break;
+				default:
+					//do nothing
+					break;
+			} 
+		} else {
+			//else exit to avoid malevolent action but assume innocence
+			throw new Meteor.Error("Internal Server Error", "If you encountered this error while normally using this app (by using the provided buttons), please let me know, if you'd like, by sending a quick notice (click on the \"Ask or Tell\" at the bottom of the page).");
+		}
+		//basic security practice - limit input value possiblities as much as possible
+		
+		let user = this.userId;
+		
+		if (!user) {
+			throw new Meteor.Error("Logged-Out", "Please log in to change your profile picture.");
+		}
+		
+		Meteor.users.update({_id: user},{$set: {'profile.proPic': proPicOptionTranslated}}, function(error){
+			if (error) {
+				throw new Meteor.Error(error);
+			}
+		});
+	},
+	
+	userMessageRemove: function(messageRemoveObject) {
+		check(messageRemoveObject, {
+			messageText: String,
+			messageId: String	
+		});
+		
+		let user = this.userId;
+		
+		if (!user) {
+			throw new Meteor.Error("Logged-Out", "Please log in to delete your messages.");
+		}
+		
+		Meteor.users.update({_id: user}, {$pull: {'profile.messages': {messageId: messageRemoveObject.messageId, messageText: messageRemoveObject.messageText}}});
+	},
+	
+	noYoutube: function() {
+		let user = Meteor.user();
+	
+		Meteor.users.update({_id: this.userId},{$set: {'profile.youtubeSettings': false, 'profile.youtubeApproved': false, 'profile.youtubeLink': 'null'}}, function(error){
+			if (error) {
+				throw new Meteor.Error(error);
+			}
+		});
+		
+		
+		let user_activity = UserActivityArchives.find({userId: user._id}).fetch()['userActivity'];
+		
+		if (user_activity) {
+			for (var i = 0; i < user_activity.length; i++) {
+				if (user_activity[i]['type'] === 'commentInsert') {
+					let collection = user_activity[i]['collection'];
+					let reviewId = user_activity[i]['reviewId'];
+					let commentsGroup = user_activity[i]['commentsGroup'];
+					let commentId = user_activity[i]['commentId'];
+				
+					let querySelector = {};
+					querySelector['_id'] = reviewId;
+					let options = {};
+					options['fields'] = {};
+					options['fields'][commentsGroup] = 1;
+
+					let comment = Mongo.Collection.get(collection).find(querySelector, options).fetch();
+					let indexComment = _.pluck(comment[0][commentsGroup], '_id').indexOf(commentId);
+				
+					let querySelector2 = {};
+					querySelector2['_id'] = reviewId;
+					let querySelector2SecondField = commentsGroup;
+					querySelector2SecondField += '._id';
+					querySelector2[querySelector2SecondField] = commentId;
+				
+					var update = {};
+					var updateFirstField = commentsGroup;
+					updateFirstField += '.' + indexComment + '.youtubeLink';
+					update[updateFirstField] = 'null';
+			
+					Mongo.Collection.get(collection).update(querySelector2, {$set: update});
+				}
+			}
+		}
+	},
+	
+	likeSettingsPrefSave: function(pref, showShare, showShareRec, cSSSetting, reviewSearchBoxPref) {
+		check(pref, Match.Maybe(String));
+		check(showShare, Match.Maybe(Boolean));
+		check(showShareRec, Match.Maybe(Boolean));
+		check(cSSSetting, Match.Maybe(String));
+		check(reviewSearchBoxPref, Match.Maybe(String));
+		
+		if (!this.userId) {
+			throw new Meteor.Error("Logged-Out", "Please log in to change your account settings.");
+		}
+		
+		if (pref === 'top') {
+			Meteor.users.update({_id: this.userId},{$set: {'profile.likeSettings': 'top'}}, function(error){
+				if (error) {
+					throw new Meteor.Error(error);
+				}
+			});
+		} else if (pref === 'bottom') {
+			Meteor.users.update({_id: this.userId},{$set: {'profile.likeSettings': 'bottom'}}, function(error){
+				if (error) {
+					throw new Meteor.Error(error);
+				}
+			});
+		}
+		
+		if (showShare === true) {
+			Meteor.users.update({_id: this.userId},{$set: {'profile.showShareSettings': true}}, function(error){
+				if (error) {
+					throw new Meteor.Error(error);
+				}
+			});
+		} else if (showShare === false) {
+			Meteor.users.update({_id: this.userId},{$set: {'profile.showShareSettings': false}}, function(error){
+				if (error) {
+					throw new Meteor.Error(error);
+				}
+			});
+		}
+		
+		if (showShareRec === true) {
+			Meteor.users.update({_id: this.userId},{$set: {'profile.showShareRecSettings': true}}, function(error){
+				if (error) {
+					throw new Meteor.Error(error);
+				}
+			});
+		} else if (showShareRec === false) {
+			Meteor.users.update({_id: this.userId},{$set: {'profile.showShareRecSettings': false}}, function(error){
+				if (error) {
+					throw new Meteor.Error(error);
+				}
+			});
+		}
+		
+		if (cSSSetting === 'left') {
+			Meteor.users.update({_id: this.userId},{$set: {'profile.cSSSetting': 'left'}}, function(error){
+				if (error) {
+					throw new Meteor.Error(error);
+				}
+			});
+		} else if (cSSSetting === 'right') {
+			Meteor.users.update({_id: this.userId},{$set: {'profile.cSSSetting': 'right'}}, function(error){
+				if (error) {
+					throw new Meteor.Error(error);
+				}
+			});
+		} else if (cSSSetting === 'both') {
+			Meteor.users.update({_id: this.userId},{$set: {'profile.cSSSetting': 'both'}}, function(error){
+				if (error) {
+					throw new Meteor.Error(error);
+				}
+			});
+		}
+		
+		if (reviewSearchBoxPref === 'top') {
+			Meteor.users.update({_id: this.userId},{$set: {'profile.reviewSearchBoxPref': 'top'}}, function(error){
+				if (error) {
+					throw new Meteor.Error(error);
+				}
+			});
+		} else if (reviewSearchBoxPref === 'bottom') {
+			Meteor.users.update({_id: this.userId},{$set: {'profile.reviewSearchBoxPref': 'bottom'}}, function(error){
+				if (error) {
+					throw new Meteor.Error(error);
+				}
+			});
+		}
+	},
+
+	//Newest Page Methods
+	
+	hasMoreNewestMethod: function (newestPostsLimit) {
+		check(newestPostsLimit, Number);
+		
+		let newestCollection;
+
+		newestCollectionLength = SearchIndex.find({}).fetch().length;
+		
+		if (newestPostsLimit < newestCollectionLength) {
+			return true;
+			//indicate that more posts exist
+		} else {
+			return false;
+		}
+	},
+	
+	//Trending Page Methods
+	
+	hasMoreTrendingMethod: function (trendingPostsLimit) {
+		check(trendingPostsLimit, Number);
+		
+		let trendingCollection;
+
+		let date = new Date();
+		date = date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear();
+
+		if(Meteor.user() && Meteor.user().profile.trendingPreferences) {
+			let finalUserPrefs = [];
+			//artifact from development features
+
+			for(var i=0; i < Meteor.user().profile.trendingPreferences.length; i++){
+				finalUserPrefs.push(Meteor.user().profile.trendingPreferences[i]);
+			}
+			
+			let query = {};
+			query['$query'] = {};
+			query['$query']['category'] = {};  
+			query['$query']['category']['$in'] = finalUserPrefs;
+			query['$query']['trendingUpdate'] = date;
+			query['$query']['trendingCount'] = {};
+			query['$query']['trendingCount']['$gte'] = 10;
+			query['$orderby'] = {};
+			query['$orderby']['trendingCount'] = -1;
+
+			trendingCollectionLength = SearchIndex.find(query).fetch().length;
+			
+			if (trendingPostsLimit < trendingCollectionLength) {
+				return true;
+				//indicate that more posts exist
+			} else {
+				return false;
+			}
+		} else {
+			let query = {};
+			query['$query'] = {};
+			query['$query']['trendingUpdate'] = date;
+			query['$query']['trendingCount'] = {};
+			query['$query']['trendingCount']['$gte'] = 10;
+			query['$orderby'] = {};
+			query['$orderby']['trendingCount'] = -1;
+			
+			trendingCollectionLength = SearchIndex.find(query).fetch().length;
+
+			if (trendingPostsLimit < trendingCollectionLength) {
+				return true;
+				//indicate that more posts exist
+			} else {
+				return false;
+			}
+		}
+	},
+	
+	//Review Page Methods
+	
+	//related to review page but actually in router
+	getReviewSEO: function(collection, reviewId) {
+		check(collection, String);
+		check(reviewId, String);
+	
+		if (collection === 'camerasreviews' || collection === 'phonesreviews' || collection === 'computersreviews' || collection === 'tvsreviews' || collection === 'consolesreviews') {
+			//proceed
+		} else {
+			//else exit to avoid malevolent action but assume innocence
+			throw new Meteor.Error("Internal Server Error", "If you encountered this error while normally using this app (by using the provided buttons), please let me know, if you'd like, by sending a quick notice (click on the \"Ask or Tell\" at the bottom of the page).");
+		}
+		//basic security practice - limit input value possiblities as much as possible
+
+		return Mongo.Collection.get(collection).find({_id: reviewId}, { fields: {'_id': 1, 'productName1': 1, 'productName2': 1 /*, 'category': 0, 'single': 0, 'picUrl1': 0, 'picUrl2': 0, 'likes1': 0, 'likes2': 0, 'hornCount': 0, 'userId': 0, 'author': 0, 'submitted': 0, 'likes1Users': 0, 'likes2Users': 0, 'hornCountUsers': 0 */ }}).fetch();
+	},
+	
+	isHighlightedBullHorn: function(collection, reviewId) {
+		check(collection, String);
+		check(reviewId, String);
+		
+		if (collection === 'camerasreviews' || collection === 'phonesreviews' || collection === 'computersreviews' || collection === 'tvsreviews' || collection === 'consolesreviews') {
+			//proceed
+		} else {
+			//else exit to avoid malevolent action but assume innocence
+			throw new Meteor.Error("Internal Server Error", "If you encountered this error while normally using this app (by using the provided buttons), please let me know, if you'd like, by sending a quick notice (click on the \"Ask or Tell\" at the bottom of the page).");
+		}
+		//basic security practice - limit input value possiblities as much as possible
+		
+		let user = this.userId;
+		
+		if (!user) {
+			return;
+		} //return to avoid unnecessary errors
+		
+		let querySelector = {};
+		let querySelectorSecondField = '_id';
+		querySelector[querySelectorSecondField] = reviewId;
+		
+		let review = Mongo.Collection.get(collection).find(querySelector).fetch();
+
+		let hornCountUsersArray = review[0]['hornCountUsers'];
+	
+		for (var i = 0; i < hornCountUsersArray.length; i++) {
+			if (hornCountUsersArray[i] == user) {
+				return 'active'; //signifies active vote button
+			}
+		}
+		
+		return;
+		//if no user found, return nothing
+	},
+	
+	isHorn: function(reviewId) {
+		check(reviewId, String);
+
+		let querySelector = {};
+		let querySelectorSecondField = '_id';
+		querySelector[querySelectorSecondField] = reviewId;
+
+		let review = SearchIndex.find(querySelector).fetch();
+
+		let today = new Date();
+		let todayDate = today.getDate() + '-' + today.getMonth() + '-' + today.getFullYear();
+		
+		if (review[0]['hornDay'] === todayDate) {
+			return true;
+		}
+	},
+	
+	RSCountMethod1: function(collection, reviewId, limitParam) {
+		check(collection, String);
+		check(reviewId, String);
+		check(limitParam, Number);
+		
+		if (collection === 'camerasreviews' || collection === 'phonesreviews' || collection === 'computersreviews' || collection === 'tvsreviews' || collection === 'consolesreviews') {
+			//proceed
+		} else {
+			//else exit to avoid malevolent action but assume innocence
+			throw new Meteor.Error("Internal Server Error", "If you encountered this error while normally using this app (by using the provided buttons), please let me know, if you'd like, by sending a quick notice (click on the \"Ask or Tell\" at the bottom of the page).");
+		}
+		//basic security practice - limit input value possiblities as much as possible
+		
+		collection += 'comments';
+		
+		var commentsDocument = Mongo.Collection.get(collection).find({_id: reviewId}).fetch();
+		var array1 = commentsDocument[0]["comments1"];
+		
+		return array1.length;
+	},
+	
+	RSCountMethod2: function(collection, reviewId, limitParam) {
+		check(collection, String);
+		check(reviewId, String);
+		check(limitParam, Number);
+		
+		if (collection === 'camerasreviews' || collection === 'phonesreviews' || collection === 'computersreviews' || collection === 'tvsreviews' || collection === 'consolesreviews') {
+			//proceed
+		} else {
+			//else exit to avoid malevolent action but assume innocence
+			throw new Meteor.Error("Internal Server Error", "If you encountered this error while normally using this app (by using the provided buttons), please let me know, if you'd like, by sending a quick notice (click on the \"Ask or Tell\" at the bottom of the page).");
+		}
+		//basic security practice - limit input value possiblities as much as possible
+		
+		collection += 'comments';
+		
+		var commentsDocument = Mongo.Collection.get(collection).find({_id: reviewId}).fetch();
+		var array2 = commentsDocument[0]["comments2"];
+		
+		return array2.length;
+	},
+	
+	hasMoreLackMethod: function(collection, reviewId, limitParam) {
+		check(collection, String);
+		check(reviewId, String);
+		check(limitParam, Number);
+		
+		if (collection === 'camerasreviews' || collection === 'phonesreviews' || collection === 'computersreviews' || collection === 'tvsreviews' || collection === 'consolesreviews') {
+			//proceed
+		} else {
+			//else exit to avoid malevolent action but assume innocence
+			throw new Meteor.Error("Internal Server Error", "If you encountered this error while normally using this app (by using the provided buttons), please let me know, if you'd like, by sending a quick notice (click on the \"Ask or Tell\" at the bottom of the page).");
+		}
+		//basic security practice - limit input value possiblities as much as possible
+
+		collection += 'comments';
+
+		var commentsDocument = Mongo.Collection.get(collection).find({_id: reviewId}).fetch();
+		var arrayLack = commentsDocument[0]["commentsLack"];
+
+		if (limitParam < arrayLack.length ) {
+			return true;
+			//indicate that more posts exist
+		} else {
+			return false;
+		}
+	},
+	
+	checkOwner: function(commentId, commentsGroup, collection, reviewId, userStatus) {
+		check(commentId, String);
+		check(commentsGroup, String);
+		check(collection, String);
+		check(reviewId, String);
+		check(userStatus, Match.Maybe(String));
+		//userStatus only used to force reactivity. not utilized anywhere in code
+		
+		if (collection === 'camerasreviews' || collection === 'phonesreviews' || collection === 'computersreviews' || collection === 'tvsreviews' || collection === 'consolesreviews') {
+			//proceed
+		} else {
+			//else exit to avoid malevolent action but assume innocence
+			throw new Meteor.Error("Internal Server Error", "If you encountered this error while normally using this app (by using the provided buttons), please let me know, if you'd like, by sending a quick notice (click on the \"Ask or Tell\" at the bottom of the page).");
+		}
+		//basic security practice - limit input value possiblities as much as possible
+		
+		if (commentId === '' || commentsGroup === '' || collection === '' || reviewId === '') {
+			return;
+		} //to avoid unnecessary operations
+		
+		if (commentsGroup === 'comments1' || commentsGroup === 'comments2' || commentsGroup === 'commentsLack') {
+			//proceed
+		} else {
+			//else exit to avoid malevolent action but assume innocence
+			throw new Meteor.Error("Internal Server Error", "If you encountered this error while normally using this app (by using the provided buttons), please let me know, if you'd like, by sending a quick notice (click on the \"Ask or Tell\" at the bottom of the page).");
+		}
+		//basic security practice - limit input value possiblities as much as possible
+		
+		var userId = this.userId;
+		
+		if(!userId) {
+			return false;
+		} //return to avoid unnecessary errors
+		
+		collection += 'comments';
+		
+		var querySelector = {};
+		var querySelectorSecondField = '_id';
+		querySelector[querySelectorSecondField] = reviewId;
+		
+		var projection = {};
+		projection['fields'] = {};
+		projection['fields'][commentsGroup] = {};
+		projection['fields'][commentsGroup]['$elemMatch'] = {};
+		projection['fields'][commentsGroup]['$elemMatch']['_id'] = commentId;
+		
+		var variable = Mongo.Collection.get(collection).find(querySelector, projection).fetch();
+		
+		if (userId === variable[0][commentsGroup][0]['userId']) {
+			return true;
+		} else {
+			return false;
+		}
+	},
+	
+	isHighlightedLike: function(collection, reviewId, single) {
+		check(collection, String);
+		check(reviewId, String);
+		check(single, Boolean);
+		
+		if (collection === 'camerasreviews' || collection === 'phonesreviews' || collection === 'computersreviews' || collection === 'tvsreviews' || collection === 'consolesreviews') {
+			//proceed
+		} else {
+			//else exit to avoid malevolent action but assume innocence
+			throw new Meteor.Error("Internal Server Error", "If you encountered this error while normally using this app (by using the provided buttons), please let me know, if you'd like, by sending a quick notice (click on the \"Ask or Tell\" at the bottom of the page).");
+		}
+		//basic security practice - limit input value possiblities as much as possible
+		
+		var user = this.userId;
+		
+		if(!user) {
+			return;
+		} //return to avoid unnecessary errors
+		
+		var querySelector = {};
+		var querySelectorSecondField = '_id';
+		querySelector[querySelectorSecondField] = reviewId;
+		
+		var review = Mongo.Collection.get(collection).find(querySelector).fetch();
+		
+		if (single) {
+		
+			var likesUsers1Array = review[0]['likes1Users'];
+
+			for (var i = 0; i < likesUsers1Array.length; i++) {
+				if (likesUsers1Array[i] === user) {
+					return 'likes1'; //signifies active vote button
+				}
+			}
+
+			return;
+			//if no user found, return nothing
+			
+		} else {
+		
+			var likesUsers1Array = review[0]['likes1Users'];
+		
+			var likesUsers2Array = review[0]['likes2Users'];
+		
+		
+			for (var i = 0; i < likesUsers1Array.length; i++) {
+				if (likesUsers1Array[i] === user) {
+					return 'likes1'; //signifies active vote button
+				}
+			}
+		
+			for (var i = 0; i < likesUsers2Array.length; i++) {
+				if (likesUsers2Array[i] === user) {
+					return 'likes2'; //signifies active vote button
+				}
+			}
+			
+			return;
+			//if no user found, return nothing
+						
+		}
+	},
+	
+	isHighlightedUpVote: function(collection, reviewId, commentsGroup, commentId) {
+		check(collection, String);
+		check(reviewId, String);
+		check(commentsGroup, String);
+		check(commentId, String);
+
+		if (collection === 'camerasreviews' || collection === 'phonesreviews' || collection === 'computersreviews' || collection === 'tvsreviews' || collection === 'consolesreviews') {
+			//proceed
+		} else {
+			//else exit to avoid malevolent action but assume innocence
+			throw new Meteor.Error("Internal Server Error", "If you encountered this error while normally using this app (by using the provided buttons), please let me know, if you'd like, by sending a quick notice (click on the \"Ask or Tell\" at the bottom of the page).");
+		}
+		//basic security practice - limit input value possiblities as much as possible
+
+		if (collection === '' || reviewId === '' || commentsGroup === '' || commentId === '') {
+			return;
+		} //to avoid unnecessary operations
+		
+		if (commentsGroup === 'comments1' || commentsGroup === 'comments2' || commentsGroup === 'commentsLack') {
+			//proceed
+		} else {
+			//else exit to avoid malevolent action but assume innocence
+			throw new Meteor.Error("Internal Server Error", "If you encountered this error while normally using this app (by using the provided buttons), please let me know, if you'd like, by sending a quick notice (click on the \"Ask or Tell\" at the bottom of the page).");
+		}
+		//basic security practice - limit input value possiblities as much as possible
+		
+		collection += 'comments';
+		
+		var user = this.userId;
+		
+		if(!user) {
+			return;
+		} //return to avoid unnecessary errors
+		
+		var querySelector = {};
+		var querySelectorSecondField = '_id';
+		querySelector[querySelectorSecondField] = reviewId;
+		var querySelectorThirdField;
+		if (commentsGroup === 'comments1') {
+			querySelectorThirdField = 'comments1._id';
+		} else if (commentsGroup === 'comments2') {
+			querySelectorThirdField = 'comments2._id';
+		} else if (commentsGroup === 'commentsLack') {
+			querySelectorThirdField = 'commentsLack._id';
+		};
+		querySelector[querySelectorThirdField] = commentId;
+		
+		
+		var projection = {};
+		var cGroup;
+		if (commentsGroup === 'comments1') {
+			cGroup = 'comments1.$.upvoteUsers'; 
+		} else if (commentsGroup === 'comments2') {
+			cGroup = 'comments2.$.upvoteUsers';
+		} else if (commentsGroup === 'commentsLack') {
+			cGroup = 'commentsLack.$.upvoteUsers';
+		};
+		projection[cGroup] = {};
+		projection[cGroup] = user;
+
+		var fetchedCollection = Mongo.Collection.get(collection).find(querySelector, projection).fetch();
+		
+		var commentsCollection = fetchedCollection[0][commentsGroup];
+		
+		
+		for (var i = 0; i < commentsCollection.length ; i++) {
+			if (commentsCollection[i]['_id'] === commentId) {
+				var no = i;
+			}			
+		}
+		
+		var upvoteUsersArray = fetchedCollection[0][commentsGroup][no]['upvoteUsers'];
+
+		for (var i = 0; i < upvoteUsersArray.length; i++) {
+			if (upvoteUsersArray[i] === user) {
+				return 'active'; //signifies active upvote button
+			}
+		}
+		
+				return;
+				//if no user found, return nothing
+				
+	},
+
+	isHighlightedDownVote: function(collection, reviewId, commentsGroup, commentId) {
+		check(collection, String);
+		check(reviewId, String);
+		check(commentsGroup, String);
+		check(commentId, String);
+		
+		if (collection === 'camerasreviews' || collection === 'phonesreviews' || collection === 'computersreviews' || collection === 'tvsreviews' || collection === 'consolesreviews') {
+			//proceed
+		} else {
+			//else exit to avoid malevolent action but assume innocence
+			throw new Meteor.Error("Internal Server Error", "If you encountered this error while normally using this app (by using the provided buttons), please let me know, if you'd like, by sending a quick notice (click on the \"Ask or Tell\" at the bottom of the page).");
+		}
+		//basic security practice - limit input value possiblities as much as possible		
+		
+		if (collection === '' || reviewId === '' || commentsGroup === '' || commentId === '') {
+			return;
+		} //to avoid unnecessary operations
+		
+		if (commentsGroup === 'comments1' || commentsGroup === 'comments2' || commentsGroup === 'commentsLack') {
+			//proceed
+		} else {
+			//else exit to avoid malevolent action but assume innocence
+			throw new Meteor.Error("Internal Server Error", "If you encountered this error while normally using this app (by using the provided buttons), please let me know, if you'd like, by sending a quick notice (click on the \"Ask or Tell\" at the bottom of the page).");
+		}
+		//basic security practice - limit input value possiblities as much as possible
+		
+		collection += 'comments';
+		
+		var user = this.userId;
+		
+		if(!user) {
+			return;
+		} //return to avoid unnecessary errors
+		
+		var querySelector = {};
+		var querySelectorSecondField = '_id';
+		querySelector[querySelectorSecondField] = reviewId;
+		var querySelectorThirdField;
+		if (commentsGroup === 'comments1') {
+			querySelectorThirdField = 'comments1._id';
+		} else if (commentsGroup === 'comments2') {
+			querySelectorThirdField = 'comments2._id';
+		} else if (commentsGroup === 'commentsLack') {
+			querySelectorThirdField = 'commentsLack._id';
+		}
+		querySelector[querySelectorThirdField] = commentId;
+		
+		
+		var projection = {};
+		var cGroup;
+		if (commentsGroup === 'comments1') {
+			cGroup = 'comments1.$.downvoteUsers'; 
+		} else if (commentsGroup === 'comments2') {
+			cGroup = 'comments2.$.downvoteUsers';
+		} else if (commentsGroup === 'commentsLack') {
+			cGroup = 'commentsLack.$.downvoteUsers';
+		}
+		projection[cGroup] = {};
+		projection[cGroup] = user;
+
+		var fetchedCollection = Mongo.Collection.get(collection).find(querySelector, projection).fetch();
+		
+		var commentsCollection = fetchedCollection[0][commentsGroup];
+		
+		
+		for (var i = 0; i < commentsCollection.length; i++) {
+			if (commentsCollection[i]['_id'] === commentId) {
+				var no = i;
+			}			
+		}
+		
+		var downvoteUsersArray = fetchedCollection[0][commentsGroup][no]['downvoteUsers'];
+
+		for (var i = 0; i < downvoteUsersArray.length; i++) {
+			if (downvoteUsersArray[i] === user) {
+				return 'active'; //signifies active upvote button
+			}
+		}
+		
+				return;
+				//if no user found, return nothing
+				
+	},
+	
+	reviewCommentInsert: function(bareComment, collection, reviewId, commentsGroup) {
+		check(bareComment, {
+			comment: String
+		});
+		check(collection, String);
+		check(reviewId, String);
+		check(commentsGroup, String);
+		
+		if (collection === 'camerasreviews' || collection === 'phonesreviews' || collection === 'computersreviews' || collection === 'tvsreviews' || collection === 'consolesreviews') {
+			//proceed
+		} else {
+			//else exit to avoid malevolent action but assume innocence
+			throw new Meteor.Error("Internal Server Error", "If you encountered this error while normally using this app (by using the provided buttons), please let me know, if you'd like, by sending a quick notice (click on the \"Ask or Tell\" at the bottom of the page).");
+		}
+		//basic security practice - limit input value possiblities as much as possible
+		
+		if(!Meteor.user()) {
+			throw new Meteor.Error("Logged-Out", "Sorry! You have to be logged in to submit a comment.");
+		}
+		
+		if (commentsGroup === 'comments1' || commentsGroup === 'comments2' || commentsGroup === 'commentsLack') {
+			//proceed
+		} else {
+			//else exit to avoid malevolent action but assume innocence
+			throw new Meteor.Error("Internal Server Error", "If you encountered this error while normally using this app (by using the provided buttons), please let me know, if you'd like, by sending a quick notice (click on the \"Ask or Tell\" at the bottom of the page).");
+		}
+		//basic security practice - limit input value possiblities as much as possible
+		
+		if (bareComment.comment.length > 1000) {
+			throw new Meteor.Error("Too long", "Please limit your snippet to 1000 characters.");
+		}
+
+		if (!bareComment.comment.replace(/\s/g, '').length || 
+		 		bareComment.comment === '' ) {
+			throw new Meteor.Error("Incomplete Form", "Sorry - your comment couldn't be saved because no text was received. Please submit a comment with content.");
+		}
+		
+		collection += 'comments';
+		
+		var submitted = new Date();
+		
+		var siReview = SearchIndex.find({_id: reviewId}).fetch();
+		var siDate = submitted.getDate() + '-' + submitted.getMonth() + '-' + submitted.getFullYear();
+
+		if (siReview[0]['trendingUpdate'] === siDate) {
+			SearchIndex.update({_id: reviewId}, { $inc: { 'trendingCount': 1}});
+		} else {
+			SearchIndex.update({_id: reviewId}, { $set: {'trendingUpdate': siDate, 'trendingCount': 1} });
+		};
+		
+		submitted = submitted.toDateString();
+		
+		var user = Meteor.user();
+		var comment = _.extend(bareComment, {
+			author: user.profile.name,
+			userId: user._id,
+			submitted: submitted,
+			commentsGroup: commentsGroup,
+			_id: Random.id(),
+			upvotes: 0,
+			downvotes: 0,
+			upvoteUsers: [],
+			downvoteUsers: [],
+			totalScore: 0
+		});
+		
+		var set = {};
+		set[commentsGroup] = comment;
+		 
+		Mongo.Collection.get(collection).update({_id: reviewId}, {$push: set});
+		
+		var querySelector = {};
+		var querySelectorSecondField = '_id';
+		querySelector[querySelectorSecondField] = reviewId;
+		var querySelectorThirdField;
+		if (commentsGroup === 'comments1') {
+			querySelectorThirdField = 'comments1._id';
+		} else if (commentsGroup === 'comments2') {
+			querySelectorThirdField = 'comments2._id';
+		} else if (commentsGroup === 'commentsLack') {
+			querySelectorThirdField = 'commentsLack._id';
+		};
+		querySelector[querySelectorThirdField] = comment._id;
+		
+		if (commentsGroup === 'comments1') {
+			Mongo.Collection.get(collection).update(querySelector, {$push: {comments1: {$each: [], $sort: {'totalScore': -1}}}});
+		} else if (commentsGroup === 'comments2') {
+			Mongo.Collection.get(collection).update(querySelector, {$push: {comments2: {$each: [], $sort: {'totalScore': -1}}}});
+		} else if (commentsGroup === 'commentsLack') {
+			Mongo.Collection.get(collection).update(querySelector, {$push: {commentsLack: {$each: [], $sort: {'totalScore': -1}}}});
+		};
+		
+		if (UserActivityArchives.find({userId: user._id}).count() === 1) {
+			UserActivityArchives.update({userId: user._id},{$push: {'userActivity': {type: 'commentInsert', collection: collection, reviewId: reviewId, commentsGroup: commentsGroup, commentId: comment._id}}}, function(error){
+				if (error) {
+					throw new Meteor.Error("Internal Server Error", "If you encountered this error while normally using this app (by using the provided buttons), please let me know, if you'd like, by sending a quick notice (click on the \"Ask or Tell\" at the bottom of the page).");
+				}
+			});
+		} else {
+			UserActivityArchives.insert({userId: user._id, userActivity: [{type: 'commentInsert', collection: collection, reviewId: reviewId, commentsGroup: commentsGroup, commentId: comment._id}]});
+		}
+		//add snippet to user's userActivity
+	}
+});

@@ -1,0 +1,4 @@
+//un-comment when creating new server
+//SpellCheck = new Mongo.Collection('spellcheck');
+
+//move over other one

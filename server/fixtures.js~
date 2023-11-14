@@ -1,0 +1,118 @@
+	if (SearchIndex.find().count() === 0) {
+		for (var i = 0; i < 200; i++) {
+			SearchIndex.insert({
+				"single": true,
+				"revTitle": "Nikon test",
+				"category": "camerasreviews",
+				"revPicUrl1": "pending_approval.png",
+				"likes1": 1,
+				"likes2": 0,
+				"trendingCount": 13,
+				"trendingUpdate": "15-11-2016",
+				"hornCount": 1
+			});
+		}
+	}
+
+
+	if (CamerasReviews.find().count() === 0) {
+		for (var i = 0; i < 200; i++) {
+			CamerasReviews.insert({
+				"single": false,
+				"category": "camerasreviews",
+				"productName1": "Nikon test 2a",
+				"productName2": "Nikon test 2b",
+				"picUrl1": "cameras_category.png",
+				"picUrl2": "cameras_category.png",
+				"picUrl1preApproved": "sample address",
+				"picUrl2preApproved": "sample address",
+				"userId": "BJxyA3hLWMqTbzYTh",
+				"author": "tester",
+				"submitted": {
+					  "$date": "2016-12-15T13:33:45.926Z"
+				},
+				"likes1": 1,
+				"likes2": 1,
+				"likes1Users": [
+					  "BJxyA3hLWMqTbzYTh"
+				],
+				"likes2Users": [
+					  "8xTYTZfovWG4uEExc"
+				],
+				"hornCount": 0,
+				"hornCountUsers": []
+			});
+		}
+	}
+	
+	
+	if (CamerasReviewsComments.find().count() === 0) {
+		for (var i = 0; i < 200; i++) {
+			CamerasReviewsComments.insert({
+				"comments1": [
+					  {
+					      "comment": "test comment1 - hello world",
+					      "author": "tester",
+					      "userId": "BJxyA3hLWMqTbzYTh",
+					      "submitted": "Thu Dec 15 2016",
+					      "commentsGroup": "comments1",
+					      "_id": "dATufie2tJnqqCn7M",
+					      "upvotes": 0,
+					      "downvotes": 0,
+					      "upvoteUsers": [],
+					      "downvoteUsers": [],
+					      "totalScore": 0,
+					      "lastUpdated": {
+					          "$date": "2016-12-15T13:40:35.978Z"
+					      }
+					  }
+				],
+				"comments2": [
+					  {
+					      "comment": "test comment2 - hello world",
+					      "author": "tester",
+					      "userId": "BJxyA3hLWMqTbzYTh",
+					      "submitted": "Thu Dec 15 2016",
+					      "commentsGroup": "comments2",
+					      "_id": "688SfqkFHqrizbsSp",
+					      "upvotes": 0,
+					      "downvotes": 0,
+					      "upvoteUsers": [],
+					      "downvoteUsers": [],
+					      "totalScore": 0,
+					      "lastUpdated": {
+					          "$date": "2016-12-15T13:40:55.637Z"
+					      }
+					  }
+				],
+				"commentsLack": [
+					  {
+					      "comment": "test comment3 - hello world",
+					      "author": "tester",
+					      "userId": "BJxyA3hLWMqTbzYTh",
+					      "submitted": "Thu Dec 15 2016",
+					      "commentsGroup": "commentsLack",
+					      "_id": "QPZAZsD5Xf9Lo3mKK",
+					      "upvotes": 0,
+					      "downvotes": 0,
+					      "upvoteUsers": [],
+					      "downvoteUsers": [],
+					      "totalScore": 0,
+					      "lastUpdated": {
+					          "$date": "2016-12-15T13:40:23.569Z"
+					      }
+					  }
+				]
+			});
+		}
+	}
+	
+	
+	if (SpellCheck.find().count() === 0) {
+		for (var i = 0; i < 200; i++) {
+			SpellCheck.insert({
+				"reviewId": "gMz2WRB9AWzPzABjE",
+				"revTitleBit": "Nikon test"
+			});
+		}
+	}

@@ -1,0 +1,61 @@
+Router.configure({
+	layoutTemplate: 'layout',
+	loadingTemplate: 'loading',
+	notFoundTemplate: 'notFound',
+	//waitOn: function() { return Meteor.subscribe('categories'); }
+});
+//what to do about main.js pg80
+
+Router.route('/', { 
+	name: 'landingPage',  
+});
+
+Router.route('/myaccount/:_id', { 
+	name: 'accountPage', 
+	data: function() {
+		return Meteor.user(this.params._id);
+	}
+});
+
+Router.route('/category/:category', { 
+	name: 'singleCategoryPage',
+	/*waitOn: function() {
+			Meteor.subscribe(Mongo.Collection.get(this.params.category));
+	},*/
+	data: function() {
+		return { 
+			category: Categories.find({reviews: this.params.category}),
+			reviews: Meteor.call('getCategoryReviews', this.params.category, function(error, result) {
+				if (error) {
+					return console.log(error.reason);
+					}
+				}
+			)
+		};
+	}
+});
+
+Router.route('/search?keyword=:keyword', {
+	name: 'searchLandingPage'/*,
+	data: function() {
+		return [HOOK UP TO GOOGLE ENGINE NEEDED]
+	}*/ 
+});
+
+Router.route('/categories', { 
+	name: 'browseCategoriesPage',
+	data: function() {
+		return Categories.find();
+	} 
+});
+
+//Review Pages per Category
+Router.route('/LaptopReviews/:p_id', { 
+	name: 'reviewPage',
+	data: function() {
+		return LaptopReviews.findOne(this.params.p_id);
+	} 
+});
+
+
+//ADD ONBEFOREACTION HOOK FOR MULTIPLE ROUTES

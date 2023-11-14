@@ -1,0 +1,14 @@
+LaptopsReviewsComments = new Mongo.Collection('laptopsreviewscomments');
+
+//Just an extra layer of security
+LaptopsReviewsComments.allow({
+	insert() { return false; },
+	update() { return false; },
+	remove() { return false; }
+});
+
+LaptopsReviewsComments.deny({
+	insert() { return true; },
+	update() { return true; },
+	remove() { return true; }
+});

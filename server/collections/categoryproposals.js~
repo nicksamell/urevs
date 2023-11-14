@@ -1,0 +1,5 @@
+//un-comment when creating new server
+//mind this - newcategoryproposals has already been created on the server unfortunately. but you'll create a new server anyway so no worries.
+CategoryProposals = new Mongo.Collection('categoryproposals');
+
+//move over other one

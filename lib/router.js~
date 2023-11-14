@@ -1,0 +1,288 @@
+Router.configure({
+	layoutTemplate: 'layout',
+	loadingTemplate: 'loading',
+	notFoundTemplate: 'notFound',
+	waitOn: function() { 
+		return Meteor.subscribe('categories');
+	}
+});
+
+Router.route('/blog', { 
+	name: 'blogPage',
+	seo: {
+		title: function() {
+			return 'urevs blog';
+		}
+	}
+});
+
+Router.route('/myaccount', { 
+	name: 'accountPage',
+	seo: {
+		title: function() {
+			return 'my account';
+		}
+	}
+});
+
+Router.route('/newest/:newestPostsLimit?', {
+	name: 'newestPage',
+	seo: {
+		title: function() {
+			return 'newest reviews';
+		}
+	}
+});
+
+NewestPageController = RouteController.extend({
+	template: 'newestPage',
+	increment: 10,
+	newestPostsLimit: function() {
+		let newestPostsLimit = parseInt(this.params.newestPostsLimit, 10) || this.increment;
+		
+		if (newestPostsLimit < 1) {
+			newestPostsLimit = 1;
+		}
+		
+		return newestPostsLimit;
+	},
+	findOptions: function() {
+		return this.newestPostsLimit();
+	},
+	subscriptions: function() {
+		this.newestSub = Meteor.subscribe('newestSubscription', this.findOptions());
+	},
+	newestReviews: function() {
+		return SearchIndex.find({}, {$sort: {'submitted': -1}});
+	},
+	data: function() {
+		let hasMoreNewest = ReactiveMethod.call('hasMoreNewestMethod', this.findOptions());
+
+		let sanitizedNewestPostsLimit;
+
+		if (this.newestPostsLimit() - this.increment <= 0) {
+			sanitizedNewestPostsLimit = 1;
+		} else {
+			sanitizedNewestPostsLimit = this.newestPostsLimit() - this.increment;
+		};
+
+		let nextNewestPath = this.route.path({newestPostsLimit: this.newestPostsLimit() + this.increment});
+		let previousNewestPath = this.route.path({newestPostsLimit: sanitizedNewestPostsLimit});
+		
+		return {
+			newestReviews: this.newestReviews(),
+			hasMoreNewestHelper: hasMoreNewest,
+			hasMoreNewestPath: hasMoreNewest ? nextNewestPath: previousNewestPath
+		};
+	}
+});
+
+Router.route('/trendingtoday/:trendingPostsLimit?', {
+	name: 'trendingPage',
+	seo: {
+		title: function() {
+			return 'trending reviews';
+		}
+	}
+});
+
+TrendingPageController = RouteController.extend({
+	template: 'trendingPage',
+	increment: 10,
+	trendingPostsLimit: function() {
+		let trendingPostsLimit = parseInt(this.params.trendingPostsLimit, 10) || this.increment;
+		
+		if (trendingPostsLimit < 1) {
+			trendingPostsLimit = 1;
+		}
+		
+		return trendingPostsLimit;
+	},
+	findOptions: function() {
+		return this.trendingPostsLimit();
+	},
+	subscriptions: function() {
+		let amendedOptions = this.findOptions()/5;
+		let options = this.findOptions() - amendedOptions;
+
+		//for trending reviews
+			this.trendingSub = Meteor.subscribe('trendingSubscription', options);
+		//for bullhorn reviews
+			this.trendingSub = Meteor.subscribe('trendingSubscriptionAmended', amendedOptions);
+	},
+	trendingReviews: function() {
+		return SearchIndex.find({}, {$sort: {'hornTime': 1, 'trendingCount': -1}});
+	},
+	data: function() {
+		let hasMoreTrending = ReactiveMethod.call('hasMoreTrendingMethod', this.findOptions());
+
+		let sanitizedTrendingPostsLimit;
+
+		if (this.trendingPostsLimit() - this.increment <= 0) {
+			sanitizedTrendingPostsLimit = 1;
+		} else {
+			sanitizedTrendingPostsLimit = this.trendingPostsLimit() - this.increment;
+		};
+
+		let nextTrendingPath = this.route.path({trendingPostsLimit: this.trendingPostsLimit() + this.increment});
+		let previousTrendingPath = this.route.path({trendingPostsLimit: sanitizedTrendingPostsLimit});
+
+		return {
+			trendingReviews: this.trendingReviews(),
+			hasMoreTrendingHelper: hasMoreTrending,
+			hasMoreTrendingPath: hasMoreTrending ? nextTrendingPath: previousTrendingPath
+		};
+	}
+});
+
+//Site-Wide Search Landing Page
+Router.route('/search/:searchString1/:searchString2/:typeFilter/:searchLimit?', {
+	name: 'searchLandingPage',
+	seo: {
+		title: function() {
+			if (Router.current().params.searchString1 != 'null' && Router.current().params.searchString2 != 'null') {
+				return 'search: ' + Router.current().params.searchString1 + ' vs ' + Router.current().params.searchString2;
+			} else if (Router.current().params.searchString1 != 'null') {
+				return 'search: ' + Router.current().params.searchString1;
+			} else {
+				return 'search: ' + Router.current().params.searchString2;
+			}
+		}
+	}
+});
+
+SearchLandingPageController = RouteController.extend({
+	template: 'searchLandingPage',
+	increment: 5,
+	searchLandingParams: function() {
+		let searchLimit = parseInt(this.params.searchLimit, 10) || 10;
+
+		let currentSearchString1 = this.params.searchString1;
+		let currentSearchString2 = this.params.searchString2;
+		let typeFilter = this.params.typeFilter;
+		
+		if (searchLimit < 1) {
+			searchLimit = 1;
+		}
+		
+		return { currentSearchString1, currentSearchString2, searchLimit, typeFilter };
+	},
+	subscriptions: function() {
+		Session.set('newSearchUrl', true);
+		
+		this.reviewSLSub = Meteor.subscribe('searchLandingSubscription', this.searchLandingParams().currentSearchString1, this.searchLandingParams().currentSearchString2, this.searchLandingParams().typeFilter, this.searchLandingParams().searchLimit);
+	},
+	searchResults: function() {
+		if (this.searchLandingParams().typeFilter == 'all') {
+			return SearchIndex.find({}, {sort: {'single': -1, difference: -1}});
+		} else if (this.searchLandingParams().typeFilter == 'single') {
+			return SearchIndex.find({'single': true}, {sort: {'single': -1, 'likes1': -1}});
+		} else if (this.searchLandingParams().typeFilter == 'comparison') {
+			return SearchIndex.find({'single': false}, {sort: {'single': -1, difference: -1}});
+		}
+	},
+	waitOn: function() {
+		hasMoreSL = ReactiveMethod.call('hasMoreSearchMethod', this.searchLandingParams().currentSearchString1, this.searchLandingParams().currentSearchString2, this.searchLandingParams().typeFilter, this.searchLandingParams().searchLimit);
+	},
+	data: function() {
+		let nextSearchPath = this.route.path({searchString1: this.searchLandingParams().currentSearchString1, searchString2: this.searchLandingParams().currentSearchString2, typeFilter: this.searchLandingParams().typeFilter, searchLimit: this.searchLandingParams().searchLimit + this.increment});
+		let previousSearchPath = this.route.path({searchString1: this.searchLandingParams().currentSearchString1, searchString2: this.searchLandingParams().currentSearchString2, typeFilter: this.searchLandingParams().typeFilter, searchLimit: this.searchLandingParams().searchLimit - this.increment});
+		
+		let hasMoreSearchPath = hasMoreSL ? nextSearchPath : previousSearchPath;
+
+		return {
+			searchResults: this.searchResults(),
+			hasMoreSearchPath,
+			hasMoreSL
+		}
+	}
+});
+
+//Review Pages per Category
+Router.route('/:category/:_id/:commentsLimit?', { 
+	name: 'reviewPage',
+	seo: {
+		title: function() {
+			let categorySEO = Router.current().params.category;
+			let catURL;
+			let revURL;
+			 
+			for (let i = 0; i < categorySEO.length; i++) {
+				if (categorySEO[i] === 's') {
+					if (categorySEO[i + 1] === 'r' && categorySEO[i + 2] === 'e' && categorySEO[i + 3] === 'v') {
+						catURL = categorySEO.substring(0, i);
+						revURL = categorySEO.substring(i + 1, categorySEO.length - 1);
+						
+						catURL = catURL.charAt(0).toUpperCase() + catURL.slice(1);
+						revURL = revURL.charAt(0).toUpperCase() + revURL.slice(1);
+					}
+				}
+			}
+		
+			return catURL + ' ' + revURL;
+		}
+	}
+});
+
+ReviewPageController = RouteController.extend({
+	template: 'reviewPage',
+	increment: 3,
+	reviewParams: function() {
+		commentsLimit = parseInt(this.params.commentsLimit, 10) || 5;
+		
+		let currentCategory = this.params.category;
+		let currentReviewId = this.params._id;
+		
+		if (commentsLimit < 1) {
+			commentsLimit = 1;
+		}
+		
+		return { currentCategory, currentReviewId, commentsLimit };
+	},
+	subscriptions: function() {
+		this.reviewSub = Meteor.subscribe('reviewPage', this.reviewParams().currentCategory, this.reviewParams().currentReviewId, this.reviewParams().commentsLimit);
+	},
+	review: function() {
+		return Mongo.Collection.get(this.reviewParams().currentCategory).find();
+	},
+	waitOn: function() {
+		let collection = this.reviewParams().currentCategory;
+
+		//eventually use imports and exports
+		RSCount1 = ReactiveMethod.call('RSCountMethod1', collection, this.reviewParams().currentReviewId, this.reviewParams().commentsLimit);
+		RSCount2 = ReactiveMethod.call('RSCountMethod2', collection, this.reviewParams().currentReviewId, this.reviewParams().commentsLimit);
+		hasMoreLackRS = ReactiveMethod.call('hasMoreLackMethod', collection, this.reviewParams().currentReviewId, this.reviewParams().commentsLimit);
+	},
+	data: function() {
+		nextReviewPath = this.route.path({category: this.reviewParams().currentCategory, _id: this.reviewParams().currentReviewId, commentsLimit: this.reviewParams().commentsLimit + this.increment});
+		let previousCommentsLimit = this.reviewParams().commentsLimit - this.increment;
+		if (previousCommentsLimit < 1) {
+			previousCommentsLimit = 1;
+		}
+		previousReviewPath = this.route.path({category: this.reviewParams().currentCategory, _id: this.reviewParams().currentReviewId, commentsLimit: previousCommentsLimit});
+
+		hasMoreLackReviewPath = hasMoreLackRS ? nextReviewPath : previousReviewPath;
+		
+		return {
+			review: this.review()
+		};
+	}
+});
+
+
+//Home Page
+Router.route('/', { 
+	name: 'landingPage'
+});
+
+if (Meteor.isClient) {
+	Router.plugin('seo', {
+		only: ['accountPage', 'newestPage', 'trendingPage', 'searchLandingPage', 'reviewPage', 'landingPage'],
+		except: [],
+		defaults: {
+			title: 'urevs',
+			
+			description: 'Aiming to make the product choosing experience radically easier.',
+		}
+	});
+}

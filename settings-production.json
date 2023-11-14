@@ -1,0 +1,9 @@
+{
+	"galaxy.meteor.com": {
+		"env": {
+			"MONGO_URL": "example.com"
+		}
+	},
+	"AWSAccessKeyId": "example",
+	"AWSSecretAccessKey": "example"
+}

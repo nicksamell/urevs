@@ -1,0 +1,1 @@
+SpellCheck = new Mongo.Collection('spellcheck');

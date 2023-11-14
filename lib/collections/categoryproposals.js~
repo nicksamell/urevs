@@ -1,0 +1,1 @@
+CategoryProposals = new Mongo.Collection('categoryproposals');

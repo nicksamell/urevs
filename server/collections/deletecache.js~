@@ -1,0 +1,5 @@
+//set delete to use id only
+//For legal purposes, we hold a copy of a deleted comment for two weeks since the deletion request.
+
+//un-comment when creating new server
+//DeleteCache = new Mongo.Collection('deletecache');
